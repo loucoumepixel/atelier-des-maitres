@@ -14,6 +14,10 @@ Application Android (Kotlin, Jetpack Compose) pour repeindre des chefs-d'œuvre 
 - **La matière du tableau** : une zone peinte reprend les coups de pinceau de l'original, modulés sous la couleur posée.
 - Zoom à deux doigts, déplacement, numéros toujours nets qui apparaissent quand on s'approche, bouton « trouver une zone », annuler / rétablir, gomme, œil à maintenir pour comparer avec l'original, sauvegarde automatique, écran de fin avec l'histoire de l'œuvre.
 
+## Publier sur le Play Store
+
+Tout est préparé dans [docs/play-store](docs/play-store/README.md).
+
 ## Installer l'application
 
 **Le plus simple, avec Android Studio** (gratuit, Windows, Mac ou Linux) :

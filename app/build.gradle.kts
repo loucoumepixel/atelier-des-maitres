@@ -6,16 +6,37 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Le numéro de build GitHub Actions sert de numéro de version : il augmente à chaque
+// publication, ce qu'exige le Play Store.
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+
+// Clé d'envoi Play Store, fournie par les secrets GitHub (voir docs/play-store/README.md).
+// Sans elle, l'APK est signé avec la clé de debug, ce qui suffit pour l'installer à la main.
+val uploadKeystore = System.getenv("UPLOAD_KEYSTORE_PATH")?.let(::file)?.takeIf { it.exists() }
+val uploadPassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+
 android {
     namespace = "app.atelier.maitres"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.atelier.maitres"
+        // Identifiant définitif sur le Play Store : il ne pourra plus changer après la publication.
+        applicationId = "io.github.loucoumepixel.atelierdesmaitres"
         minSdk = 28
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = buildNumber
+        versionName = "1.0.$buildNumber"
+    }
+
+    signingConfigs {
+        if (uploadKeystore != null && uploadPassword != null) {
+            create("upload") {
+                storeFile = uploadKeystore
+                storePassword = uploadPassword
+                keyAlias = "upload"
+                keyPassword = uploadPassword
+            }
+        }
     }
 
     buildTypes {
@@ -23,9 +44,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signé avec la clé de debug pour pouvoir installer l'APK directement.
-            // Pour le Play Store, remplacez par votre propre signingConfig.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("upload") ?: signingConfigs.getByName("debug")
         }
     }
 

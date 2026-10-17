@@ -18,14 +18,31 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
-      - name: Tests du moteur et APK
-        run: ./gradlew :core:test :app:assembleRelease
-      - name: Nommer l'APK
-        run: cp app/build/outputs/apk/release/app-release.apk atelier-des-maitres.apk
+      # Clé d'envoi Play Store, si les secrets sont configurés (voir docs/play-store/README.md).
+      - name: Préparer la clé d'envoi
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+        if: env.UPLOAD_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "UPLOAD_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      - name: Tests du moteur, APK et bundle Play Store
+        env:
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+        run: ./gradlew :core:test :app:assembleRelease :app:bundleRelease
+      - name: Nommer les fichiers
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk atelier-des-maitres.apk
+          cp app/build/outputs/bundle/release/app-release.aab atelier-des-maitres.aab
       - uses: actions/upload-artifact@v4
         with:
           name: atelier-des-maitres-apk
           path: atelier-des-maitres.apk
+      # Le bundle .aab est le format à déposer sur la Play Console.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: atelier-des-maitres-play-store
+          path: atelier-des-maitres.aab
       # Chaque version de main est publiée en Release : l'APK se télécharge alors
       # directement depuis un téléphone, sans compte ni zip.
       - name: Publier la Release
@@ -33,7 +50,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v1.0.${{ github.run_number }}" atelier-des-maitres.apk \
+          gh release create "v1.0.${{ github.run_number }}" atelier-des-maitres.apk atelier-des-maitres.aab \
             --title "Atelier des Maîtres 1.0.${{ github.run_number }}" \
-            --notes "Téléchargez atelier-des-maitres.apk depuis votre téléphone Android et ouvrez-le pour l'installer." \
+            --notes "Téléchargez atelier-des-maitres.apk depuis votre téléphone Android et ouvrez-le pour l'installer. Le fichier .aab est destiné à la Play Console." \
             --latest
