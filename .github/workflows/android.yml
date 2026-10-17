@@ -5,6 +5,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +20,20 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Tests du moteur et APK
         run: ./gradlew :core:test :app:assembleRelease
+      - name: Nommer l'APK
+        run: cp app/build/outputs/apk/release/app-release.apk atelier-des-maitres.apk
       - uses: actions/upload-artifact@v4
         with:
           name: atelier-des-maitres-apk
-          path: app/build/outputs/apk/release/*.apk
+          path: atelier-des-maitres.apk
+      # Chaque version de main est publiée en Release : l'APK se télécharge alors
+      # directement depuis un téléphone, sans compte ni zip.
+      - name: Publier la Release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" atelier-des-maitres.apk \
+            --title "Atelier des Maîtres 1.0.${{ github.run_number }}" \
+            --notes "Téléchargez atelier-des-maitres.apk depuis votre téléphone Android et ouvrez-le pour l'installer." \
+            --latest
