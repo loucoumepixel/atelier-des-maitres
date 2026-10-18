@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Atelier des Maîtres</string>
+    <string name="welcome_title">Repaint the masters, area by area.</string>
+    <string name="welcome_sub">Every number is a colour from the painter\'s palette. Tap, and the canvas comes back to life.</string>
+    <string name="welcome_step1">Choose a canvas</string>
+    <string name="welcome_step2">Pick a colour</string>
+    <string name="welcome_step3">Tap its areas</string>
+    <string name="welcome_cta">Pick up the brush</string>
     <string name="gallery_subtitle">Choose a canvas, pick up the brush.</string>
     <string name="about_open">About the app</string>
     <string name="import_failed">This image could not be read.</string>

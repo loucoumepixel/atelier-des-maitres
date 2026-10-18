@@ -18,6 +18,10 @@ import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
 import app.atelier.maitres.ui.studio.StudioScreen
 import app.atelier.maitres.ui.theme.AtelierTheme
+import app.atelier.maitres.ui.welcome.WelcomeScreen
+
+/** Écran d'accueil, montré à chaque ouverture de l'application. */
+private const val WELCOME = "accueil"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +31,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AtelierTheme {
-                // Navigation volontairement simple : deux écrans, un état sauvegardable.
-                // "id|NIVEAU" quand une toile est ouverte, null pour la galerie.
-                var open by rememberSaveable { mutableStateOf<String?>(null) }
+                // Navigation volontairement simple : un état sauvegardable.
+                // WELCOME à l'ouverture de l'application, "id|NIVEAU" quand une toile est ouverte,
+                // null pour la galerie.
+                var open by rememberSaveable { mutableStateOf<String?>(WELCOME) }
 
                 AnimatedContent(
                     targetState = open,
@@ -41,7 +46,9 @@ class MainActivity : ComponentActivity() {
                     val parts = target?.split('|')
                     val painting = parts?.let { repository.painting(it[0]) }
                     val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
-                    if (painting != null && difficulty != null) {
+                    if (target == WELCOME) {
+                        WelcomeScreen(onEnter = { open = null })
+                    } else if (painting != null && difficulty != null) {
                         StudioScreen(
                             painting = painting,
                             difficulty = difficulty,

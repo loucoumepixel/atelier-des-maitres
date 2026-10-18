@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="welcome_title">Repeignez les maîtres, zone par zone.</string>
+    <string name="welcome_sub">Chaque numéro est une couleur de la palette du peintre. Touchez, la toile renaît.</string>
+    <string name="welcome_step1">Choisissez une toile</string>
+    <string name="welcome_step2">Prenez une couleur</string>
+    <string name="welcome_step3">Touchez ses zones</string>
+    <string name="welcome_cta">Prendre le pinceau</string>
     <string name="gallery_subtitle">Choisissez une toile, prenez le pinceau.</string>
     <string name="about_open">À propos de l\'application</string>
     <string name="import_failed">Impossible de lire cette image.</string>
