@@ -75,13 +75,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
 import app.atelier.maitres.data.PaintingStats
+import app.atelier.maitres.ui.labelRes
 import app.atelier.maitres.ui.theme.CartelStyle
 import app.atelier.maitres.ui.theme.Pigments
 import kotlinx.coroutines.launch
@@ -97,12 +100,13 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val importFailed = stringResource(R.string.import_failed)
 
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) scope.launch {
             runCatching { repository.import(uri) }
                 .onSuccess { choosing = it }
-                .onFailure { snackbar.showSnackbar("Impossible de lire cette image.") }
+                .onFailure { snackbar.showSnackbar(importFailed) }
         }
     }
 
@@ -115,9 +119,9 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
             LargeTopAppBar(
                 title = {
                     Column {
-                        Text("Atelier des Maîtres")
+                        Text(stringResource(R.string.app_name))
                         Text(
-                            "Choisissez une toile, prenez le pinceau.",
+                            stringResource(R.string.gallery_subtitle),
                             style = CartelStyle,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -125,7 +129,7 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
                 },
                 actions = {
                     IconButton(onClick = { about = true }) {
-                        Icon(Icons.Outlined.Info, contentDescription = "À propos de l'application")
+                        Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.about_open))
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -188,15 +192,15 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
         AlertDialog(
             onDismissRequest = { deleting = null },
             icon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
-            title = { Text("Retirer « ${painting.title} » ?") },
-            text = { Text("L'image importée et votre progression sur cette toile seront supprimées.") },
+            title = { Text(stringResource(R.string.remove_title, painting.title)) },
+            text = { Text(stringResource(R.string.remove_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     deleting = null
                     scope.launch { repository.delete(painting) }
-                }) { Text("Retirer") }
+                }) { Text(stringResource(R.string.remove)) }
             },
-            dismissButton = { TextButton(onClick = { deleting = null }) { Text("Annuler") } },
+            dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }
@@ -223,8 +227,8 @@ private fun PaintingCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(6.dp))
             .combinedClickable(
-                onClickLabel = "Choisir le niveau",
-                onLongClickLabel = if (painting.isImported) "Retirer cette image" else null,
+                onClickLabel = stringResource(R.string.action_choose_level),
+                onLongClickLabel = if (painting.isImported) stringResource(R.string.remove_image) else null,
                 onClick = onClick,
                 onLongClick = onLongClick,
             ),
@@ -259,7 +263,7 @@ private fun PaintingCard(
             if (best?.isComplete == true) {
                 Icon(
                     Icons.Outlined.CheckCircle,
-                    contentDescription = "Terminée",
+                    contentDescription = stringResource(R.string.finished),
                     tint = Pigments.PaperBright,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -296,7 +300,7 @@ private fun PaintingCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    "${(best.fraction * 100).toInt()} %",
+                    stringResource(R.string.percent, (best.fraction * 100).toInt()),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -323,10 +327,9 @@ private fun ImportCard(onClick: () -> Unit) {
             )
             Spacer(Modifier.width(16.dp))
             Column {
-                Text("Importer une œuvre", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.import_title), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "Un Monet, un Renoir, une photo de vacances : toute image de votre téléphone " +
-                        "devient une toile à peindre.",
+                    stringResource(R.string.import_text),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -358,7 +361,7 @@ private fun DifficultySheet(
                 Text(painting.note, style = MaterialTheme.typography.bodyMedium)
             }
             Spacer(Modifier.height(20.dp))
-            Text("Choisissez votre niveau", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.choose_level), style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.height(8.dp))
             Difficulty.entries.forEach { difficulty ->
                 val stat = stats.firstOrNull { it.difficulty == difficulty }
@@ -369,7 +372,7 @@ private fun DifficultySheet(
                 TextButton(onClick = onDelete, modifier = Modifier.align(Alignment.End)) {
                     Icon(Icons.Outlined.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Retirer cette image")
+                    Text(stringResource(R.string.remove_image))
                 }
             }
         }
@@ -379,9 +382,9 @@ private fun DifficultySheet(
 @Composable
 private fun DifficultyRow(difficulty: Difficulty, stat: PaintingStats?, highlighted: Boolean, onClick: () -> Unit) {
     val description = when (difficulty) {
-        Difficulty.FACILE -> "Grandes zones, ${difficulty.colorCount} couleurs. Idéal pour se détendre."
-        Difficulty.NORMAL -> "L'équilibre entre détail et plaisir, ${difficulty.colorCount} couleurs."
-        Difficulty.EXPERT -> "Chaque nuance du maître, jusqu'à ${difficulty.colorCount} couleurs."
+        Difficulty.FACILE -> stringResource(R.string.level_easy_text, difficulty.colorCount)
+        Difficulty.NORMAL -> stringResource(R.string.level_normal_text, difficulty.colorCount)
+        Difficulty.EXPERT -> stringResource(R.string.level_expert_text, difficulty.colorCount)
     }
     Surface(
         onClick = onClick,
@@ -391,13 +394,14 @@ private fun DifficultyRow(difficulty: Difficulty, stat: PaintingStats?, highligh
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                Text(difficulty.label, style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(difficulty.labelRes), style = MaterialTheme.typography.titleMedium)
                 Text(description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (stat != null && stat.faithful > 0) {
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    if (stat.isComplete) "Terminée" else "${(stat.fraction * 100).toInt()} %",
+                    if (stat.isComplete) stringResource(R.string.finished)
+                    else stringResource(R.string.percent, (stat.fraction * 100).toInt()),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.secondary,
@@ -421,24 +425,23 @@ private fun AboutDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Outlined.Palette, contentDescription = null) },
-        title = { Text("Atelier des Maîtres") },
+        title = { Text(stringResource(R.string.app_name)) },
         text = {
             Column {
                 if (version.isNotEmpty()) {
-                    Text("Version $version", style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.version, version), style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(12.dp))
                 }
                 Text(
-                    "Toutes les toiles fournies sont dans le domaine public. Sans publicité, sans compte : " +
-                        "rien ne quitte votre téléphone.",
+                    stringResource(R.string.about_text),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(Modifier.height(8.dp))
-                TextButton(onClick = { open(PRIVACY_URL) }) { Text("Politique de confidentialité") }
-                TextButton(onClick = { open(SUPPORT_URL) }) { Text("Signaler un problème") }
+                TextButton(onClick = { open(PRIVACY_URL) }) { Text(stringResource(R.string.privacy_policy)) }
+                TextButton(onClick = { open(SUPPORT_URL) }) { Text(stringResource(R.string.report_problem)) }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Fermer") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
     )
 }
 

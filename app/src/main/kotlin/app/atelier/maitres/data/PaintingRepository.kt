@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.AtomicFile
 import android.util.LruCache
 import androidx.core.content.FileProvider
+import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.PaintByNumber
 import app.atelier.maitres.core.PbnCodec
@@ -65,7 +66,7 @@ class PaintingRepository(private val context: Context) {
         override fun sizeOf(key: String, value: Bitmap) = value.byteCount
     }
 
-    private val _paintings = MutableStateFlow(MasterCatalog.paintings + readImports())
+    private val _paintings = MutableStateFlow(MasterCatalog.paintings(context.resources) + readImports())
     val paintings: StateFlow<List<Painting>> = _paintings.asStateFlow()
 
     /** Incrémenté à chaque sauvegarde, pour que la galerie rafraîchisse ses pourcentages. */
@@ -182,14 +183,15 @@ class PaintingRepository(private val context: Context) {
         val file = File(importDir, "$id.jpg")
         AtomicFile(file).write { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
         // Numéro suivant le plus grand déjà attribué : jamais deux « Ma toile n° 2 », même après une suppression.
-        val count = _paintings.value.mapNotNull { IMPORT_TITLE.matchEntire(it.title)?.groupValues?.get(1)?.toIntOrNull() }
+        val count = _paintings.value.filter { it.isImported }
+            .mapNotNull { IMPORT_NUMBER.find(it.title)?.groupValues?.get(1)?.toIntOrNull() }
             .maxOrNull().let { (it ?: 0) + 1 }
         val painting = Painting(
             id = id,
-            title = "Ma toile n° $count",
-            artist = "Importée",
+            title = context.getString(R.string.imported_title, count),
+            artist = context.getString(R.string.imported_artist),
             year = "",
-            note = "Une image de votre galerie, découpée en zones comme les toiles de maître.",
+            note = context.getString(R.string.imported_note),
             source = Painting.Source.File(file.path),
         )
         _paintings.value = _paintings.value + painting
@@ -217,7 +219,7 @@ class PaintingRepository(private val context: Context) {
             Painting(
                 id = o.getString("id"),
                 title = o.getString("title"),
-                artist = o.optString("artist", "Importée"),
+                artist = o.optString("artist", context.getString(R.string.imported_artist)),
                 year = o.optString("year"),
                 note = o.optString("note"),
                 // Nom de fichier relatif : le chemin absolu change d'un appareil (ou d'un profil
@@ -271,7 +273,8 @@ class PaintingRepository(private val context: Context) {
         const val WORKING_SIZE = 1200
         private const val THUMBNAIL_SIZE = 480
         private const val IMPORT_SIZE = 1600
-        private val IMPORT_TITLE = Regex("Ma toile n° (\\d+)")
+        /** Numéro final d'un titre d'import, quelle que soit la langue (« Ma toile n° 3 », « My canvas no. 3 »). */
+        private val IMPORT_NUMBER = Regex("(\\d+)$")
 
         /** À incrémenter si l'algorithme de découpage change, pour invalider le cache. */
         private const val CANVAS_FORMAT = 1

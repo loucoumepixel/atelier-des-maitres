@@ -79,6 +79,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
@@ -90,9 +91,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
+import app.atelier.maitres.ui.labelRes
 import app.atelier.maitres.ui.theme.CartelStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -160,15 +163,15 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                     type = "image/png"
                     putExtra(Intent.EXTRA_STREAM, uri)
                     if (!painting.isImported) {
-                        putExtra(Intent.EXTRA_TEXT, "« ${painting.title} », ${painting.artist}, repeint dans Atelier des Maîtres")
+                        putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text, painting.title, painting.artist))
                     }
                     clipData = ClipData.newRawUri(null, uri)
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
-                context.startActivity(Intent.createChooser(send, "Partager la toile"))
+                context.startActivity(Intent.createChooser(send, context.getString(R.string.share_canvas)))
             }.onFailure { e ->
                 if (e is kotlinx.coroutines.CancellationException) throw e
-                Toast.makeText(context, "Le partage n'a pas pu être préparé.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, R.string.share_failed, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -184,7 +187,7 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Retour à la galerie") }
+                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back_to_gallery)) }
                 },
                 title = {
                     state.version
@@ -193,7 +196,13 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                     Column {
                         Text(painting.title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
                         Text(
-                            "${state.loaded.difficulty.label} · $faithful / $total zones · ${faithful * 100 / maxOf(1, total)} %",
+                            stringResource(
+                                R.string.studio_progress,
+                                stringResource(state.loaded.difficulty.labelRes),
+                                faithful,
+                                total,
+                                faithful * 100 / maxOf(1, total),
+                            ),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -201,6 +210,11 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                 },
                 actions = {
                     // Maintenir pour voir l'original : on le compare à son propre travail.
+                    val peekHold = stringResource(R.string.peek_hold)
+                    val peekOn = stringResource(R.string.peek_on)
+                    val peekOff = stringResource(R.string.peek_off)
+                    val peekShow = stringResource(R.string.peek_show)
+                    val peekHide = stringResource(R.string.peek_hide)
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -217,9 +231,9 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                             // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
                             .semantics {
                                 role = Role.Button
-                                contentDescription = "Maintenir pour voir l'original"
-                                stateDescription = if (peek) "Original affiché" else "Votre toile affichée"
-                                onClick(label = if (peek) "Revenir à votre toile" else "Voir l'original") {
+                                contentDescription = peekHold
+                                stateDescription = if (peek) peekOn else peekOff
+                                onClick(label = if (peek) peekHide else peekShow) {
                                     peek = !peek
                                     true
                                 }
@@ -227,10 +241,10 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                     ) {
                         Icon(Icons.Outlined.Visibility, contentDescription = null)
                     }
-                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = "Plus d'options") }
+                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options)) }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                         DropdownMenuItem(
-                            text = { Text("Vue d'ensemble") },
+                            text = { Text(stringResource(R.string.overview)) },
                             leadingIcon = { Icon(Icons.Outlined.FitScreen, contentDescription = null) },
                             onClick = {
                                 menu = false
@@ -238,7 +252,7 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                             },
                         )
                         DropdownMenuItem(
-                            text = { Text("Partager la toile") },
+                            text = { Text(stringResource(R.string.share_canvas)) },
                             leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
                             onClick = {
                                 menu = false
@@ -246,7 +260,7 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                             },
                         )
                         DropdownMenuItem(
-                            text = { Text("Recommencer la toile") },
+                            text = { Text(stringResource(R.string.restart_canvas)) },
                             leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
                             onClick = {
                                 menu = false
@@ -280,12 +294,12 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     state.version
-                    FloatingTool(Icons.AutoMirrored.Outlined.Undo, "Annuler", enabled = state.session.canUndo) { state.undo() }
-                    FloatingTool(Icons.AutoMirrored.Outlined.Redo, "Rétablir", enabled = state.session.canRedo) { state.redo() }
+                    FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), enabled = state.session.canUndo) { state.undo() }
+                    FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), enabled = state.session.canRedo) { state.redo() }
                 }
                 FloatingTool(
                     Icons.Outlined.CenterFocusStrong,
-                    "Trouver une zone à peindre",
+                    stringResource(R.string.find_area),
                     enabled = true,
                     modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
                 ) { scope.launch { state.findNextRegion() } }
@@ -303,15 +317,15 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { confirmRestart = false },
             icon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
-            title = { Text("Recommencer la toile ?") },
-            text = { Text("Toutes les zones redeviennent blanches. Vous pourrez encore annuler.") },
+            title = { Text(stringResource(R.string.restart_title)) },
+            text = { Text(stringResource(R.string.restart_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     confirmRestart = false
                     state.restart()
-                }) { Text("Recommencer") }
+                }) { Text(stringResource(R.string.restart)) }
             },
-            dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text("Garder") } },
+            dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text(stringResource(R.string.keep)) } },
         )
     }
 
@@ -319,10 +333,10 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { state.showCompletion = false },
             icon = { Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
-            title = { Text("Chef-d'œuvre achevé", style = MaterialTheme.typography.headlineSmall) },
+            title = { Text(stringResource(R.string.done_title), style = MaterialTheme.typography.headlineSmall) },
             text = {
                 Column {
-                    Text("Vous avez repeint « ${painting.title} » zone par zone, avec les couleurs du maître.")
+                    Text(stringResource(R.string.done_text, painting.title))
                     if (painting.note.isNotBlank()) {
                         Spacer(Modifier.height(12.dp))
                         Text(painting.note, style = CartelStyle)
@@ -333,18 +347,18 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                 Button(onClick = {
                     state.showCompletion = false
                     scope.launch { state.camera.animateToOverview() }
-                }) { Text("Admirer") }
+                }) { Text(stringResource(R.string.admire)) }
             },
             dismissButton = {
                 Row {
                     TextButton(onClick = {
                         state.showCompletion = false
                         share()
-                    }) { Text("Partager") }
+                    }) { Text(stringResource(R.string.share)) }
                     TextButton(onClick = {
                         state.showCompletion = false
                         onBack()
-                    }) { Text("Galerie") }
+                    }) { Text(stringResource(R.string.gallery)) }
                 }
             },
         )
@@ -362,7 +376,7 @@ private fun HintBanner(visible: Boolean, modifier: Modifier = Modifier) {
     ) {
         Surface(shape = RoundedCornerShape(50), tonalElevation = 6.dp, shadowElevation = 4.dp) {
             Text(
-                "Touchez une zone pour la peindre · appui long pour choisir sa couleur",
+                stringResource(R.string.hint),
                 style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp).widthIn(max = 320.dp),
@@ -408,14 +422,14 @@ private fun LoadingScreen(painting: Painting, difficulty: Difficulty, progress: 
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    "L'atelier prépare la toile (${difficulty.label.lowercase()})…",
+                    stringResource(R.string.preparing, stringResource(difficulty.labelRes).lowercase()),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                Text("Cette image n'a pas pu être ouverte.", style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.open_failed), style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(12.dp))
-                TextButton(onClick = onBack) { Text("Retour à la galerie") }
+                TextButton(onClick = onBack) { Text(stringResource(R.string.back_to_gallery)) }
             }
         }
     }

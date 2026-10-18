@@ -1,0 +1,5 @@
+# Profil de démarrage : ces classes sont compilées à l'avance à l'installation au lieu
+# d'être interprétées au premier lancement. Compose fournit déjà le sien ; on y ajoute
+# tout le code de l'application (galerie, atelier, rendu), qui est petit et toujours chaud.
+HSPLapp/atelier/maitres/**->**(**)**
+Lapp/atelier/maitres/**;

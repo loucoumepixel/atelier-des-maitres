@@ -54,6 +54,9 @@ android {
     }
 
     buildFeatures { compose = true }
+
+    // Langue choisissable par application (Paramètres › Langues, Android 13+) : anglais, français.
+    androidResources { generateLocaleConfig = true }
 }
 
 kotlin {
@@ -67,6 +70,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.kotlinx.coroutines.android)
+    // Installe le profil de démarrage même hors Play Store (APK des Releases).
+    implementation(libs.androidx.profileinstaller)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
