@@ -13,11 +13,14 @@ Application Android (Kotlin, Jetpack Compose) pour repeindre des chefs-d'œuvre 
 - **Choisir sa couleur** : un appui long sur une zone ouvre le nuancier (couleur du maître, palette de la toile, ou n'importe quelle couleur via teinte, saturation et luminosité). On peut aussi peindre librement.
 - **La matière du tableau** : une zone peinte reprend les coups de pinceau de l'original, modulés sous la couleur posée.
 - Zoom à deux doigts, déplacement, numéros toujours nets qui apparaissent quand on s'approche, bouton « trouver une zone », annuler / rétablir, gomme, œil à maintenir pour comparer avec l'original, sauvegarde automatique, écran de fin avec l'histoire de l'œuvre.
+- **En anglais et en français**, selon la langue du téléphone (ou celle choisie pour l'application dans les paramètres d'Android 13+).
 - **Partager sa toile** (menu ⋮ ou écran de fin) : l'image peinte, encadrée d'une marge de papier, part vers n'importe quelle application.
 
 ## Publier sur le Play Store
 
-Tout est préparé dans [docs/play-store](docs/play-store/README.md).
+Tout est préparé dans [docs/play-store](docs/play-store/README.md), et l'[audit de publication](docs/audit-publication.md) liste ce qui reste à faire.
+
+Les politiques de confidentialité ([français](docs/confidentialite.md), [anglais](docs/privacy.md)) deviennent des pages web en activant GitHub Pages une fois : *Settings › Pages › Build and deployment › Deploy from a branch*, branche `main`, dossier `/docs`. Elles sont alors à l'adresse `https://loucoumepixel.github.io/atelier-des-maitres/confidentialite.html` (et `privacy.html`).
 
 ## Installer l'application
 

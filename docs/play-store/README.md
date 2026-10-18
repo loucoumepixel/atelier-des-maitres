@@ -3,10 +3,10 @@
 ## Déjà prêt dans le dépôt
 - Application conforme aux exigences actuelles : Android 16 (API 36) ciblé, identifiant définitif `io.github.loucoumepixel.atelierdesmaitres`, numéro de version qui augmente à chaque build.
 - Bundle `.aab` (le format exigé par la Play Console) produit à chaque build et joint à chaque Release GitHub.
-- Fiche du store en français et réponses aux questionnaires : [fiche.md](fiche.md).
+- Fiche du store en français et en anglais, réponses aux questionnaires : [fiche.md](fiche.md).
 - Politique de confidentialité : [../confidentialite.md](../confidentialite.md) (lien public à coller dans la Play Console).
 - Audit de publication et points restant à faire : [../audit-publication.md](../audit-publication.md).
-- Icône 512 × 512 : [icone-512.png](icone-512.png) ; image de présentation 1024 × 500 : [image-presentation-1024x500.png](image-presentation-1024x500.png).
+- Icône 512 × 512 : [icone-512.png](icone-512.png) ; image de présentation 1024 × 500 en français : [image-presentation-1024x500.png](image-presentation-1024x500.png), en anglais : [feature-graphic-en-1024x500.png](feature-graphic-en-1024x500.png).
 
 ## La clé d'envoi
 La Play Console exige que le `.aab` soit signé avec une clé d'envoi, toujours la même pour toutes les mises à jour. Google garde ensuite la vraie clé de l'application (« signature d'application Play »), donc une clé d'envoi perdue peut être réinitialisée auprès de Google.

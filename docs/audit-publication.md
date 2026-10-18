@@ -35,14 +35,29 @@ Les manques relevaient surtout de la finition : pas de partage de la toile (la f
 3. **Test fermé** : un compte personnel récent doit faire tester l'application par au moins 12 personnes pendant 14 jours avant la production. Pendant ce test, consulter le *rapport de pré-lancement* de la Play Console (Google y lance l'application sur de vrais appareils et signale plantages et défauts d'accessibilité).
 4. **Fichier de désobscurcissement** : à chaque `.aab` déposé, déposer aussi le `mapping.txt` de la même Release.
 5. **Signature** : l'application du Play Store sera re-signée par Google, celle des Releases GitHub par votre clé d'envoi. On ne peut pas passer de l'une à l'autre sans désinstaller (et donc perdre sa progression) : une fois sur le store, orienter les testeurs vers le store uniquement.
+6. **GitHub Pages** : Settings › Pages › *Deploy from a branch*, branche `main`, dossier `/docs`. Les politiques de confidentialité sont alors publiées à `https://loucoumepixel.github.io/atelier-des-maitres/confidentialite.html` et `privacy.html`, les adresses à donner à la Play Console.
+7. **Fiche en anglais** : dans la Play Console, ajouter la traduction anglaise de la fiche avec le texte de [fiche.md](play-store/fiche.md#english) et l'image de présentation anglaise.
 
-## Recommandations suivantes (non faites, à décider)
+## Recommandations mises en œuvre (deuxième passe)
 
-Par ordre d'impact estimé :
+| Recommandation | Fait |
+|---|---|
+| Version anglaise | Tous les textes de l'application sont dans les ressources Android : anglais par défaut, français pour les téléphones en français, langue choisissable par application sous Android 13+. Titres, dates et cartels des toiles traduits. Fiche du store et politique de confidentialité en anglais ([fiche.md](play-store/fiche.md#english), [privacy.md](privacy.md)). |
+| Bibliothèques à jour | Kotlin 2.2.21, Compose BOM 2025.06.01, activity 1.10.1, lifecycle 2.9.1, core-ktx 1.16.0, coroutines 1.10.2 ; validé par le build GitHub. |
+| Profil de démarrage | `profileinstaller` et `baseline-prof.txt` : le code de l'application est compilé à l'installation, y compris pour l'APK des Releases. |
+| Image de présentation | Refaite avec un dégradé sombre et une ombre sous le texte, en français et en anglais. |
+| Confidentialité sur GitHub Pages | Site prêt dans `docs/` ; il ne reste qu'à activer GitHub Pages (voir ci-dessous). |
+| Plus de toiles | **Bloqué ici** : l'environnement de travail n'a pas accès aux musées ni à Wikimedia Commons pour télécharger les reproductions. Voir ci-dessous. |
 
-1. **Version anglaise.** Aujourd'hui tout le texte est en français, écrit directement dans le code. Externaliser les textes et ajouter l'anglais (application et fiche) multiplierait l'audience potentielle ; c'est le plus gros levier de diffusion.
-2. **Plus de toiles.** Sept œuvres, c'est peu face à la concurrence. Le domaine public offre Monet, Vermeer, Klimt, Hokusai (autres vues du Fuji), Seurat, Cézanne… Chaque toile ajoute environ 300 Ko à l'application.
-3. **Mettre à jour les bibliothèques** (Compose de décembre 2024, Kotlin 2.0) : corrections de performance et de stabilité ; à faire sur une branche dédiée, le build GitHub validant la mise à jour.
-4. **Profil de démarrage** (*baseline profile*) : démarrage et défilement plus fluides au premier lancement, mesurables dans Android vitals.
-5. **Image de présentation** : le sous-titre ocre se lit mal sur le ciel tourmenté de la Nuit étoilée ; un bandeau sombre ou un texte plus clair le rendrait lisible en vignette.
-6. **Politique de confidentialité sur GitHub Pages** plutôt que sur la page du dépôt : même contenu, présentation plus propre pour les utilisateurs qui l'ouvrent.
+## Nouvelles toiles proposées
+
+Toutes dans le domaine public, choisies pour leurs aplats lisibles en zones et leur notoriété :
+
+- Claude Monet, *Impression, soleil levant* (1872)
+- Claude Monet, *Les Coquelicots* (1873)
+- Johannes Vermeer, *La Jeune Fille à la perle* (vers 1665)
+- Gustav Klimt, *Le Baiser* (1908)
+- Georges Seurat, *Un dimanche après-midi à l'Île de la Grande Jatte* (1884-1886)
+- Katsushika Hokusai, *Le Fuji rouge* (vers 1831)
+
+Il suffit de déposer les reproductions (JPEG, 1600 px environ sur le grand côté, depuis Wikimedia Commons ou le site du musée) dans le projet : je les intègre au catalogue avec titre, date et cartel en deux langues.

@@ -12,6 +12,8 @@ Atelier des Maîtres est une application de peinture par zones. Elle fonctionne 
 
 **Progression.** Vos toiles en cours sont enregistrées uniquement sur votre téléphone. Elles peuvent être incluses dans la sauvegarde Android de votre appareil si vous l'avez activée, selon les réglages de votre compte Google.
 
-**Suppression.** Retirer une image importée (appui long dans la galerie) supprime sa copie et sa progression. Désinstaller l'application efface toutes ses données.
+**Suppression.** Retirer une image importée (depuis sa fiche dans la galerie) supprime sa copie et sa progression. Désinstaller l'application efface toutes ses données.
 
 **Contact.** Pour toute question : ouvrez un ticket sur https://github.com/loucoumepixel/atelier-des-maitres/issues
+
+*English version: [privacy.md](privacy.md)*
