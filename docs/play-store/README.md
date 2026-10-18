@@ -5,6 +5,7 @@
 - Bundle `.aab` (le format exigé par la Play Console) produit à chaque build et joint à chaque Release GitHub.
 - Fiche du store en français et réponses aux questionnaires : [fiche.md](fiche.md).
 - Politique de confidentialité : [../confidentialite.md](../confidentialite.md) (lien public à coller dans la Play Console).
+- Audit de publication et points restant à faire : [../audit-publication.md](../audit-publication.md).
 - Icône 512 × 512 : [icone-512.png](icone-512.png) ; image de présentation 1024 × 500 : [image-presentation-1024x500.png](image-presentation-1024x500.png).
 
 ## La clé d'envoi

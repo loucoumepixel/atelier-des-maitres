@@ -6,6 +6,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.AtomicFile
 import android.util.LruCache
+import androidx.core.content.FileProvider
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.PaintByNumber
 import app.atelier.maitres.core.PbnCodec
@@ -180,7 +181,9 @@ class PaintingRepository(private val context: Context) {
         val id = "import_" + UUID.randomUUID().toString().take(8)
         val file = File(importDir, "$id.jpg")
         AtomicFile(file).write { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
-        val count = _paintings.value.count { it.isImported } + 1
+        // Numéro suivant le plus grand déjà attribué : jamais deux « Ma toile n° 2 », même après une suppression.
+        val count = _paintings.value.mapNotNull { IMPORT_TITLE.matchEntire(it.title)?.groupValues?.get(1)?.toIntOrNull() }
+            .maxOrNull().let { (it ?: 0) + 1 }
         val painting = Painting(
             id = id,
             title = "Ma toile n° $count",
@@ -201,6 +204,7 @@ class PaintingRepository(private val context: Context) {
             canvasFile(painting, d).delete()
             resetProgress(painting, d)
         }
+        prefs.edit().remove(lastKey(painting)).apply()
         thumbnails.remove(painting.id)
         _paintings.value = _paintings.value.filterNot { it.id == painting.id }
         writeImports()
@@ -216,7 +220,9 @@ class PaintingRepository(private val context: Context) {
                 artist = o.optString("artist", "Importée"),
                 year = o.optString("year"),
                 note = o.optString("note"),
-                source = Painting.Source.File(o.getString("path")),
+                // Nom de fichier relatif : le chemin absolu change d'un appareil (ou d'un profil
+                // utilisateur) à l'autre, ce qui casserait la restauration d'une sauvegarde Android.
+                source = Painting.Source.File(File(importDir, o.optString("file").ifEmpty { File(o.getString("path")).name }).path),
             )
         }.filter { File((it.source as Painting.Source.File).path).exists() }
     }.getOrDefault(emptyList())
@@ -228,10 +234,25 @@ class PaintingRepository(private val context: Context) {
                 JSONObject()
                     .put("id", p.id).put("title", p.title).put("artist", p.artist)
                     .put("year", p.year).put("note", p.note)
-                    .put("path", (p.source as Painting.Source.File).path),
+                    .put("file", File((p.source as Painting.Source.File).path).name),
             )
         }
         importIndex.write { it.write(array.toString().toByteArray()) }
+    }
+
+    // ------------------------------------------------------------------ partage
+
+    /**
+     * Enregistre [image] en PNG dans le cache et renvoie une adresse que les autres
+     * applications peuvent lire le temps du partage (aucune autorisation de stockage requise).
+     */
+    suspend fun shareableImage(painting: Painting, image: Bitmap): Uri = withContext(Dispatchers.IO) {
+        val dir = File(context.cacheDir, "partage").apply { mkdirs() }
+        dir.listFiles()?.forEach { it.delete() }
+        val name = painting.title.replace(Regex("[^\\p{L}\\p{N}]+"), "-").trim('-').ifEmpty { "toile" }
+        val file = File(dir, "$name.png")
+        file.outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        FileProvider.getUriForFile(context, "${context.packageName}.partage", file)
     }
 
     private inline fun AtomicFile.write(block: (java.io.OutputStream) -> Unit) {
@@ -250,6 +271,7 @@ class PaintingRepository(private val context: Context) {
         const val WORKING_SIZE = 1200
         private const val THUMBNAIL_SIZE = 480
         private const val IMPORT_SIZE = 1600
+        private val IMPORT_TITLE = Regex("Ma toile n° (\\d+)")
 
         /** À incrémenter si l'algorithme de découpage change, pour invalider le cache. */
         private const val CANVAS_FORMAT = 1

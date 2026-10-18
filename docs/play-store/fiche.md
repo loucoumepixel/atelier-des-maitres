@@ -28,17 +28,28 @@ VOTRE RYTHME
 VOTRE STYLE
 • Appui long sur une zone pour choisir n'importe quelle couleur : respectez le maître ou réinventez-le
 • Maintenez l'œil pour comparer votre travail à l'original
+• Partagez votre toile achevée avec vos proches
 
 VOS IMAGES
 Importez une photo ou une œuvre depuis votre téléphone : elle est découpée en zones en une seconde, directement sur l'appareil.
 
 Sans publicité, sans compte, sans connexion Internet. Rien ne quitte votre téléphone.
 
+## Captures d'écran (à prendre sur le téléphone)
+Les captures font plus pour le téléchargement que tout le reste de la fiche. Viser 6 à 8 captures portrait (1080 × 1920 ou plus), dans cet ordre, la première étant la plus importante :
+1. Une toile célèbre à moitié peinte, zoomée sur les numéros (La Nuit étoilée).
+2. La galerie, quelques toiles commencées et d'autres en sépia.
+3. Le choix du niveau (Facile, Normal, Expert) sur Le Cri.
+4. Le nuancier ouvert sur une zone (« appui long : réinventez le maître »).
+5. Une toile achevée, vue d'ensemble.
+6. Une photo personnelle importée et découpée en zones.
+Prendre les captures en mode clair, avec la batterie pleine et sans notifications (Options pour les développeurs › Mode démo de l'interface système). Pour la visibilité sur tablette, ajouter si possible 2 captures prises sur une tablette 7" et 10".
+
 ## Catégorie
 Art et design
 
 ## Coordonnées
-- Adresse e-mail : à renseigner (obligatoire)
+- Adresse e-mail : **à renseigner (obligatoire, affichée publiquement sur la fiche)** ; une adresse dédiée est préférable à l'adresse personnelle
 - Site web : https://github.com/loucoumepixel/atelier-des-maitres
 - Politique de confidentialité : https://github.com/loucoumepixel/atelier-des-maitres/blob/main/docs/confidentialite.md
 

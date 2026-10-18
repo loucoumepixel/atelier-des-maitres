@@ -1,12 +1,19 @@
 name: Android
 
 on:
+  # Les branches de travail sont construites par leur pull request : pas de double build.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# Une nouvelle poussée annule le build en cours de la même branche (sauf main, qui publie).
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -26,6 +33,18 @@ jobs:
         run: |
           echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
           echo "UPLOAD_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      # Une version publiée signée avec la clé de debug serait refusée par la Play Console
+      # et ne pourrait pas mettre à jour l'application installée : on s'arrête net.
+      - name: Exiger la clé d'envoi pour publier
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$UPLOAD_KEYSTORE_BASE64" ] || [ -z "$UPLOAD_KEYSTORE_PASSWORD" ]; then
+            echo "::error::Secrets UPLOAD_KEYSTORE_BASE64 / UPLOAD_KEYSTORE_PASSWORD absents : voir docs/play-store/README.md"
+            exit 1
+          fi
       - name: Tests du moteur, APK et bundle Play Store
         env:
           UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
@@ -34,6 +53,7 @@ jobs:
         run: |
           cp app/build/outputs/apk/release/app-release.apk atelier-des-maitres.apk
           cp app/build/outputs/bundle/release/app-release.aab atelier-des-maitres.aab
+          cp app/build/outputs/mapping/release/mapping.txt atelier-des-maitres-mapping.txt
       - uses: actions/upload-artifact@v4
         with:
           name: atelier-des-maitres-apk
@@ -42,7 +62,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: atelier-des-maitres-play-store
-          path: atelier-des-maitres.aab
+          path: |
+            atelier-des-maitres.aab
+            atelier-des-maitres-mapping.txt
       # Chaque version de main est publiée en Release : l'APK se télécharge alors
       # directement depuis un téléphone, sans compte ni zip.
       - name: Publier la Release
@@ -50,7 +72,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v1.0.${{ github.run_number }}" atelier-des-maitres.apk atelier-des-maitres.aab \
+          gh release create "v1.0.${{ github.run_number }}" \
+            atelier-des-maitres.apk atelier-des-maitres.aab atelier-des-maitres-mapping.txt \
             --title "Atelier des Maîtres 1.0.${{ github.run_number }}" \
-            --notes "Téléchargez atelier-des-maitres.apk depuis votre téléphone Android et ouvrez-le pour l'installer. Le fichier .aab est destiné à la Play Console." \
+            --notes "Téléchargez atelier-des-maitres.apk depuis votre téléphone Android et ouvrez-le pour l'installer. Le fichier .aab est destiné à la Play Console ; atelier-des-maitres-mapping.txt s'y dépose avec lui (Explorateur d'App Bundle › Téléchargements › Fichier de désobscurcissement) pour des rapports de plantage lisibles." \
+            --generate-notes \
             --latest

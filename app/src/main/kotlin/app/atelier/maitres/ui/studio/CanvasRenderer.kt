@@ -67,6 +67,28 @@ class CanvasRenderer(
         refresh(touched)
     }
 
+    /**
+     * Image à partager : la toile telle qu'elle est, sans le hachurage de la couleur active,
+     * posée sur une marge de papier comme une œuvre encadrée. À appeler sur le thread principal.
+     */
+    fun exportBitmap(): Bitmap {
+        val out = pixels.copyOf()
+        if (highlight >= 0) {
+            for (r in 0 until canvas.regionCount) {
+                if (canvas.regionColor[r] != highlight || session.fills[r] != PaintingSession.EMPTY) continue
+                for (k in canvas.regionStart[r] until canvas.regionStart[r + 1]) {
+                    val p = canvas.regionPixels[k]
+                    out[p] = paper[p]
+                }
+            }
+        }
+        val margin = max(width, height) / 24
+        return Bitmap.createBitmap(width + 2 * margin, height + 2 * margin, Bitmap.Config.ARGB_8888).apply {
+            eraseColor(PAPER)
+            setPixels(out, 0, width, margin, margin, width, height)
+        }
+    }
+
     private fun drawRegion(region: Int) {
         val fill = session.fills[region]
         val start = canvas.regionStart[region]

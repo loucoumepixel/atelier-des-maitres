@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -32,9 +34,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +70,9 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -83,6 +91,7 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
     val statsVersion by repository.statsVersion.collectAsState()
     var choosing by remember { mutableStateOf<Painting?>(null) }
     var deleting by remember { mutableStateOf<Painting?>(null) }
+    var about by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -97,6 +106,8 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
+        contentWindowInsets = WindowInsets.safeDrawing,
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             LargeTopAppBar(
@@ -110,14 +121,21 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
                         )
                     }
                 },
+                actions = {
+                    IconButton(onClick = { about = true }) {
+                        Icon(Icons.Outlined.Info, contentDescription = "À propos de l'application")
+                    }
+                },
                 scrollBehavior = scrollBehavior,
             )
         },
     ) { padding ->
+        val layoutDirection = LocalLayoutDirection.current
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Adaptive(168.dp),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp,
+                start = padding.calculateStartPadding(layoutDirection) + 16.dp,
+                end = padding.calculateEndPadding(layoutDirection) + 16.dp,
                 top = padding.calculateTopPadding() + 4.dp,
                 bottom = padding.calculateBottomPadding() + 24.dp,
             ),
@@ -153,8 +171,16 @@ fun GalleryScreen(repository: PaintingRepository, onOpen: (Painting, Difficulty)
                 choosing = null
                 onOpen(painting, difficulty)
             },
+            onDelete = if (painting.isImported) {
+                {
+                    choosing = null
+                    deleting = painting
+                }
+            } else null,
         )
     }
+
+    if (about) AboutDialog(onDismiss = { about = false })
 
     deleting?.let { painting ->
         AlertDialog(
@@ -194,7 +220,12 @@ private fun PaintingCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(6.dp))
-            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+            .combinedClickable(
+                onClickLabel = "Choisir le niveau",
+                onLongClickLabel = if (painting.isImported) "Retirer cette image" else null,
+                onClick = onClick,
+                onLongClick = onLongClick,
+            ),
     ) {
         // Cadre doré fin, à la manière d'une cimaise.
         Box(
@@ -212,7 +243,8 @@ private fun PaintingCard(
             if (bitmap != null) {
                 Image(
                     bitmap = remember(bitmap) { bitmap.asImageBitmap() },
-                    contentDescription = painting.title,
+                    // Le titre est lu juste en dessous : inutile de l'annoncer deux fois.
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     colorFilter = ColorFilter.colorMatrix(sepiaMatrix(sepia)),
                     modifier = Modifier
@@ -309,6 +341,7 @@ private fun DifficultySheet(
     last: Difficulty?,
     onDismiss: () -> Unit,
     onChoose: (Difficulty) -> Unit,
+    onDelete: (() -> Unit)?,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
@@ -329,6 +362,13 @@ private fun DifficultySheet(
                 val stat = stats.firstOrNull { it.difficulty == difficulty }
                 DifficultyRow(difficulty, stat, highlighted = difficulty == (last ?: Difficulty.NORMAL)) { onChoose(difficulty) }
                 Spacer(Modifier.height(8.dp))
+            }
+            if (onDelete != null) {
+                TextButton(onClick = onDelete, modifier = Modifier.align(Alignment.End)) {
+                    Icon(Icons.Outlined.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Retirer cette image")
+                }
             }
         }
     }
@@ -364,6 +404,44 @@ private fun DifficultyRow(difficulty: Difficulty, stat: PaintingStats?, highligh
         }
     }
 }
+
+/** Version, confidentialité, contact et crédits : ce qu'un utilisateur (et la Play Console) s'attend à trouver. */
+@Composable
+private fun AboutDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val version = remember {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull().orEmpty()
+    }
+    fun open(url: String) {
+        runCatching { uriHandler.openUri(url) }
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Outlined.Palette, contentDescription = null) },
+        title = { Text("Atelier des Maîtres") },
+        text = {
+            Column {
+                if (version.isNotEmpty()) {
+                    Text("Version $version", style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(12.dp))
+                }
+                Text(
+                    "Toutes les toiles fournies sont dans le domaine public. Sans publicité, sans compte : " +
+                        "rien ne quitte votre téléphone.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(Modifier.height(8.dp))
+                TextButton(onClick = { open(PRIVACY_URL) }) { Text("Politique de confidentialité") }
+                TextButton(onClick = { open(SUPPORT_URL) }) { Text("Signaler un problème") }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text("Fermer") } },
+    )
+}
+
+private const val PRIVACY_URL = "https://github.com/loucoumepixel/atelier-des-maitres/blob/main/docs/confidentialite.md"
+private const val SUPPORT_URL = "https://github.com/loucoumepixel/atelier-des-maitres/issues"
 
 /** Interpolation entre l'image d'origine (0) et un sépia délavé (1). */
 private fun sepiaMatrix(amount: Float): ColorMatrix {

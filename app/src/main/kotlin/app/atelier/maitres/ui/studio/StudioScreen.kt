@@ -1,5 +1,10 @@
 package app.atelier.maitres.ui.studio
 
+import android.content.ClipData
+import android.content.Intent
+import android.os.Build
+import android.view.HapticFeedbackConstants
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -14,14 +19,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +43,7 @@ import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.FitScreen
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.RestartAlt
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -63,6 +74,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -117,6 +137,39 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
     var confirmRestart by remember { mutableStateOf(false) }
     var showHint by remember { mutableStateOf(state.session.paintedCount == 0) }
     val painting = state.loaded.painting
+    val context = LocalContext.current
+    val view = LocalView.current
+
+    // Une vibration franche quand une couleur est terminée : la palette passe à la suivante.
+    LaunchedEffect(state.colorsFinished) {
+        if (state.colorsFinished > 0) {
+            view.performHapticFeedback(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
+                else HapticFeedbackConstants.LONG_PRESS,
+            )
+        }
+    }
+
+    fun share() {
+        scope.launch {
+            runCatching {
+                val uri = state.shareableImage()
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/png"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    if (!painting.isImported) {
+                        putExtra(Intent.EXTRA_TEXT, "« ${painting.title} », ${painting.artist}, repeint dans Atelier des Maîtres")
+                    }
+                    clipData = ClipData.newRawUri(null, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(Intent.createChooser(send, "Partager la toile"))
+            }.onFailure { e ->
+                if (e is kotlinx.coroutines.CancellationException) throw e
+                Toast.makeText(context, "Le partage n'a pas pu être préparé.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         delay(5_000)
@@ -124,6 +177,8 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
     }
 
     Scaffold(
+        // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -156,9 +211,19 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                                     tryAwaitRelease()
                                     peek = false
                                 })
+                            }
+                            // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
+                            .semantics {
+                                role = Role.Button
+                                contentDescription = "Maintenir pour voir l'original"
+                                stateDescription = if (peek) "Original affiché" else "Votre toile affichée"
+                                onClick(label = if (peek) "Revenir à votre toile" else "Voir l'original") {
+                                    peek = !peek
+                                    true
+                                }
                             },
                     ) {
-                        Icon(Icons.Outlined.Visibility, contentDescription = "Maintenir pour voir l'original")
+                        Icon(Icons.Outlined.Visibility, contentDescription = null)
                     }
                     IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = "Plus d'options") }
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
@@ -168,6 +233,14 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                             onClick = {
                                 menu = false
                                 scope.launch { state.camera.animateToOverview() }
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Partager la toile") },
+                            leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
+                            onClick = {
+                                menu = false
+                                share()
                             },
                         )
                         DropdownMenuItem(
@@ -184,7 +257,16 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
             )
         },
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(top = padding.calculateTopPadding())) {
+        val layoutDirection = LocalLayoutDirection.current
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    start = padding.calculateStartPadding(layoutDirection),
+                    end = padding.calculateEndPadding(layoutDirection),
+                ),
+        ) {
             Box(Modifier.weight(1f).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)) {
                 PaintCanvas(state, peekOriginal = peek, modifier = Modifier.fillMaxSize())
 
@@ -207,7 +289,8 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                 ) { scope.launch { state.findNextRegion() } }
             }
             Surface(color = MaterialTheme.colorScheme.surface, shadowElevation = 8.dp) {
-                PaletteBar(state, Modifier.navigationBarsPadding())
+                // Seul le bas : les côtés sont déjà dégagés par la colonne.
+                PaletteBar(state, Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
             }
         }
     }
@@ -250,7 +333,18 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
                     scope.launch { state.camera.animateToOverview() }
                 }) { Text("Admirer") }
             },
-            dismissButton = { TextButton(onClick = onBack) { Text("Galerie") } },
+            dismissButton = {
+                Row {
+                    TextButton(onClick = {
+                        state.showCompletion = false
+                        share()
+                    }) { Text("Partager") }
+                    TextButton(onClick = {
+                        state.showCompletion = false
+                        onBack()
+                    }) { Text("Galerie") }
+                }
+            },
         )
     }
 }

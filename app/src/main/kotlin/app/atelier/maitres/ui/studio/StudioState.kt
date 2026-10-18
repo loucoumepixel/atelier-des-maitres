@@ -1,5 +1,6 @@
 package app.atelier.maitres.ui.studio
 
+import android.net.Uri
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -62,7 +63,13 @@ class StudioState(
         private set
 
     var showCompletion by mutableStateOf(false)
-    private val wasCompleteAtStart = session.isComplete
+
+    /** La fin n'est célébrée qu'une fois par séance, même si l'on annule puis rétablit. */
+    private var celebrated = session.isComplete
+
+    /** Incrémenté quand toutes les zones d'une couleur sont peintes, pour un retour haptique. */
+    var colorsFinished by mutableIntStateOf(0)
+        private set
 
     private var saveJob: Job? = null
     private var dirty = false
@@ -137,8 +144,11 @@ class StudioState(
         if (changed.isEmpty()) return
         lastStroke = Stroke(point, color, System.nanoTime())
         commit(changed)
-        advanceIfColorDone()
-        if (session.isComplete && !wasCompleteAtStart) showCompletion = true
+        advanceIfColorDone(region)
+        if (session.isComplete && !celebrated) {
+            celebrated = true
+            showCompletion = true
+        }
     }
 
     private fun commit(changed: IntArray) {
@@ -150,9 +160,11 @@ class StudioState(
     }
 
     /** Quand une couleur est terminée, on passe d'elle-même à la suivante. */
-    private fun advanceIfColorDone() {
+    private fun advanceIfColorDone(painted: Int) {
         val current = (tool as? Tool.Palette)?.index ?: return
         if (session.remainingPerColor[current] > 0) return
+        // Seule la touche qui achève la couleur compte, pas celles posées ensuite avec elle.
+        if (canvas.regionColor[painted] == current && session.isFaithful(painted)) colorsFinished++
         nextUnfinishedColor(after = current)?.let { select(Tool.Palette(it)) }
     }
 
@@ -173,6 +185,11 @@ class StudioState(
         val zoom = (14f / canvas.labelRadius[target]).coerceIn(1.5f, 8f)
         camera.animateTo(Offset(canvas.labelX[target], canvas.labelY[target]), zoom)
     }
+
+    // ---------------------------------------------------------------- partage
+
+    /** Image de la toile prête à être partagée (le rendu est copié avant de quitter le thread principal). */
+    suspend fun shareableImage(): Uri = repository.shareableImage(loaded.painting, renderer.exportBitmap())
 
     // ---------------------------------------------------------------- sauvegarde
 

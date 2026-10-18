@@ -18,7 +18,7 @@ import kotlin.math.min
  * Cadrage de la toile à l'écran : `écran = origin + image × scale`.
  *
  * Le zoom suit le point entre les doigts, la toile ne peut pas sortir du cadre,
- * et les déplacements automatiques (double tap, « trouver une zone ») sont animés
+ * et les déplacements automatiques (« trouver une zone », vue d'ensemble) sont animés
  * en interpolant l'échelle de façon géométrique, ce qui donne un zoom régulier à l'œil.
  */
 @Stable
