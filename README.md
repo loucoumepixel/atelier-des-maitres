@@ -13,20 +13,26 @@ Application Android (Kotlin, Jetpack Compose) pour repeindre des chefs-d'œuvre 
 - **Choisir sa couleur** : un appui long sur une zone ouvre le nuancier (couleur du maître, palette de la toile, ou n'importe quelle couleur via teinte, saturation et luminosité). On peut aussi peindre librement.
 - **La matière du tableau** : une zone peinte reprend les coups de pinceau de l'original, modulés sous la couleur posée.
 - Zoom à deux doigts, déplacement, numéros toujours nets qui apparaissent quand on s'approche, bouton « trouver une zone », annuler / rétablir, gomme, œil à maintenir pour comparer avec l'original, sauvegarde automatique, écran de fin avec l'histoire de l'œuvre.
+- **En anglais et en français**, selon la langue du téléphone (ou celle choisie pour l'application dans les paramètres d'Android 13+).
+- **Partager sa toile** (menu ⋮ ou écran de fin) : l'image peinte, encadrée d'une marge de papier, part vers n'importe quelle application.
 
 ## Publier sur le Play Store
 
-Tout est préparé dans [docs/play-store](docs/play-store/README.md).
+Tout est préparé dans [docs/play-store](docs/play-store/README.md), et l'[audit de publication](docs/audit-publication.md) liste ce qui reste à faire.
+
+Les politiques de confidentialité ([français](docs/confidentialite.md), [anglais](docs/privacy.md)) deviennent des pages web en activant GitHub Pages une fois : *Settings › Pages › Build and deployment › Deploy from a branch*, branche `main`, dossier `/docs`. Elles sont alors à l'adresse `https://loucoumepixel.github.io/atelier-des-maitres/confidentialite.html` (et `privacy.html`).
 
 ## Installer l'application
 
-**Le plus simple, avec Android Studio** (gratuit, Windows, Mac ou Linux) :
-1. Ouvrir Android Studio, puis *File › Open* et choisir ce dossier `peinture-app`.
+**Le plus simple, depuis le téléphone** : ouvrir la [dernière Release](https://github.com/loucoumepixel/atelier-des-maitres/releases/latest), télécharger `atelier-des-maitres.apk` et l'ouvrir en autorisant l'installation d'applications de sources inconnues. Chaque version de `main` y est publiée automatiquement.
+
+> Une application installée depuis le Play Store et celle des Releases ne sont pas signées par la même clé (Google re-signe l'application du store) : pour passer de l'une à l'autre, il faut désinstaller d'abord.
+
+**Avec Android Studio** (gratuit, Windows, Mac ou Linux) :
+1. Ouvrir Android Studio, puis *File › Open* et choisir ce dossier.
 2. Laisser Android Studio télécharger ce qu'il demande (la première synchronisation prend quelques minutes).
 3. Brancher le téléphone en USB avec le *débogage USB* activé (Paramètres › À propos › appuyer 7 fois sur « Numéro de build », puis Options pour les développeurs › Débogage USB).
 4. Cliquer sur ▶ *Run*.
-
-**Sans rien installer, avec GitHub** : pousser ce dossier dans un dépôt GitHub. Le workflow `.github/workflows/android.yml` lance les tests et construit l'APK ; il se télécharge dans l'onglet *Actions*, section *Artifacts*. On l'ouvre ensuite sur le téléphone en autorisant l'installation d'applications de sources inconnues.
 
 **En ligne de commande** (JDK 17 et SDK Android installés) : `./gradlew :app:assembleRelease`, puis `adb install app/build/outputs/apk/release/app-release.apk`.
 

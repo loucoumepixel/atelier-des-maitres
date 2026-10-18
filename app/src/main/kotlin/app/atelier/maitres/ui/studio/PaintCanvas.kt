@@ -2,6 +2,7 @@ package app.atelier.maitres.ui.studio
 
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -26,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,7 @@ import kotlin.math.min
 
 /**
  * La toile interactive : zoom à deux doigts, déplacement, tap pour peindre,
- * double tap pour zoomer, appui long pour choisir la couleur d'une zone.
+ * appui long pour choisir la couleur d'une zone.
  *
  * Les numéros sont dessinés à l'échelle de l'écran (et non dans le bitmap) : ils
  * restent nets à tous les zooms, et n'apparaissent que lorsqu'ils sont assez grands
@@ -47,6 +49,7 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
     val canvas = state.canvas
     val density = LocalDensity.current
     val haptics = LocalHapticFeedback.current
+    val view = LocalView.current
 
     val painted = remember(state) { state.renderer.bitmap.asImageBitmap() }
     val original = remember(state) { state.loaded.original.asImageBitmap() }
@@ -73,6 +76,8 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
     val stroke = state.lastStroke
     LaunchedEffect(stroke?.id) {
         if (stroke != null) {
+            // Un « tic » léger sous le doigt à chaque touche de pinceau.
+            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
             splash.snapTo(0f)
             splash.animateTo(1f, tween(420, easing = FastOutSlowInEasing))
         }

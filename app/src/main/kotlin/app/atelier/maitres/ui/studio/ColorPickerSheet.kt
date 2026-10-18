@@ -43,9 +43,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.atelier.maitres.R
 import app.atelier.maitres.core.ColorSpace
 import app.atelier.maitres.core.PaintingSession
 
@@ -78,7 +80,8 @@ fun ColorPickerSheet(state: StudioState) {
     ) {
         Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding().padding(bottom = 16.dp)) {
             Text(
-                if (region != null) "Zone n° ${canvas.regionColor[region] + 1}" else "Nuancier",
+                if (region != null) stringResource(R.string.picker_area, canvas.regionColor[region] + 1)
+                else stringResource(R.string.picker_title),
                 style = MaterialTheme.typography.headlineSmall,
             )
             if (region != null) {
@@ -87,12 +90,12 @@ fun ColorPickerSheet(state: StudioState) {
                 OutlinedButton(onClick = { state.onPicked(reference) }) {
                     Box(Modifier.size(18.dp).clip(CircleShape).background(Color(reference)))
                     Spacer(Modifier.width(10.dp))
-                    Text("Couleur du maître")
+                    Text(stringResource(R.string.master_colour))
                 }
             }
 
             Spacer(Modifier.height(16.dp))
-            Text("Palette de la toile", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.canvas_palette), style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.height(8.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 (canvas.palette.toList() + state.customColors).distinct().forEach { color ->
@@ -102,7 +105,7 @@ fun ColorPickerSheet(state: StudioState) {
             }
 
             Spacer(Modifier.height(20.dp))
-            Text("Couleur libre", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.free_colour), style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.height(8.dp))
             SaturationValuePanel(hue, saturation, value) { s, v -> saturation = s; value = v }
             Spacer(Modifier.height(14.dp))
@@ -121,7 +124,7 @@ fun ColorPickerSheet(state: StudioState) {
                     modifier = Modifier.weight(1f),
                 )
                 Button(onClick = { state.onPicked(chosen) }) {
-                    Text(if (region != null) "Peindre la zone" else "Prendre cette couleur")
+                    Text(stringResource(if (region != null) R.string.paint_area else R.string.take_colour))
                 }
             }
         }

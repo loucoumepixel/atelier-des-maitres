@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +37,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.atelier.maitres.R
 import app.atelier.maitres.core.ColorSpace
 
 /**
@@ -82,7 +85,7 @@ fun PaletteBar(state: StudioState, modifier: Modifier = Modifier) {
                 progress = if (total == 0) 1f else 1f - remaining.toFloat() / total,
                 done = remaining == 0,
                 selected = tool == Tool.Palette(index),
-                description = "Couleur ${index + 1}, $remaining zones restantes",
+                description = pluralStringResource(R.plurals.colour_swatch, remaining, index + 1, remaining),
                 onClick = { state.select(Tool.Palette(index)) },
             )
         }
@@ -93,17 +96,17 @@ fun PaletteBar(state: StudioState, modifier: Modifier = Modifier) {
                 progress = null,
                 done = false,
                 selected = tool == Tool.Custom(color),
-                description = "Couleur libre",
+                description = stringResource(R.string.free_colour),
                 onClick = { state.select(Tool.Custom(color)) },
             )
         }
         item(key = "picker") {
-            ToolButton(selected = false, description = "Nuancier : choisir une couleur libre", onClick = state::openPicker) {
+            ToolButton(selected = false, description = stringResource(R.string.colour_picker_open), onClick = state::openPicker) {
                 Icon(Icons.Outlined.Add, contentDescription = null)
             }
         }
         item(key = "eraser") {
-            ToolButton(selected = tool == Tool.Eraser, description = "Gomme", onClick = { state.select(Tool.Eraser) }) {
+            ToolButton(selected = tool == Tool.Eraser, description = stringResource(R.string.eraser), onClick = { state.select(Tool.Eraser) }) {
                 Icon(Icons.Outlined.AutoFixHigh, contentDescription = null)
             }
         }
