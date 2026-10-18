@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="welcome_title">Les maîtres vous prêtent leur palette.</string>
+    <string name="welcome_sub">Une couleur, un numéro, une touche : la toile renaît sous vos doigts.</string>
+    <string name="welcome_cta">Entrer dans l\'atelier</string>
     <string name="gallery_subtitle">Choisissez une toile, prenez le pinceau.</string>
     <string name="about_open">À propos de l\'application</string>
     <string name="import_failed">Impossible de lire cette image.</string>
