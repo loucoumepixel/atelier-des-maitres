@@ -10,10 +10,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -21,13 +19,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +37,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
@@ -65,11 +62,12 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sin
 
 /**
  * Écran d'accueil : La Nuit étoilée, découpée par le vrai moteur au niveau Facile,
- * se peint d'elle-même zone par zone. Le joueur voit le geste du jeu avant sa première toile,
- * et trois étapes le résument en une phrase chacune.
+ * se peint d'elle-même zone par zone sous un pinceau dessiné. Le joueur voit le geste du jeu
+ * avant sa première toile, et entre en touchant le pinceau resté posé au bout d'un trait de peinture.
  */
 @Composable
 fun WelcomeScreen(onEnter: () -> Unit) {
@@ -77,6 +75,7 @@ fun WelcomeScreen(onEnter: () -> Unit) {
     val density = LocalDensity.current
     var demo by remember { mutableStateOf<WelcomeDemo?>(null) }
     var shown by remember { mutableStateOf(false) }
+    val animate = remember { !animationsDisabled(context) }
 
     LaunchedEffect(Unit) {
         shown = true
@@ -87,22 +86,26 @@ fun WelcomeScreen(onEnter: () -> Unit) {
     val current = demo
     LaunchedEffect(current) {
         if (current == null) return@LaunchedEffect
-        if (animationsDisabled(context)) {
+        if (!animate) {
             current.paintUpTo(current.regionCount)
             return@LaunchedEffect
         }
         val start = withFrameNanos { it }
-        while (current.painted < current.regionCount) {
-            withFrameNanos { now ->
-                val t = ((now - start) / 1_000_000f - START_DELAY_MS) / PAINT_DURATION_MS
-                val k = t.coerceIn(0f, 1f)
+        do {
+            val going = withFrameNanos { now ->
+                val ms = (now - start) / 1_000_000f
+                val k = ((ms - START_DELAY_MS) / PAINT_DURATION_MS).coerceIn(0f, 1f)
                 current.paintUpTo(if (k < 1f) (current.regionCount * k.pow(1.15f)).toInt() else current.regionCount)
+                current.moveBrush(ms)
+                current.painted < current.regionCount || current.brushAlpha > 0f
             }
-        }
+        } while (going)
     }
 
     val minTextPx = with(density) { 8.dp.toPx() }
     val maxTextPx = with(density) { 15.dp.toPx() }
+    val brushUnit = with(density) { 104.dp.toPx() } / 124f
+    val dabPx = with(density) { 2.2.dp.toPx() }
     val numberPaint = remember {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
             textAlign = Paint.Align.CENTER
@@ -148,6 +151,9 @@ fun WelcomeScreen(onEnter: () -> Unit) {
                             numberPaint,
                         )
                     }
+                    // Le pinceau suit les zones qui se peignent, la pointe trempée dans leur couleur.
+                    val tip = Offset(dx + d.brushX * scale, dy + d.brushY * scale + sin(d.brushTime / 90f) * dabPx)
+                    drawPaintbrush(tip, brushUnit, Color(d.brushColor), d.brushAlpha)
                 }
             }
             // Fondu vers le fond de l'écran, sous lequel arrive le texte.
@@ -180,30 +186,13 @@ fun WelcomeScreen(onEnter: () -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.appear(shown, 1),
             )
-            Spacer(Modifier.height(22.dp))
-            Row(Modifier.fillMaxWidth().appear(shown, 2), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                listOf(R.string.welcome_step1, R.string.welcome_step2, R.string.welcome_step3).forEachIndexed { index, step ->
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            (index + 1).toString(),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                        Text(
-                            stringResource(step),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
             Spacer(Modifier.height(26.dp))
-            Button(
+            BrushStrokeButton(
+                label = stringResource(R.string.welcome_cta),
                 onClick = onEnter,
-                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).appear(shown, 3),
-            ) {
-                Text(stringResource(R.string.welcome_cta), style = MaterialTheme.typography.titleSmall)
-            }
+                animate = animate,
+                modifier = Modifier.appear(shown, 2),
+            )
         }
     }
 }
@@ -249,6 +238,18 @@ private class WelcomeDemo(
     var version by mutableIntStateOf(0)
         private set
 
+    /** Pointe du pinceau, en pixels de la toile, et sa peinture. */
+    var brushX = width * 0.5f
+        private set
+    var brushY = height * 0.3f
+        private set
+    var brushColor = 0
+        private set
+    var brushAlpha = 0f
+        private set
+    var brushTime = 0f
+        private set
+
     init {
         val labels = canvas.labels
         for (y in 0 until height) for (x in 0 until width) {
@@ -292,6 +293,18 @@ private class WelcomeDemo(
             done[r] = true
         }
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+        version++
+    }
+
+    /** Rapproche le pinceau de la dernière zone peinte ; il s'efface une fois la toile finie. */
+    fun moveBrush(timeMs: Float) {
+        if (painted == 0) return
+        val r = order[painted - 1]
+        brushX += (canvas.labelX[r] - brushX) * 0.16f
+        brushY += (canvas.labelY[r] - brushY) * 0.16f
+        brushColor = canvas.referenceColor(r) or (0xFF shl 24)
+        brushAlpha = if (painted < regionCount) min(1f, brushAlpha + 0.08f) else max(0f, brushAlpha - 0.03f)
+        brushTime = timeMs
         version++
     }
 
