@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Icône thématique (Android 13+) : seule la forme compte. Le trait déjà peint est plein,
-     la zone 3 encore vierge n'est qu'un contour, et le pinceau est posé à la frontière. -->
+<!-- Icône thématique (Android 13+) : seule la forme compte. La médaille des rangs en contour,
+     le coup de pinceau plein, et le pinceau posé au bout du trait. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path
-        android:fillColor="#FF000000"
-        android:pathData="M60.6,52.5C48,50 34,50.5 22,58C18,61 14,62.5 9,63.5C13,65 12,66.6 7,68C12,69 13,71 9,73.5C14,73.5 18,74.6 22,76C34,71.5 47,70.8 59,72.6Z" />
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="1.6"
-        android:strokeLineJoin="round"
-        android:pathData="M61.6,52.6C70,53.8 78,55.8 86,58L86,77C78,74.6 70,73 60,72.4Z" />
     <group
-        android:translateX="60.5"
-        android:translateY="61"
-        android:rotation="-52"
-        android:scaleX="0.28"
-        android:scaleY="0.28">
-        <path
-            android:fillColor="#FF000000"
-            android:pathData="M58,-5.6L139,-3.6Q146,-3.6 146,0Q146,3.6 139,3.6L58,5.6ZM30,-6.8L59,-6.8L59,6.8L30,6.8ZM-1,0.4C6,-2.2 14,-6.2 31,-6.6L31,6.6C14,6.2 6,2.2 -1,0.4Z" />
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.9"
+        android:scaleY="0.9">
+        <group
+            android:pivotX="54"
+            android:pivotY="54"
+            android:rotation="-8">
+            <path
+                android:fillColor="#00000000"
+                android:strokeColor="#FF000000"
+                android:strokeWidth="3"
+                android:pathData="M81,54A27,27 0,1 1,27 54A27,27 0,1 1,81 54Z" />
+            <path
+                android:fillColor="#FF000000"
+                android:pathData="M38,64C44,57 52,56 60,58C66,59.5 70,57 72,54L73,60C69,65 63,66 57,64.5C50,62.6 44,64 40,69Z" />
+        </group>
+        <group
+            android:translateX="64"
+            android:translateY="54"
+            android:rotation="-52"
+            android:scaleX="0.2"
+            android:scaleY="0.2">
+            <path
+                android:fillColor="#FF000000"
+                android:pathData="M-3,0C6,-3.4 14,-8.6 31,-9L58,-8.4L139,-6Q149,-6 149,0Q149,6 139,6L58,8.4L31,9C14,8.6 6,3.4 -3,0Z" />
+        </group>
     </group>
 </vector>
