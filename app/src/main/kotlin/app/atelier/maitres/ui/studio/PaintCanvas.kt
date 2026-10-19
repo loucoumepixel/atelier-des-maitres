@@ -81,6 +81,8 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, look: AtelierLook, mo
         }
     }
     val edgeStep = with(density) { 1.dp.toPx() }
+    val mistakeDot = with(density) { 4.dp.toPx() }
+    val mistakeRing = with(density) { 2.dp.toPx() }
 
     // Éclaboussure : un anneau de la couleur posée qui s'élargit puis s'efface.
     val splash = remember { Animatable(1f) }
@@ -149,11 +151,29 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, look: AtelierLook, mo
             val bottom = top + size.height / zoomScale
             val native = drawContext.canvas.nativeCanvas
             for (r in 0 until canvas.regionCount) {
-                if (state.session.fills[r] != PaintingSession.EMPTY) continue
+                val mistake = state.session.isMistake(r)
+                if (state.session.fills[r] != PaintingSession.EMPTY && !mistake) continue
                 val x = canvas.labelX[r]
                 val y = canvas.labelY[r]
                 if (x < left || x > right || y < top || y > bottom) continue
                 val textSize = min(canvas.labelRadius[r] * 1.25f * zoomScale, maxTextPx)
+                val at = Offset(origin.x + x * zoomScale, origin.y + y * zoomScale)
+                if (mistake) {
+                    // Une zone de la mauvaise couleur garde son numéro, dans une pastille cerclée de corail,
+                    // et reste repérable même de loin, en simple point.
+                    if (textSize < minTextPx) {
+                        drawCircle(Color.White, mistakeDot + mistakeRing, at)
+                        drawCircle(MISTAKE, mistakeDot, at)
+                        continue
+                    }
+                    val radius = textSize * 0.78f
+                    drawCircle(Color(0xF2FFFCF5), radius, at)
+                    drawCircle(MISTAKE, radius, at, style = Stroke(mistakeRing))
+                    strongPaint.textSize = textSize
+                    strongPaint.color = STRONG_INK
+                    native.drawText(numbers[canvas.regionColor[r]], at.x, at.y + textSize * 0.36f, strongPaint)
+                    continue
+                }
                 if (textSize < minTextPx) continue
                 val colorIndex = canvas.regionColor[r]
                 val paint = if (colorIndex == highlight) strongPaint else textPaint
@@ -179,5 +199,6 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, look: AtelierLook, mo
 }
 
 private val CANVAS_EDGE = longArrayOf(0xFFE4DACA, 0xFFDDD2BF, 0xFFD7CBB6, 0xFFD1C4AE, 0xFFCBBDA6, 0xFFC4B69E, 0xFFBBAC93).map { it.toInt() }
+private val MISTAKE = Color(0xFFE8553B)
 private val SOFT_INK = 0xFF8C8478.toInt()
 private val STRONG_INK = 0xFF2B2620.toInt()

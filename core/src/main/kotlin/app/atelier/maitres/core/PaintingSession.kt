@@ -40,6 +40,15 @@ class PaintingSession(
 
     fun isFaithful(region: Int): Boolean = fills[region] == canvas.referenceColor(region)
 
+    /** Zone peinte, mais pas de la couleur du maître. */
+    fun isMistake(region: Int): Boolean = fills[region] != EMPTY && !isFaithful(region)
+
+    /** Nombre de zones peintes d'une autre couleur que celle du maître. */
+    val mistakeCount: Int get() = paintedCount - faithfulCount
+
+    /** Les zones peintes d'une autre couleur que celle du maître. */
+    fun mistakes(): IntArray = (0 until canvas.regionCount).filter { isMistake(it) }.toIntArray()
+
     /** Peint une zone. Renvoie les zones modifiées (vide si rien n'a changé). */
     fun paint(region: Int, color: Int): IntArray = paintAll(intArrayOf(region), color)
 

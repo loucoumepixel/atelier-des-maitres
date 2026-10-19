@@ -269,12 +269,23 @@ class StudioState(
 
     /** Centre la caméra sur la plus grande zone restante de la couleur courante. */
     suspend fun findNextRegion() {
+        // Les erreurs d'abord : une zone peinte de travers se perd vite dans la toile.
+        val mistake = session.mistakes().maxByOrNull { canvas.labelRadius[it] }
+        if (mistake != null) {
+            select(Tool.Palette(canvas.regionColor[mistake]))
+            focus(mistake)
+            return
+        }
         val index = (tool as? Tool.Palette)?.index ?: nextUnfinishedColor(after = canvas.palette.size - 1) ?: return
         if (tool !is Tool.Palette) select(Tool.Palette(index))
         val target = session.unfinishedRegions(index).maxByOrNull { canvas.labelRadius[it] } ?: return
-        // Zoom choisi pour que le numéro soit confortable à lire et à toucher.
-        val zoom = (14f / canvas.labelRadius[target]).coerceIn(1.5f, 8f)
-        camera.animateTo(Offset(canvas.labelX[target], canvas.labelY[target]), zoom)
+        focus(target)
+    }
+
+    /** Amène la zone au centre, à un zoom où son numéro est confortable à lire et à toucher. */
+    private suspend fun focus(region: Int) {
+        val zoom = (14f / canvas.labelRadius[region]).coerceIn(1.5f, 8f)
+        camera.animateTo(Offset(canvas.labelX[region], canvas.labelY[region]), zoom)
     }
 
     // ---------------------------------------------------------------- partage

@@ -77,6 +77,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.MusicOff
@@ -374,11 +377,14 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), look, enabled = state.session.canUndo) { state.undo() }
                     FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), look, enabled = state.session.canRedo) { state.redo() }
                 }
+                state.version
+                val mistakes = state.session.mistakeCount
                 FloatingTool(
                     Icons.Outlined.CenterFocusStrong,
-                    stringResource(R.string.find_area),
+                    if (mistakes > 0) pluralStringResource(R.plurals.find_mistake, mistakes, mistakes) else stringResource(R.string.find_area),
                     look,
                     enabled = true,
+                    badge = mistakes,
                     modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
                 ) { scope.launch { state.findNextRegion() } }
             }
@@ -523,18 +529,39 @@ private fun FloatingTool(
     look: AtelierLook,
     enabled: Boolean,
     modifier: Modifier = Modifier,
+    badge: Int = 0,
     onClick: () -> Unit,
 ) {
     val alpha by animateFloatAsState(if (enabled) 1f else 0.38f, label = "alpha")
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = CircleShape,
-        color = look.button,
-        contentColor = look.ink.copy(alpha = alpha),
-        modifier = modifier.size(48.dp).wallButtonShadow(look),
-    ) {
-        Box(contentAlignment = Alignment.Center) { Icon(icon, contentDescription = description) }
+    Box(modifier) {
+        Surface(
+            onClick = onClick,
+            enabled = enabled,
+            shape = CircleShape,
+            color = look.button,
+            contentColor = look.ink.copy(alpha = alpha),
+            modifier = Modifier.size(48.dp).wallButtonShadow(look),
+        ) {
+            Box(contentAlignment = Alignment.Center) { Icon(icon, contentDescription = description) }
+        }
+        // Le nombre de zones à reprendre, en pastille corail sur le bouton.
+        if (badge > 0) {
+            Text(
+                if (badge > 99) "99+" else badge.toString(),
+                color = Color.White,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 4.dp, y = (-4).dp)
+                    .clearAndSetSemantics {}
+                    .widthIn(min = 20.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Play.Coral)
+                    .padding(horizontal = 5.dp, vertical = 2.dp),
+            )
+        }
     }
 }
 

@@ -156,6 +156,11 @@
     <string name="joconde_artist">Léonard de Vinci</string>
     <string name="joconde_nickname">Léonard</string>
     <string name="joconde_note">Léonard la garda toute sa vie et la retoucha sans cesse. Son sourire tient au sfumato, ces contours fondus dans l\'ombre.</string>
+    <plurals name="find_mistake">
+        <item quantity="one">Retrouver la zone peinte de la mauvaise couleur (%d)</item>
+        <item quantity="many">Retrouver une zone peinte de la mauvaise couleur (encore %d)</item>
+        <item quantity="other">Retrouver une zone peinte de la mauvaise couleur (encore %d)</item>
+    </plurals>
     <plurals name="colour_swatch">
         <item quantity="one">Couleur %1$d, %2$d zone restante</item>
         <item quantity="many">Couleur %1$d, %2$d zones restantes</item>
