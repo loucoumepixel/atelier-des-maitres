@@ -136,7 +136,8 @@ class StudioState(
     private var saveJob: Job? = null
     private var dirty = false
 
-    data class Stroke(val imagePoint: Offset, val color: Int, val id: Long)
+    /** Une touche de pinceau : où, quelle couleur, si elle est juste et la série de coups justes en cours. */
+    data class Stroke(val imagePoint: Offset, val color: Int, val faithful: Boolean, val combo: Int, val id: Long)
 
     init {
         renderer.setHighlight((tool as? Tool.Palette)?.index ?: -1)
@@ -205,10 +206,10 @@ class StudioState(
     private fun paint(region: Int, color: Int, point: Offset) {
         val changed = session.paint(region, color)
         if (changed.isEmpty()) return
-        lastStroke = Stroke(point, color, System.nanoTime())
         rankedNow = false
         commit(changed)
         score(region)
+        lastStroke = Stroke(point, color, session.isFaithful(region), streakOfGood, System.nanoTime())
         advanceIfColorDone(region)
         if (session.isComplete && !celebrated) {
             celebrated = true

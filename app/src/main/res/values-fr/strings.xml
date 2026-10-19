@@ -119,8 +119,10 @@
     <string name="win_next">encore %1$s pour devenir %2$s</string>
     <string name="one_more">Encore une !</string>
     <string name="show_friends">Montrer à mes amis</string>
-    <string name="sound_mute">Couper le bruit du pinceau</string>
-    <string name="sound_unmute">Remettre le bruit du pinceau</string>
+    <string name="sound_mute">Couper le son</string>
+    <string name="sound_unmute">Remettre le son</string>
+    <string name="music_on">Mettre la musique</string>
+    <string name="music_off">Couper la musique</string>
     <string name="monet_impression_title">Impression, soleil levant</string>
     <string name="monet_impression_note">Le port du Havre au petit matin. Un critique moqua ce titre : le mot « impressionnisme » était né.</string>
     <string name="monet_nympheas_title">Nymphéas</string>
