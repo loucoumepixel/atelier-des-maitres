@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Atelier des Maîtres</string>
-    <string name="welcome_title">The masters lend you their palette.</string>
-    <string name="welcome_sub">A colour, a number, a touch: the canvas comes back to life under your fingers.</string>
-    <string name="welcome_cta">Enter the studio</string>
-    <string name="gallery_subtitle">Choose a canvas, pick up the brush.</string>
+    <string name="welcome_title">The masters lend you %1$s.</string>
+    <string name="welcome_cta">Grab your brush!</string>
     <string name="about_open">About the app</string>
     <string name="import_failed">This image could not be read.</string>
     <string name="remove_title">Remove “%1$s”?</string>
@@ -85,8 +83,93 @@
     <string name="naufrage_minotaure_note">Turner, painter of light and storms, heralds the Impressionists here by more than half a century.</string>
     <string name="le_cri_title">The Scream</string>
     <string name="le_cri_note">“I sensed an infinite scream passing through nature.” The red sky may be a sunset over Oslo.</string>
+    <string name="welcome_title_em">their palette</string>
+    <string name="welcome_new">Walk in a Scribbler, walk out a Genius!</string>
+    <string name="welcome_back">Welcome back, %1$s!</string>
+    <string name="welcome_cta_back">Let\'s keep going!</string>
+    <string name="welcome_cap">look, it paints itself…</string>
+    <string name="welcome_cap_done">your turn!</string>
+    <string name="gallery_q">What shall we %1$s today?</string>
+    <string name="gallery_q_em">paint</string>
+    <string name="rank_of">rank %1$d of %2$d</string>
+    <string name="streak_kept">Streak kept today</string>
+    <string name="streak_hint">Paint an area today to keep your streak</string>
+    <string name="touches_n">%1$s touches</string>
+    <string name="next_rank">%1$s at %2$s</string>
+    <string name="max_rank">Top rank: hats off!</string>
+    <string name="daily">today\'s canvas</string>
+    <string name="paint_now">Paint</string>
+    <string name="touches_word">touches</string>
+    <string name="cap_new">to start</string>
+    <string name="cap_done">done!</string>
+    <string name="stars_label">%1$d stars out of 3</string>
+    <string name="locked_cap">unwraps at %1$s</string>
+    <string name="locked_title">This canvas is still wrapped</string>
+    <string name="locked_text">It unwraps at the %1$s rank. %2$s more touches to go: every area painted right earns some.</string>
+    <string name="ok">OK</string>
+    <string name="surprise">Surprise me!</string>
+    <string name="surprise_label">Surprise me: a random canvas and level</string>
+    <string name="colour_done">Colour %1$d done</string>
+    <string name="combo">%1$d in a row!</string>
+    <string name="rank_up">New rank: %1$s!</string>
+    <string name="unlocked">“%1$s” is unwrapped!</string>
+    <string name="win_title">Well done,\n%1$s!</string>
+    <string name="nickname_default">maestro</string>
+    <string name="win_drag">Slide to see how far you\'ve come</string>
+    <string name="win_gain">+%1$s touches</string>
+    <string name="win_next">%1$s more to become %2$s</string>
+    <string name="one_more">One more!</string>
+    <string name="show_friends">Show my friends</string>
+    <string name="sound_mute">Mute the brush sound</string>
+    <string name="sound_unmute">Turn the brush sound back on</string>
+    <string name="monet_impression_title">Impression, Sunrise</string>
+    <string name="monet_impression_note">The port of Le Havre at dawn. A critic mocked the title, and the word “Impressionism” was born.</string>
+    <string name="monet_nympheas_title">Water Lilies</string>
+    <string name="monet_nympheas_note">Monet painted the water lilies of his Giverny pond more than 250 times, at every hour of the day.</string>
+    <string name="monet_prairie_title">Meadow at Giverny</string>
+    <string name="monet_prairie_note">Settled in Giverny, Monet painted the countryside around his house in every light, before creating his famous water garden.</string>
+    <string name="panier_pommes_title">The Basket of Apples</string>
+    <string name="panier_pommes_year">c. 1893</string>
+    <string name="panier_pommes_note">The table tilts, and so does the bottle: Cézanne shows each object from its best angle, even if perspective bends.</string>
+    <string name="voyageur_brume_title">Wanderer above the Sea of Fog</string>
+    <string name="voyageur_brume_year">c. 1818</string>
+    <string name="voyageur_brume_note">The icon of German Romanticism. We never see the wanderer\'s face: we look out over the fog with him.</string>
+    <string name="pont_neuf_title">The Pont Neuf</string>
+    <string name="pont_neuf_note">Renoir painted the crowd from the upper floor of a café; his brother stopped passers-by to make them pause for a moment.</string>
+    <string name="grande_jatte_title">A Sunday Afternoon on the Island of La Grande Jatte</string>
+    <string name="grande_jatte_note">Two years of work, dot by dot: Seurat sets touches of pure colour side by side for the eye to blend from afar.</string>
+    <string name="noce_juive_title">Jewish Wedding in Morocco</string>
+    <string name="noce_juive_year">c. 1839</string>
+    <string name="noce_juive_note">Delacroix attended this celebration in Tangier in 1832 and painted it from memory, helped by his sketchbooks.</string>
+    <string name="vermeer_laitiere_title">The Milkmaid</string>
+    <string name="vermeer_laitiere_year">c. 1658</string>
+    <string name="vermeer_laitiere_note">A trickle of milk, a ray of light: Vermeer turns a kitchen gesture into a moment held still.</string>
+    <string name="american_gothic_title">American Gothic</string>
+    <string name="american_gothic_note">Wood posed his sister and his dentist in front of an Iowa house. People take them for husband and wife; he meant father and daughter.</string>
+    <string name="liberte_peuple_title">Liberty Leading the People</string>
+    <string name="liberte_peuple_note">Painted to honour the July Revolution of 1830. Restored in 2024, it has regained its bright colours.</string>
+    <string name="naissance_venus_title">The Birth of Venus</string>
+    <string name="naissance_venus_year">c. 1485</string>
+    <string name="naissance_venus_note">Zephyr blows the goddess towards the shore, where one of the Horae waits with a flowered cloak.</string>
+    <string name="joconde_title">Mona Lisa</string>
+    <string name="joconde_artist">Leonardo da Vinci</string>
+    <string name="joconde_nickname">Leonardo</string>
+    <string name="joconde_note">Leonardo kept it all his life and kept retouching it. Her smile owes everything to sfumato, outlines melting into shadow.</string>
     <plurals name="colour_swatch">
         <item quantity="one">Colour %1$d, %2$d area left</item>
         <item quantity="other">Colour %1$d, %2$d areas left</item>
+    </plurals>
+    <string-array name="rank_names">
+        <item>Scribbler</item>
+        <item>Dauber</item>
+        <item>Apprentice</item>
+        <item>Journeyman</item>
+        <item>Artist</item>
+        <item>Master</item>
+        <item>Genius</item>
+    </string-array>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
     </plurals>
 </resources>

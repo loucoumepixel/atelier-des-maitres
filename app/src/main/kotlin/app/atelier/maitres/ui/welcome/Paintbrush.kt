@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -110,8 +111,15 @@ private object BrushPaths {
  * au bout du trait. Tout l'ensemble est le bouton.
  */
 @Composable
-fun BrushStrokeButton(label: String, onClick: () -> Unit, animate: Boolean, modifier: Modifier = Modifier) {
-    val color = MaterialTheme.colorScheme.primary
+fun BrushStrokeButton(
+    label: String,
+    onClick: () -> Unit,
+    animate: Boolean,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+    labelStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(fontStyle = FontStyle.Italic, fontSize = 19.sp),
+    labelColor: Color = MaterialTheme.colorScheme.onPrimary,
+) {
     val reveal = remember { Animatable(if (animate) 0f else 1f) }
     LaunchedEffect(Unit) {
         if (animate) reveal.animateTo(1f, tween(1300, delayMillis = 1100, easing = StrokeEasing))
@@ -167,8 +175,8 @@ fun BrushStrokeButton(label: String, onClick: () -> Unit, animate: Boolean, modi
         }
         Text(
             label,
-            style = MaterialTheme.typography.titleLarge.copy(fontStyle = FontStyle.Italic, fontSize = 19.sp),
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = labelStyle,
+            color = labelColor,
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(end = 54.dp)

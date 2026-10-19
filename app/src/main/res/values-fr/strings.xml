@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="welcome_title">Les maîtres vous prêtent leur palette.</string>
-    <string name="welcome_sub">Une couleur, un numéro, une touche : la toile renaît sous vos doigts.</string>
-    <string name="welcome_cta">Entrer dans l\'atelier</string>
-    <string name="gallery_subtitle">Choisissez une toile, prenez le pinceau.</string>
+    <string name="welcome_title">Les maîtres vous prêtent %1$s.</string>
+    <string name="welcome_cta">À vos pinceaux !</string>
     <string name="about_open">À propos de l\'application</string>
     <string name="import_failed">Impossible de lire cette image.</string>
     <string name="remove_title">Retirer « %1$s » ?</string>
@@ -84,9 +82,95 @@
     <string name="naufrage_minotaure_note">Turner, peintre de la lumière et des tempêtes, annonce ici les impressionnistes de plus d\'un demi-siècle.</string>
     <string name="le_cri_title">Le Cri</string>
     <string name="le_cri_note">« Je sentis un cri infini qui traversait la nature. » Le ciel rouge serait celui d\'un crépuscule sur Oslo.</string>
+    <string name="welcome_title_em">leur palette</string>
+    <string name="welcome_new">Entrez Gribouilleur, ressortez Génie !</string>
+    <string name="welcome_back">Re-bonjour, %1$s !</string>
+    <string name="welcome_cta_back">On continue !</string>
+    <string name="welcome_cap">regardez, elle se peint…</string>
+    <string name="welcome_cap_done">à vous de jouer !</string>
+    <string name="gallery_q">On peint %1$s aujourd\'hui ?</string>
+    <string name="gallery_q_em">quoi</string>
+    <string name="rank_of">rang %1$d sur %2$d</string>
+    <string name="streak_kept">Série de jours gardée aujourd\'hui</string>
+    <string name="streak_hint">Peignez une zone aujourd\'hui pour garder votre série</string>
+    <string name="touches_n">%1$s touches</string>
+    <string name="next_rank">%1$s à %2$s</string>
+    <string name="max_rank">Rang maximal : chapeau bas !</string>
+    <string name="daily">la toile du jour</string>
+    <string name="paint_now">Peindre</string>
+    <string name="touches_word">touches</string>
+    <string name="cap_new">à commencer</string>
+    <string name="cap_done">fini !</string>
+    <string name="stars_label">%1$d étoiles sur 3</string>
+    <string name="locked_cap">à déballer au rang %1$s</string>
+    <string name="locked_title">Cette toile est encore emballée</string>
+    <string name="locked_text">Elle se déballe au rang %1$s. Encore %2$s touches : chaque zone bien peinte en rapporte.</string>
+    <string name="ok">D\'accord</string>
+    <string name="surprise">Surprends-moi !</string>
+    <string name="surprise_label">Surprends-moi : une toile et un niveau au hasard</string>
+    <string name="colour_done">Couleur %1$d terminée</string>
+    <string name="combo">Série de %1$d !</string>
+    <string name="rank_up">Nouveau rang : %1$s !</string>
+    <string name="unlocked">« %1$s » est déballée !</string>
+    <string name="win_title">Bravo,\n%1$s !</string>
+    <string name="nickname_default">l\'artiste</string>
+    <string name="win_drag">Glissez pour voir le chemin parcouru</string>
+    <string name="win_gain">+%1$s touches</string>
+    <string name="win_next">encore %1$s pour devenir %2$s</string>
+    <string name="one_more">Encore une !</string>
+    <string name="show_friends">Montrer à mes amis</string>
+    <string name="sound_mute">Couper le bruit du pinceau</string>
+    <string name="sound_unmute">Remettre le bruit du pinceau</string>
+    <string name="monet_impression_title">Impression, soleil levant</string>
+    <string name="monet_impression_note">Le port du Havre au petit matin. Un critique moqua ce titre : le mot « impressionnisme » était né.</string>
+    <string name="monet_nympheas_title">Nymphéas</string>
+    <string name="monet_nympheas_note">Monet a peint plus de 250 fois les nymphéas de son étang de Giverny, à toutes les heures du jour.</string>
+    <string name="monet_prairie_title">Prairie à Giverny</string>
+    <string name="monet_prairie_note">Installé à Giverny, Monet peint la campagne autour de sa maison sous toutes les lumières, avant de créer son célèbre jardin d\'eau.</string>
+    <string name="panier_pommes_title">Le Panier de pommes</string>
+    <string name="panier_pommes_year">vers 1893</string>
+    <string name="panier_pommes_note">La table penche, la bouteille aussi : Cézanne montre chaque objet sous son meilleur angle, quitte à tordre la perspective.</string>
+    <string name="voyageur_brume_title">Le Voyageur contemplant une mer de nuages</string>
+    <string name="voyageur_brume_year">vers 1818</string>
+    <string name="voyageur_brume_note">L\'icône du romantisme allemand. On ne voit jamais le visage du voyageur : c\'est nous qui regardons la brume avec lui.</string>
+    <string name="pont_neuf_title">Le Pont-Neuf</string>
+    <string name="pont_neuf_note">Renoir peignit la foule depuis l\'étage d\'un café ; son frère arrêtait les passants pour les faire poser un instant.</string>
+    <string name="grande_jatte_title">Un dimanche après-midi à l\'île de la Grande Jatte</string>
+    <string name="grande_jatte_note">Deux ans de travail, point par point : Seurat juxtapose des touches de couleur pure que l\'œil mélange de loin.</string>
+    <string name="noce_juive_title">Noce juive dans le Maroc</string>
+    <string name="noce_juive_year">vers 1839</string>
+    <string name="noce_juive_note">Delacroix assista à cette fête à Tanger en 1832 et la peignit de mémoire, carnets de croquis à l\'appui.</string>
+    <string name="vermeer_laitiere_title">La Laitière</string>
+    <string name="vermeer_laitiere_year">vers 1658</string>
+    <string name="vermeer_laitiere_note">Un filet de lait, un rayon de lumière : Vermeer fait d\'un geste de cuisine un instant suspendu.</string>
+    <string name="american_gothic_title">American Gothic</string>
+    <string name="american_gothic_note">Wood fit poser sa sœur et son dentiste devant une maison de l\'Iowa. On les croit mari et femme ; il les voulait père et fille.</string>
+    <string name="liberte_peuple_title">La Liberté guidant le peuple</string>
+    <string name="liberte_peuple_note">Peinte en l\'honneur des Trois Glorieuses de juillet 1830. Restaurée en 2024, elle a retrouvé ses couleurs vives.</string>
+    <string name="naissance_venus_title">La Naissance de Vénus</string>
+    <string name="naissance_venus_year">vers 1485</string>
+    <string name="naissance_venus_note">Zéphyr souffle la déesse vers le rivage, où une Heure l\'attend avec un manteau fleuri.</string>
+    <string name="joconde_title">La Joconde</string>
+    <string name="joconde_artist">Léonard de Vinci</string>
+    <string name="joconde_nickname">Léonard</string>
+    <string name="joconde_note">Léonard la garda toute sa vie et la retoucha sans cesse. Son sourire tient au sfumato, ces contours fondus dans l\'ombre.</string>
     <plurals name="colour_swatch">
         <item quantity="one">Couleur %1$d, %2$d zone restante</item>
         <item quantity="many">Couleur %1$d, %2$d zones restantes</item>
         <item quantity="other">Couleur %1$d, %2$d zones restantes</item>
+    </plurals>
+    <string-array name="rank_names">
+        <item>Gribouilleur</item>
+        <item>Barbouilleur</item>
+        <item>Apprenti</item>
+        <item>Compagnon</item>
+        <item>Artiste</item>
+        <item>Maître</item>
+        <item>Génie</item>
+    </string-array>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d jour</item>
+        <item quantity="many">%1$d jours</item>
+        <item quantity="other">%1$d jours</item>
     </plurals>
 </resources>

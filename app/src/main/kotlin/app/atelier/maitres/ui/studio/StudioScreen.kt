@@ -40,7 +40,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Redo
 import androidx.compose.material.icons.automirrored.outlined.Undo
-import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.FitScreen
 import androidx.compose.material.icons.outlined.MoreVert
@@ -48,7 +47,6 @@ import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -93,17 +91,28 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
+import app.atelier.maitres.data.Career
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
 import app.atelier.maitres.ui.labelRes
+import app.atelier.maitres.ui.play.ColourDot
+import app.atelier.maitres.ui.play.rankNames
 import app.atelier.maitres.ui.theme.CartelStyle
+import app.atelier.maitres.ui.theme.Play
+import androidx.compose.material.icons.automirrored.outlined.VolumeOff
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: PaintingRepository, onBack: () -> Unit) {
+fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: PaintingRepository, career: Career, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     var loadProgress by remember { mutableFloatStateOf(0f) }
     var state by remember { mutableStateOf<StudioState?>(null) }
@@ -112,7 +121,8 @@ fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: Paintin
     LaunchedEffect(painting.id, difficulty) {
         try {
             val loaded = repository.load(painting, difficulty) { loadProgress = it }
-            state = withContext(Dispatchers.Default) { StudioState(loaded, repository, scope) }
+            val daily = career.daily(repository.paintings.value)?.id == painting.id
+            state = withContext(Dispatchers.Default) { StudioState(loaded, repository, career, daily, scope) }
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -127,7 +137,7 @@ fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: Paintin
     BackHandler(onBack = onBack)
 
     when {
-        current != null -> Studio(current, onBack)
+        current != null -> Studio(current, career, onBack)
         failed -> LoadingScreen(painting, difficulty, progress = null, onBack = onBack)
         else -> LoadingScreen(painting, difficulty, progress = loadProgress, onBack = onBack)
     }
@@ -135,7 +145,7 @@ fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: Paintin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun Studio(state: StudioState, onBack: () -> Unit) {
+private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     var peek by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
@@ -144,6 +154,14 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
     val painting = state.loaded.painting
     val context = LocalContext.current
     val view = LocalView.current
+    var soundOn by remember { mutableStateOf(career.soundOn) }
+    val sound = remember { runCatching { BrushSound() }.getOrNull() }
+    DisposableEffect(sound) { onDispose { sound?.release() } }
+
+    // Un petit frottement de pinceau à chaque touche, si le son n'est pas coupé.
+    LaunchedEffect(state.lastStroke) {
+        if (state.lastStroke != null && soundOn) sound?.play()
+    }
 
     // Une vibration franche quand une couleur est terminée : la palette passe à la suivante.
     LaunchedEffect(state.colorsFinished) {
@@ -181,186 +199,234 @@ private fun Studio(state: StudioState, onBack: () -> Unit) {
         showHint = false
     }
 
-    Scaffold(
-        // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
-        contentWindowInsets = WindowInsets.safeDrawing,
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back_to_gallery)) }
-                },
-                title = {
-                    state.version
-                    val faithful = state.session.faithfulCount
-                    val total = state.canvas.regionCount
-                    Column {
-                        Text(painting.title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
-                        Text(
-                            stringResource(
-                                R.string.studio_progress,
-                                stringResource(state.loaded.difficulty.labelRes),
-                                faithful,
-                                total,
-                                faithful * 100 / maxOf(1, total),
-                            ),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                },
-                actions = {
-                    // Maintenir pour voir l'original : on le compare à son propre travail.
-                    val peekHold = stringResource(R.string.peek_hold)
-                    val peekOn = stringResource(R.string.peek_on)
-                    val peekOff = stringResource(R.string.peek_off)
-                    val peekShow = stringResource(R.string.peek_show)
-                    val peekHide = stringResource(R.string.peek_hide)
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(if (peek) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface)
-                            .pointerInput(Unit) {
-                                detectTapGestures(onPress = {
-                                    peek = true
-                                    tryAwaitRelease()
-                                    peek = false
-                                })
+    Box(Modifier.fillMaxSize()) {
+        Scaffold(
+            // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
+            contentWindowInsets = WindowInsets.safeDrawing,
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back_to_gallery)) }
+                    },
+                    title = {
+                        state.version
+                        val faithful = state.session.faithfulCount
+                        val total = state.canvas.regionCount
+                        Column {
+                            Text(painting.title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                stringResource(
+                                    R.string.studio_progress,
+                                    stringResource(state.loaded.difficulty.labelRes),
+                                    faithful,
+                                    total,
+                                    faithful * 100 / maxOf(1, total),
+                                ),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    actions = {
+                        if (sound != null) {
+                            IconButton(onClick = {
+                                soundOn = !soundOn
+                                career.soundOn = soundOn
+                            }) {
+                                Icon(
+                                    if (soundOn) Icons.AutoMirrored.Outlined.VolumeUp else Icons.AutoMirrored.Outlined.VolumeOff,
+                                    contentDescription = stringResource(if (soundOn) R.string.sound_mute else R.string.sound_unmute),
+                                )
                             }
-                            // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
-                            .semantics {
-                                role = Role.Button
-                                contentDescription = peekHold
-                                stateDescription = if (peek) peekOn else peekOff
-                                onClick(label = if (peek) peekHide else peekShow) {
-                                    peek = !peek
-                                    true
+                        }
+                        // Maintenir pour voir l'original : on le compare à son propre travail.
+                        val peekHold = stringResource(R.string.peek_hold)
+                        val peekOn = stringResource(R.string.peek_on)
+                        val peekOff = stringResource(R.string.peek_off)
+                        val peekShow = stringResource(R.string.peek_show)
+                        val peekHide = stringResource(R.string.peek_hide)
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(if (peek) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(onPress = {
+                                        peek = true
+                                        tryAwaitRelease()
+                                        peek = false
+                                    })
                                 }
-                            },
+                                // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
+                                .semantics {
+                                    role = Role.Button
+                                    contentDescription = peekHold
+                                    stateDescription = if (peek) peekOn else peekOff
+                                    onClick(label = if (peek) peekHide else peekShow) {
+                                        peek = !peek
+                                        true
+                                    }
+                                },
+                        ) {
+                            Icon(Icons.Outlined.Visibility, contentDescription = null)
+                        }
+                        IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options)) }
+                        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.overview)) },
+                                leadingIcon = { Icon(Icons.Outlined.FitScreen, contentDescription = null) },
+                                onClick = {
+                                    menu = false
+                                    scope.launch { state.camera.animateToOverview() }
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.share_canvas)) },
+                                leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
+                                onClick = {
+                                    menu = false
+                                    share()
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.restart_canvas)) },
+                                leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
+                                onClick = {
+                                    menu = false
+                                    confirmRestart = true
+                                },
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                )
+            },
+        ) { padding ->
+            val layoutDirection = LocalLayoutDirection.current
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = padding.calculateTopPadding(),
+                        start = padding.calculateStartPadding(layoutDirection),
+                        end = padding.calculateEndPadding(layoutDirection),
+                    ),
+            ) {
+                Box(Modifier.weight(1f).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)) {
+                    PaintCanvas(state, peekOriginal = peek, modifier = Modifier.fillMaxSize())
+
+                    HintBanner(visible = showHint, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
+                    ToastPill(state.toast, Modifier.align(Alignment.TopCenter).padding(top = 14.dp))
+
+                    // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
+                    Row(
+                        modifier = Modifier.align(Alignment.BottomStart).padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Icon(Icons.Outlined.Visibility, contentDescription = null)
+                        state.version
+                        FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), enabled = state.session.canUndo) { state.undo() }
+                        FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), enabled = state.session.canRedo) { state.redo() }
                     }
-                    IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options)) }
-                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.overview)) },
-                            leadingIcon = { Icon(Icons.Outlined.FitScreen, contentDescription = null) },
-                            onClick = {
-                                menu = false
-                                scope.launch { state.camera.animateToOverview() }
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.share_canvas)) },
-                            leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
-                            onClick = {
-                                menu = false
-                                share()
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.restart_canvas)) },
-                            leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
-                            onClick = {
-                                menu = false
-                                confirmRestart = true
-                            },
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-            )
-        },
-    ) { padding ->
-        val layoutDirection = LocalLayoutDirection.current
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(
-                    top = padding.calculateTopPadding(),
-                    start = padding.calculateStartPadding(layoutDirection),
-                    end = padding.calculateEndPadding(layoutDirection),
-                ),
-        ) {
-            Box(Modifier.weight(1f).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)) {
-                PaintCanvas(state, peekOriginal = peek, modifier = Modifier.fillMaxSize())
-
-                HintBanner(visible = showHint, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
-
-                // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
-                Row(
-                    modifier = Modifier.align(Alignment.BottomStart).padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    state.version
-                    FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), enabled = state.session.canUndo) { state.undo() }
-                    FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), enabled = state.session.canRedo) { state.redo() }
+                    FloatingTool(
+                        Icons.Outlined.CenterFocusStrong,
+                        stringResource(R.string.find_area),
+                        enabled = true,
+                        modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+                    ) { scope.launch { state.findNextRegion() } }
                 }
-                FloatingTool(
-                    Icons.Outlined.CenterFocusStrong,
-                    stringResource(R.string.find_area),
-                    enabled = true,
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
-                ) { scope.launch { state.findNextRegion() } }
-            }
-            Surface(color = MaterialTheme.colorScheme.surface, shadowElevation = 8.dp) {
-                // Seul le bas : les côtés sont déjà dégagés par la colonne.
-                PaletteBar(state, Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
+                Surface(color = MaterialTheme.colorScheme.surface, shadowElevation = 8.dp) {
+                    // Seul le bas : les côtés sont déjà dégagés par la colonne.
+                    PaletteBar(state, Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
+                }
             }
         }
-    }
 
-    if (state.pickerOpen) ColorPickerSheet(state)
+        if (state.pickerOpen) ColorPickerSheet(state)
 
-    if (confirmRestart) {
-        AlertDialog(
-            onDismissRequest = { confirmRestart = false },
-            icon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
-            title = { Text(stringResource(R.string.restart_title)) },
-            text = { Text(stringResource(R.string.restart_text)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmRestart = false
-                    state.restart()
-                }) { Text(stringResource(R.string.restart)) }
-            },
-            dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text(stringResource(R.string.keep)) } },
-        )
-    }
+        if (confirmRestart) {
+            AlertDialog(
+                onDismissRequest = { confirmRestart = false },
+                icon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
+                title = { Text(stringResource(R.string.restart_title)) },
+                text = { Text(stringResource(R.string.restart_text)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        confirmRestart = false
+                        state.restart()
+                    }) { Text(stringResource(R.string.restart)) }
+                },
+                dismissButton = { TextButton(onClick = { confirmRestart = false }) { Text(stringResource(R.string.keep)) } },
+            )
+        }
 
-    if (state.showCompletion) {
-        AlertDialog(
-            onDismissRequest = { state.showCompletion = false },
-            icon = { Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.secondary) },
-            title = { Text(stringResource(R.string.done_title), style = MaterialTheme.typography.headlineSmall) },
-            text = {
-                Column {
-                    Text(stringResource(R.string.done_text, painting.title))
-                    if (painting.note.isNotBlank()) {
-                        Spacer(Modifier.height(12.dp))
-                        Text(painting.note, style = CartelStyle)
-                    }
-                }
-            },
-            confirmButton = {
-                Button(onClick = {
+        if (state.showCompletion) {
+            WinScreen(
+                state = state,
+                career = career,
+                onShare = { share() },
+                onOneMore = {
+                    state.showCompletion = false
+                    onBack()
+                },
+                onAdmire = {
                     state.showCompletion = false
                     scope.launch { state.camera.animateToOverview() }
-                }) { Text(stringResource(R.string.admire)) }
+                },
+            )
+            BackHandler { state.showCompletion = false }
+        }
+    }
+}
+
+/** Petit mot de jeu (série, couleur finie, nouveau rang) qui s'affiche un instant puis s'en va. */
+@Composable
+private fun ToastPill(toast: GameToast?, modifier: Modifier = Modifier) {
+    var shown by remember { mutableStateOf<GameToast?>(null) }
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(toast) {
+        if (toast == null) return@LaunchedEffect
+        shown = toast
+        visible = true
+        delay(if (toast is GameToast.RankUp) 2_600 else 1_600)
+        visible = false
+    }
+    val names = rankNames()
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideInVertically { -it / 2 },
+        exit = fadeOut(),
+        modifier = modifier,
+    ) {
+        // Le dernier mot reste affiché pendant qu'il s'efface.
+        shown?.let { t -> ToastContent(t, names) }
+    }
+}
+
+@Composable
+private fun ToastContent(t: GameToast, names: Array<String>) {
+    val rankUp = t is GameToast.RankUp
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(if (rankUp) Play.Sun else Play.Ink.copy(alpha = 0.86f))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .semantics { liveRegion = LiveRegionMode.Polite },
+    ) {
+        if (t is GameToast.ColourDone) {
+            ColourDot(Color(t.color or (0xFF shl 24)))
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(
+            when (t) {
+                is GameToast.Combo -> stringResource(R.string.combo, t.count)
+                is GameToast.ColourDone -> stringResource(R.string.colour_done, t.number)
+                is GameToast.RankUp -> stringResource(R.string.rank_up, names[t.rank])
             },
-            dismissButton = {
-                Row {
-                    TextButton(onClick = {
-                        state.showCompletion = false
-                        share()
-                    }) { Text(stringResource(R.string.share)) }
-                    TextButton(onClick = {
-                        state.showCompletion = false
-                        onBack()
-                    }) { Text(stringResource(R.string.gallery)) }
-                }
-            },
+            color = if (rankUp) Play.Ink else Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
         )
     }
 }

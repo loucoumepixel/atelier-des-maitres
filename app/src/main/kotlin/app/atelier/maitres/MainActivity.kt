@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val repository = (application as AtelierApp).repository
+        val career = (application as AtelierApp).career
 
         setContent {
             AtelierTheme {
@@ -47,17 +48,19 @@ class MainActivity : ComponentActivity() {
                     val painting = parts?.let { repository.painting(it[0]) }
                     val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
                     if (target == WELCOME) {
-                        WelcomeScreen(onEnter = { open = null })
+                        WelcomeScreen(career = career, onEnter = { open = null })
                     } else if (painting != null && difficulty != null) {
                         StudioScreen(
                             painting = painting,
                             difficulty = difficulty,
                             repository = repository,
+                            career = career,
                             onBack = { open = null },
                         )
                     } else {
                         GalleryScreen(
                             repository = repository,
+                            career = career,
                             onOpen = { p, d -> open = "${p.id}|${d.name}" },
                         )
                     }
