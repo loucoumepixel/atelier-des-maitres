@@ -20,14 +20,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -49,17 +44,12 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +65,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -87,6 +76,11 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.MusicOff
+import app.atelier.maitres.ui.theme.Fraunces
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import app.atelier.maitres.R
@@ -143,7 +137,6 @@ fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: Paintin
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
@@ -154,18 +147,31 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     val painting = state.loaded.painting
     val context = LocalContext.current
     val view = LocalView.current
+    val look = atelierLook()
     var soundOn by remember { mutableStateOf(career.soundOn) }
-    val sound = remember { runCatching { BrushSound() }.getOrNull() }
+    var musicOn by remember { mutableStateOf(career.musicOn) }
+    var inFront by remember { mutableStateOf(true) }
+    val sound = remember { runCatching { StudioSound(context.applicationContext) }.getOrNull() }
     DisposableEffect(sound) { onDispose { sound?.release() } }
+    LaunchedEffect(sound) { sound?.prepare() }
+    LifecycleEventEffect(Lifecycle.Event.ON_START) { inFront = true }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { inFront = false }
+    // Le piano ne joue que dans l'atelier, à l'écran, et jamais quand le son est coupé.
+    LaunchedEffect(soundOn, musicOn, inFront) { sound?.music(soundOn && musicOn && inFront) }
 
-    // Un petit frottement de pinceau à chaque touche, si le son n'est pas coupé.
+    // Une note de bois à chaque touche, si le son n'est pas coupé.
     LaunchedEffect(state.lastStroke) {
-        if (state.lastStroke != null && soundOn) sound?.play()
+        val stroke = state.lastStroke ?: return@LaunchedEffect
+        if (soundOn) sound?.stroke(stroke.faithful, stroke.combo)
+    }
+    LaunchedEffect(state.showCompletion) {
+        if (state.showCompletion && soundOn) sound?.fanfare()
     }
 
-    // Une vibration franche quand une couleur est terminée : la palette passe à la suivante.
+    // Une vibration franche et un petit arpège quand une couleur est terminée : la palette passe à la suivante.
     LaunchedEffect(state.colorsFinished) {
         if (state.colorsFinished > 0) {
+            if (soundOn && !state.showCompletion) sound?.colourDone()
             view.performHapticFeedback(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
                 else HapticFeedbackConstants.LONG_PRESS,
@@ -200,146 +206,183 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     }
 
     Box(Modifier.fillMaxSize()) {
-        Scaffold(
-            // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
-            contentWindowInsets = WindowInsets.safeDrawing,
-            topBar = {
-                TopAppBar(
-                    navigationIcon = {
-                        IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back_to_gallery)) }
-                    },
-                    title = {
-                        state.version
-                        val faithful = state.session.faithfulCount
-                        val total = state.canvas.regionCount
-                        Column {
-                            Text(painting.title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                stringResource(
-                                    R.string.studio_progress,
-                                    stringResource(state.loaded.difficulty.labelRes),
-                                    faithful,
-                                    total,
-                                    faithful * 100 / maxOf(1, total),
-                                ),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+        // Tout l'atelier est posé sur le mur : barre du haut, toile et palette.
+        Column(
+            Modifier
+                .fillMaxSize()
+                .clipToBounds()
+                .atelierWall(look)
+                // Encoche et barres système comprises : rien ne passe dessous, même en paysage.
+                .windowInsetsPadding(WindowInsets.safeDrawing),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 4.dp),
+            ) {
+                WallButton(look, onClick = onBack) {
+                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = stringResource(R.string.back_to_gallery))
+                }
+                state.version
+                val faithful = state.session.faithfulCount
+                val total = state.canvas.regionCount
+                Column(Modifier.weight(1f).padding(start = 4.dp)) {
+                    Text(
+                        painting.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontFamily = Fraunces,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 19.sp,
+                        lineHeight = 22.sp,
+                        color = look.ink,
+                    )
+                    Text(
+                        stringResource(
+                            R.string.studio_progress,
+                            stringResource(state.loaded.difficulty.labelRes),
+                            faithful,
+                            total,
+                            faithful * 100 / maxOf(1, total),
+                        ).uppercase(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.5.sp,
+                        color = look.meta,
+                    )
+                    val shown by animateFloatAsState(faithful.toFloat() / maxOf(1, total), label = "progress")
+                    Box(
+                        Modifier
+                            .padding(top = 6.dp)
+                            .fillMaxWidth()
+                            .height(3.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(look.progressTrack),
+                    ) {
+                        Box(Modifier.fillMaxWidth(shown).fillMaxHeight().clip(RoundedCornerShape(2.dp)).background(look.progress))
+                    }
+                }
+                if (sound != null) {
+                    WallButton(look, onClick = {
+                        soundOn = !soundOn
+                        career.soundOn = soundOn
+                        if (soundOn) sound.hello()
+                    }) {
+                        Icon(
+                            if (soundOn) Icons.AutoMirrored.Outlined.VolumeUp else Icons.AutoMirrored.Outlined.VolumeOff,
+                            contentDescription = stringResource(if (soundOn) R.string.sound_mute else R.string.sound_unmute),
+                        )
+                    }
+                }
+                // Maintenir pour voir l'original : on le compare à son propre travail.
+                val peekHold = stringResource(R.string.peek_hold)
+                val peekOn = stringResource(R.string.peek_on)
+                val peekOff = stringResource(R.string.peek_off)
+                val peekShow = stringResource(R.string.peek_show)
+                val peekHide = stringResource(R.string.peek_hide)
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(2.dp)
+                        .wallButtonShadow(look)
+                        .clip(CircleShape)
+                        .background(if (peek) MaterialTheme.colorScheme.secondaryContainer else look.button)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onPress = {
+                                peek = true
+                                tryAwaitRelease()
+                                peek = false
+                            })
                         }
-                    },
-                    actions = {
-                        if (sound != null) {
-                            IconButton(onClick = {
-                                soundOn = !soundOn
-                                career.soundOn = soundOn
-                            }) {
-                                Icon(
-                                    if (soundOn) Icons.AutoMirrored.Outlined.VolumeUp else Icons.AutoMirrored.Outlined.VolumeOff,
-                                    contentDescription = stringResource(if (soundOn) R.string.sound_mute else R.string.sound_unmute),
-                                )
+                        // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
+                        .semantics {
+                            role = Role.Button
+                            contentDescription = peekHold
+                            stateDescription = if (peek) peekOn else peekOff
+                            onClick(label = if (peek) peekHide else peekShow) {
+                                peek = !peek
+                                true
                             }
-                        }
-                        // Maintenir pour voir l'original : on le compare à son propre travail.
-                        val peekHold = stringResource(R.string.peek_hold)
-                        val peekOn = stringResource(R.string.peek_on)
-                        val peekOff = stringResource(R.string.peek_off)
-                        val peekShow = stringResource(R.string.peek_show)
-                        val peekHide = stringResource(R.string.peek_hide)
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(if (peek) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface)
-                                .pointerInput(Unit) {
-                                    detectTapGestures(onPress = {
-                                        peek = true
-                                        tryAwaitRelease()
-                                        peek = false
-                                    })
-                                }
-                                // Avec TalkBack, maintenir n'a pas de sens : l'action bascule l'original.
-                                .semantics {
-                                    role = Role.Button
-                                    contentDescription = peekHold
-                                    stateDescription = if (peek) peekOn else peekOff
-                                    onClick(label = if (peek) peekHide else peekShow) {
-                                        peek = !peek
-                                        true
+                        },
+                ) {
+                    Icon(Icons.Outlined.Visibility, contentDescription = null, tint = if (peek) MaterialTheme.colorScheme.onSecondaryContainer else look.ink)
+                }
+                Box {
+                    WallButton(look, onClick = { menu = true }) {
+                        Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options))
+                    }
+                    DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.overview)) },
+                            leadingIcon = { Icon(Icons.Outlined.FitScreen, contentDescription = null) },
+                            onClick = {
+                                menu = false
+                                scope.launch { state.camera.animateToOverview() }
+                            },
+                        )
+                        if (sound != null) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(if (musicOn) R.string.music_off else R.string.music_on)) },
+                                leadingIcon = { Icon(if (musicOn) Icons.Outlined.MusicOff else Icons.Outlined.MusicNote, contentDescription = null) },
+                                onClick = {
+                                    menu = false
+                                    musicOn = !musicOn
+                                    career.musicOn = musicOn
+                                    // Demander la musique, c'est aussi vouloir du son.
+                                    if (musicOn && !soundOn) {
+                                        soundOn = true
+                                        career.soundOn = true
                                     }
                                 },
-                        ) {
-                            Icon(Icons.Outlined.Visibility, contentDescription = null)
-                        }
-                        IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(R.string.more_options)) }
-                        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.overview)) },
-                                leadingIcon = { Icon(Icons.Outlined.FitScreen, contentDescription = null) },
-                                onClick = {
-                                    menu = false
-                                    scope.launch { state.camera.animateToOverview() }
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.share_canvas)) },
-                                leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
-                                onClick = {
-                                    menu = false
-                                    share()
-                                },
-                            )
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.restart_canvas)) },
-                                leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
-                                onClick = {
-                                    menu = false
-                                    confirmRestart = true
-                                },
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-                )
-            },
-        ) { padding ->
-            val layoutDirection = LocalLayoutDirection.current
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .padding(
-                        top = padding.calculateTopPadding(),
-                        start = padding.calculateStartPadding(layoutDirection),
-                        end = padding.calculateEndPadding(layoutDirection),
-                    ),
-            ) {
-                Box(Modifier.weight(1f).fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)) {
-                    PaintCanvas(state, peekOriginal = peek, modifier = Modifier.fillMaxSize())
-
-                    HintBanner(visible = showHint, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
-                    ToastPill(state.toast, Modifier.align(Alignment.TopCenter).padding(top = 14.dp))
-
-                    // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
-                    Row(
-                        modifier = Modifier.align(Alignment.BottomStart).padding(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        state.version
-                        FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), enabled = state.session.canUndo) { state.undo() }
-                        FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), enabled = state.session.canRedo) { state.redo() }
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.share_canvas)) },
+                            leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
+                            onClick = {
+                                menu = false
+                                share()
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.restart_canvas)) },
+                            leadingIcon = { Icon(Icons.Outlined.RestartAlt, contentDescription = null) },
+                            onClick = {
+                                menu = false
+                                confirmRestart = true
+                            },
+                        )
                     }
-                    FloatingTool(
-                        Icons.Outlined.CenterFocusStrong,
-                        stringResource(R.string.find_area),
-                        enabled = true,
-                        modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
-                    ) { scope.launch { state.findNextRegion() } }
-                }
-                Surface(color = MaterialTheme.colorScheme.surface, shadowElevation = 8.dp) {
-                    // Seul le bas : les côtés sont déjà dégagés par la colonne.
-                    PaletteBar(state, Modifier.windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)))
                 }
             }
+
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                PaintCanvas(state, peekOriginal = peek, look = look, modifier = Modifier.fillMaxSize())
+
+                HintBanner(visible = showHint, look = look, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
+                ToastPill(state.toast, Modifier.align(Alignment.TopCenter).padding(top = 14.dp))
+
+                // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
+                Row(
+                    modifier = Modifier.align(Alignment.BottomStart).padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    state.version
+                    FloatingTool(Icons.AutoMirrored.Outlined.Undo, stringResource(R.string.undo), look, enabled = state.session.canUndo) { state.undo() }
+                    FloatingTool(Icons.AutoMirrored.Outlined.Redo, stringResource(R.string.redo), look, enabled = state.session.canRedo) { state.redo() }
+                }
+                FloatingTool(
+                    Icons.Outlined.CenterFocusStrong,
+                    stringResource(R.string.find_area),
+                    look,
+                    enabled = true,
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+                ) { scope.launch { state.findNextRegion() } }
+            }
+            PaletteBar(state, look, Modifier.padding(start = 10.dp, end = 10.dp, top = 4.dp, bottom = 10.dp))
         }
 
         if (state.pickerOpen) ColorPickerSheet(state)
@@ -433,21 +476,43 @@ private fun ToastContent(t: GameToast, names: Array<String>) {
 
 /** Bandeau d'aide affiché à l'ouverture d'une toile vierge. */
 @Composable
-private fun HintBanner(visible: Boolean, modifier: Modifier = Modifier) {
+private fun HintBanner(visible: Boolean, look: AtelierLook, modifier: Modifier = Modifier) {
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + slideInVertically { -it },
         exit = fadeOut() + slideOutVertically { -it },
         modifier = modifier,
     ) {
-        Surface(shape = RoundedCornerShape(50), tonalElevation = 6.dp, shadowElevation = 4.dp) {
-            Text(
-                stringResource(R.string.hint),
-                style = MaterialTheme.typography.labelLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp).widthIn(max = 320.dp),
-            )
-        }
+        Text(
+            stringResource(R.string.hint),
+            style = MaterialTheme.typography.labelLarge,
+            color = look.ink,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .wallButtonShadow(look)
+                .clip(RoundedCornerShape(50))
+                .background(if (look.evening) Color(0xE61E140E) else Color(0xEBFFFCF5))
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .widthIn(max = 320.dp),
+        )
+    }
+}
+
+/** Ombre légère des boutons posés sur le mur, le jour seulement : le soir, la lampe n'en fait pas. */
+private fun Modifier.wallButtonShadow(look: AtelierLook) =
+    if (look.buttonShadow) shadow(2.dp, CircleShape, ambientColor = Color(0xFF3C1E0A), spotColor = Color(0xFF3C1E0A)) else this
+
+/** Bouton rond, couleur crème le jour, à peine éclairé le soir. */
+@Composable
+private fun WallButton(look: AtelierLook, onClick: () -> Unit, content: @Composable () -> Unit) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = look.button,
+        contentColor = look.ink,
+        modifier = Modifier.size(48.dp).padding(2.dp).wallButtonShadow(look),
+    ) {
+        Box(contentAlignment = Alignment.Center) { content() }
     }
 }
 
@@ -455,6 +520,7 @@ private fun HintBanner(visible: Boolean, modifier: Modifier = Modifier) {
 private fun FloatingTool(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     description: String,
+    look: AtelierLook,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -464,9 +530,9 @@ private fun FloatingTool(
         onClick = onClick,
         enabled = enabled,
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
-        modifier = modifier.size(48.dp).shadow(6.dp, CircleShape),
+        color = look.button,
+        contentColor = look.ink.copy(alpha = alpha),
+        modifier = modifier.size(48.dp).wallButtonShadow(look),
     ) {
         Box(contentAlignment = Alignment.Center) { Icon(icon, contentDescription = description) }
     }

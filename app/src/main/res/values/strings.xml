@@ -120,8 +120,10 @@
     <string name="win_next">%1$s more to become %2$s</string>
     <string name="one_more">One more!</string>
     <string name="show_friends">Show my friends</string>
-    <string name="sound_mute">Mute the brush sound</string>
-    <string name="sound_unmute">Turn the brush sound back on</string>
+    <string name="sound_mute">Mute the sound</string>
+    <string name="sound_unmute">Turn the sound back on</string>
+    <string name="music_on">Play the music</string>
+    <string name="music_off">Stop the music</string>
     <string name="monet_impression_title">Impression, Sunrise</string>
     <string name="monet_impression_note">The port of Le Havre at dawn. A critic mocked the title, and the word “Impressionism” was born.</string>
     <string name="monet_nympheas_title">Water Lilies</string>

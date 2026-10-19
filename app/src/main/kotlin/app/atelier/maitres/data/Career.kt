@@ -36,6 +36,11 @@ class Career(context: Context, private val repository: PaintingRepository) {
         get() = prefs.getBoolean(SOUND, true)
         set(value) = prefs.edit().putBoolean(SOUND, value).apply()
 
+    /** La petite musique de piano, en fond dans l'atelier. */
+    var musicOn: Boolean
+        get() = prefs.getBoolean(MUSIC, true)
+        set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
+
     /** Ajoute [points] et renvoie le nouveau rang s'il vient d'être atteint, sinon -1. */
     fun earn(points: Int): Int {
         val before = rank
@@ -134,6 +139,7 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val STREAK = "career_streak"
         private const val LAST_DAY = "career_last_day"
         private const val SOUND = "sound"
+        private const val MUSIC = "music"
     }
 }
 

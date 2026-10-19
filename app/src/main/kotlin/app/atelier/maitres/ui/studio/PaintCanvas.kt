@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -44,7 +46,7 @@ import kotlin.math.min
  * pour être lus, comme sur une vraie toile que l'on regarde de plus en plus près.
  */
 @Composable
-fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = Modifier) {
+fun PaintCanvas(state: StudioState, peekOriginal: Boolean, look: AtelierLook, modifier: Modifier = Modifier) {
     val camera = state.camera
     val canvas = state.canvas
     val density = LocalDensity.current
@@ -70,6 +72,15 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
             typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         }
     }
+
+    // L'ombre de la toile sur le mur : le flou des ombres Android, plus doux qu'un dégradé.
+    val shadowPaint = remember(look, density) {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = CANVAS_EDGE.last()
+            with(density) { setShadowLayer(24.dp.toPx(), look.shadowDx.dp.toPx(), 16.dp.toPx(), look.canvasShadow.toArgb()) }
+        }
+    }
+    val edgeStep = with(density) { 1.dp.toPx() }
 
     // Éclaboussure : un anneau de la couleur posée qui s'élargit puis s'efface.
     val splash = remember { Animatable(1f) }
@@ -106,10 +117,13 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
         val zoomScale = camera.scale
         val origin = camera.origin
 
-        // Ombre portée discrète sous la toile, comme accrochée au mur.
+        // La toile accrochée au mur : son ombre, puis l'épaisseur du châssis, en tranches.
         val canvasSize = Size(canvas.width * zoomScale, canvas.height * zoomScale)
-        drawRect(Color.Black.copy(alpha = 0.10f), origin + Offset(0f, 6f), canvasSize)
-        drawRect(Color.Black.copy(alpha = 0.06f), origin + Offset(0f, 2f), canvasSize)
+        val depth = CANVAS_EDGE.size * edgeStep
+        drawContext.canvas.nativeCanvas.drawRect(origin.x + depth / 2, origin.y + depth / 2, origin.x + canvasSize.width, origin.y + canvasSize.height, shadowPaint)
+        for (i in CANVAS_EDGE.indices.reversed()) {
+            drawRect(Color(CANVAS_EDGE[i]), origin + Offset((i + 1) * edgeStep, (i + 1) * edgeStep), canvasSize)
+        }
 
         withTransform({
             translate(origin.x, origin.y)
@@ -124,6 +138,8 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
                 filterQuality = if (zoomScale > 3f) FilterQuality.None else FilterQuality.Low,
             )
         }
+        // Le grain du lin, par-dessus la peinture comme sous un vrai pinceau.
+        drawRect(Textures.linen, origin, canvasSize, blendMode = BlendMode.Multiply)
 
         if (!peekOriginal) {
             val highlight = (state.tool as? Tool.Palette)?.index ?: -1
@@ -162,5 +178,6 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, modifier: Modifier = 
     }
 }
 
+private val CANVAS_EDGE = longArrayOf(0xFFE4DACA, 0xFFDDD2BF, 0xFFD7CBB6, 0xFFD1C4AE, 0xFFCBBDA6, 0xFFC4B69E, 0xFFBBAC93).map { it.toInt() }
 private val SOFT_INK = 0xFF8C8478.toInt()
 private val STRONG_INK = 0xFF2B2620.toInt()
