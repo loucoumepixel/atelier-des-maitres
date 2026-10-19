@@ -157,6 +157,10 @@
     <string name="joconde_artist">Leonardo da Vinci</string>
     <string name="joconde_nickname">Leonardo</string>
     <string name="joconde_note">Leonardo kept it all his life and kept retouching it. Her smile owes everything to sfumato, outlines melting into shadow.</string>
+    <plurals name="find_mistake">
+        <item quantity="one">Find the area painted in the wrong colour (%d)</item>
+        <item quantity="other">Find an area painted in the wrong colour (%d left)</item>
+    </plurals>
     <plurals name="colour_swatch">
         <item quantity="one">Colour %1$d, %2$d area left</item>
         <item quantity="other">Colour %1$d, %2$d areas left</item>

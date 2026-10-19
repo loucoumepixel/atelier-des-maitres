@@ -36,6 +36,24 @@ class PaintingSessionTest {
     }
 
     @Test
+    fun `les zones de la mauvaise couleur sont reperees`() {
+        val session = PaintingSession(canvas)
+        session.paint(0, blue)
+        session.paint(1, blue)
+        session.paint(2, green)
+
+        assertEquals(2, session.mistakeCount)
+        assertEquals(listOf(0, 2), session.mistakes().toList())
+        assertTrue(session.isMistake(0))
+        assertFalse(session.isMistake(1))
+
+        session.paint(0, red)
+        session.erase(2)
+        assertEquals(0, session.mistakeCount)
+        assertTrue(session.mistakes().isEmpty())
+    }
+
+    @Test
     fun `annuler puis retablir restaure exactement l etat`() {
         val session = PaintingSession(canvas)
         session.paint(0, red)
