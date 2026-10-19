@@ -6,12 +6,19 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.CompositionLocalProvider
+import app.atelier.maitres.R
 
 /** Couleurs inspirées des pigments historiques : outremer, ocre, vermillon, papier. */
 object Pigments {
@@ -94,11 +101,62 @@ private val AtelierTypography = Typography().run {
 /** Style des cartels de musée : italique, discret. */
 val CartelStyle = TextStyle(fontFamily = Display, fontStyle = FontStyle.Italic, fontSize = 13.sp)
 
+/** Couleurs franches de l'atelier en mode jeu : jaune soleil, corail, encre, kraft. */
+object Play {
+    val Sun = Color(0xFFFFC93C)
+    val Coral = Color(0xFFE8553B)
+    val CoralLight = Color(0xFFF07A5F)
+    val Teal = Color(0xFF3FB6A8)
+    val TealDeep = Color(0xFF10302C)
+    val Ink = Color(0xFF2B1B12)
+    val Cream = Color(0xFFFFE9C7)
+}
+
+/** Fond, encre et papier photo : clairs le jour, chauds et sombres la nuit. */
+@Immutable
+data class PlayColors(val background: Color, val dots: Color, val ink: Color, val kraft: Color, val polaroid: Color)
+
+private val PlayLight = PlayColors(Color(0xFFFFF1D9), Color(0xFFEBCFA4), Play.Ink, Color(0xFF8A5A3C), Color.White)
+private val PlayDark = PlayColors(Color(0xFF1C1814), Color(0xFF362C23), Color(0xFFF4E6D2), Color(0xFFD2AE85), Color(0xFF2B2520))
+
+val LocalPlayColors = staticCompositionLocalOf { PlayLight }
+
+/** Titres ronds et joueurs (Fraunces « soft » et « wonky »), notes écrites à la main (Caveat). */
+@OptIn(ExperimentalTextApi::class)
+val Fraunces = FontFamily(
+    Font(
+        R.font.fraunces,
+        FontWeight.Black,
+        variationSettings = FontVariation.Settings(
+            FontVariation.weight(900),
+            FontVariation.Setting("SOFT", 100f),
+            FontVariation.Setting("WONK", 1f),
+        ),
+    ),
+    Font(
+        R.font.fraunces,
+        FontWeight.ExtraBold,
+        variationSettings = FontVariation.Settings(FontVariation.weight(800), FontVariation.Setting("SOFT", 100f)),
+    ),
+)
+
+@OptIn(ExperimentalTextApi::class)
+val Caveat = FontFamily(
+    Font(R.font.caveat, FontWeight.Bold, variationSettings = FontVariation.Settings(FontVariation.weight(700))),
+)
+
+/** Gros titre de jeu, en Fraunces noir. */
+val PlayTitle = TextStyle(fontFamily = Fraunces, fontWeight = FontWeight.Black, fontSize = 30.sp, lineHeight = 31.sp)
+
+/** Écriture à la main, pour les légendes et les petits mots. */
+val HandStyle = TextStyle(fontFamily = Caveat, fontWeight = FontWeight.Bold, fontSize = 20.sp, lineHeight = 22.sp)
+
 @Composable
 fun AtelierTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = if (darkTheme) DarkColors else LightColors,
         typography = AtelierTypography,
-        content = content,
-    )
+    ) {
+        CompositionLocalProvider(LocalPlayColors provides if (darkTheme) PlayDark else PlayLight, content = content)
+    }
 }

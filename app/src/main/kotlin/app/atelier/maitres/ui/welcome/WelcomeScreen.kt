@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,9 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
@@ -55,7 +51,28 @@ import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.PaintByNumber
 import app.atelier.maitres.core.Segmenter
-import app.atelier.maitres.ui.theme.CartelStyle
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import app.atelier.maitres.data.Career
+import app.atelier.maitres.ui.play.FlameChip
+import app.atelier.maitres.ui.play.RankBadge
+import app.atelier.maitres.ui.play.dottedPaper
+import app.atelier.maitres.ui.play.emphasized
+import app.atelier.maitres.ui.play.flatShadow
+import app.atelier.maitres.ui.play.formatCount
+import app.atelier.maitres.ui.play.rankNames
+import app.atelier.maitres.ui.theme.Fraunces
+import app.atelier.maitres.ui.theme.HandStyle
+import app.atelier.maitres.ui.theme.LocalPlayColors
+import app.atelier.maitres.ui.theme.Play
+import app.atelier.maitres.ui.theme.PlayTitle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.max
@@ -65,17 +82,20 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 /**
- * Écran d'accueil : La Nuit étoilée, découpée par le vrai moteur au niveau Facile,
- * se peint d'elle-même zone par zone sous un pinceau dessiné. Le joueur voit le geste du jeu
- * avant sa première toile, et entre en touchant le pinceau resté posé au bout d'un trait de peinture.
+ * Écran d'accueil : La Nuit étoilée, découpée par le vrai moteur au niveau Facile, se peint
+ * d'elle-même zone par zone sous un pinceau dessiné, dans un polaroïd posé sur la table de
+ * l'atelier. Le joueur voit le geste du jeu avant sa première toile ; un joueur qui revient
+ * retrouve son rang et sa série de jours.
  */
 @Composable
-fun WelcomeScreen(onEnter: () -> Unit) {
+fun WelcomeScreen(career: Career, onEnter: () -> Unit) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val colors = LocalPlayColors.current
     var demo by remember { mutableStateOf<WelcomeDemo?>(null) }
     var shown by remember { mutableStateOf(false) }
     val animate = remember { !animationsDisabled(context) }
+    val returning = remember { career.touches > 0 }
 
     LaunchedEffect(Unit) {
         shown = true
@@ -102,10 +122,10 @@ fun WelcomeScreen(onEnter: () -> Unit) {
         } while (going)
     }
 
-    val minTextPx = with(density) { 8.dp.toPx() }
-    val maxTextPx = with(density) { 15.dp.toPx() }
-    val brushUnit = with(density) { 104.dp.toPx() } / 124f
-    val dabPx = with(density) { 2.2.dp.toPx() }
+    val minTextPx = with(density) { 7.dp.toPx() }
+    val maxTextPx = with(density) { 13.dp.toPx() }
+    val brushUnit = with(density) { 84.dp.toPx() } / 124f
+    val dabPx = with(density) { 2.dp.toPx() }
     val numberPaint = remember {
         Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
             textAlign = Paint.Align.CENTER
@@ -113,85 +133,132 @@ fun WelcomeScreen(onEnter: () -> Unit) {
             color = 0xFF8C8478.toInt()
         }
     }
-    val background = MaterialTheme.colorScheme.background
 
     Column(
         Modifier
             .fillMaxSize()
-            .background(background)
+            .dottedPaper(colors)
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(Modifier.weight(1f).fillMaxWidth().clipToBounds().clearAndSetSemantics {}) {
-            val d = current
-            if (d != null) {
-                Canvas(Modifier.fillMaxSize()) {
-                    d.version // relu à chaque zone peinte
-                    val scale = max(size.width / d.width, size.height / d.height)
-                    val dx = (size.width - d.width * scale) / 2f
-                    val dy = (size.height - d.height * scale) / 2f
-                    drawImage(
-                        image = d.image,
-                        srcOffset = IntOffset.Zero,
-                        srcSize = IntSize(d.width, d.height),
-                        dstOffset = IntOffset(dx.roundToInt(), dy.roundToInt()),
-                        dstSize = IntSize((d.width * scale).roundToInt(), (d.height * scale).roundToInt()),
-                        filterQuality = FilterQuality.Medium,
-                    )
-                    val canvas = d.canvas
-                    val native = drawContext.canvas.nativeCanvas
-                    for (r in 0 until canvas.regionCount) {
-                        if (d.isPainted(r)) continue
-                        val textSize = min(canvas.labelRadius[r] * 1.25f * scale, maxTextPx)
-                        if (textSize < minTextPx) continue
-                        numberPaint.textSize = textSize
-                        native.drawText(
-                            (canvas.regionColor[r] + 1).toString(),
-                            dx + canvas.labelX[r] * scale,
-                            dy + canvas.labelY[r] * scale + textSize * 0.36f,
-                            numberPaint,
+        // Le polaroïd qui se peint tout seul, avec son autocollant de rang.
+        Box(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 34.dp, vertical = 18.dp)
+                .clearAndSetSemantics {},
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(Modifier.appear(shown, 0)) {
+                Column(
+                    Modifier
+                        .rotate(-3f)
+                        .flatShadow(Play.Ink.copy(alpha = 0.18f), 5.dp, 8.dp, 4.dp)
+                        .background(colors.polaroid, RoundedCornerShape(4.dp))
+                        .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 10.dp),
+                ) {
+                    val d = current
+                    Box(
+                        Modifier
+                            .aspectRatio(if (d != null) d.width.toFloat() / d.height else 1.6f)
+                            .background(Color(0xFFFBF8F2)),
+                    ) {
+                        if (d != null) {
+                            Canvas(Modifier.fillMaxSize()) {
+                                d.version // relu à chaque zone peinte
+                                val scale = min(size.width / d.width, size.height / d.height)
+                                val dx = (size.width - d.width * scale) / 2f
+                                val dy = (size.height - d.height * scale) / 2f
+                                drawImage(
+                                    image = d.image,
+                                    srcOffset = IntOffset.Zero,
+                                    srcSize = IntSize(d.width, d.height),
+                                    dstOffset = IntOffset(dx.roundToInt(), dy.roundToInt()),
+                                    dstSize = IntSize((d.width * scale).roundToInt(), (d.height * scale).roundToInt()),
+                                    filterQuality = FilterQuality.Medium,
+                                )
+                                val canvas = d.canvas
+                                val native = drawContext.canvas.nativeCanvas
+                                for (r in 0 until canvas.regionCount) {
+                                    if (d.isPainted(r)) continue
+                                    val textSize = min(canvas.labelRadius[r] * 1.25f * scale, maxTextPx)
+                                    if (textSize < minTextPx) continue
+                                    numberPaint.textSize = textSize
+                                    native.drawText(
+                                        (canvas.regionColor[r] + 1).toString(),
+                                        dx + canvas.labelX[r] * scale,
+                                        dy + canvas.labelY[r] * scale + textSize * 0.36f,
+                                        numberPaint,
+                                    )
+                                }
+                                // Le pinceau suit les zones qui se peignent, la pointe trempée dans leur couleur.
+                                val tip = Offset(dx + d.brushX * scale, dy + d.brushY * scale + sin(d.brushTime / 90f) * dabPx)
+                                drawPaintbrush(tip, brushUnit, Color(d.brushColor), d.brushAlpha)
+                            }
+                        }
+                    }
+                    Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        d?.version // relu à chaque zone peinte
+                        val finished = d != null && d.painted >= d.regionCount
+                        Text(
+                            stringResource(if (finished) R.string.welcome_cap_done else R.string.welcome_cap),
+                            style = HandStyle,
+                            color = colors.ink,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            stringResource(R.string.touches_n, formatCount((d?.painted ?: 0) * 3)),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Play.Coral,
                         )
                     }
-                    // Le pinceau suit les zones qui se peignent, la pointe trempée dans leur couleur.
-                    val tip = Offset(dx + d.brushX * scale, dy + d.brushY * scale + sin(d.brushTime / 90f) * dabPx)
-                    drawPaintbrush(tip, brushUnit, Color(d.brushColor), d.brushAlpha)
                 }
+                RankBadge(
+                    size = 58.dp,
+                    modifier = Modifier.align(Alignment.TopEnd).offset(x = 18.dp, y = (-20).dp),
+                )
             }
-            // Fondu vers le fond de l'écran, sous lequel arrive le texte.
-            Box(
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.32f)
-                    .background(Brush.verticalGradient(listOf(Color.Transparent, background))),
-            )
         }
 
         Column(
             Modifier
-                .align(Alignment.CenterHorizontally)
                 .widthIn(max = 560.dp)
                 .fillMaxWidth()
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
                 .padding(start = 28.dp, end = 28.dp, top = 4.dp, bottom = 28.dp),
         ) {
             Text(
-                stringResource(R.string.welcome_title),
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier.appear(shown, 0),
-            )
-            Spacer(Modifier.height(12.dp))
-            Text(
-                stringResource(R.string.welcome_sub),
-                style = CartelStyle.copy(fontSize = MaterialTheme.typography.bodyLarge.fontSize, lineHeight = MaterialTheme.typography.bodyLarge.lineHeight),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                emphasized(R.string.welcome_title, R.string.welcome_title_em),
+                style = PlayTitle.copy(fontSize = 34.sp, lineHeight = 36.sp),
+                color = colors.ink,
                 modifier = Modifier.appear(shown, 1),
             )
-            Spacer(Modifier.height(26.dp))
+            Spacer(Modifier.height(10.dp))
+            Row(Modifier.appear(shown, 2), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    if (returning) stringResource(R.string.welcome_back, rankNames()[career.rank])
+                    else stringResource(R.string.welcome_new),
+                    style = HandStyle.copy(fontSize = 23.sp, lineHeight = 25.sp),
+                    color = colors.kraft,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (returning && career.streak > 0) {
+                    Spacer(Modifier.width(10.dp))
+                    FlameChip(career.streak, career.paintedToday, colors.kraft)
+                }
+            }
+            Spacer(Modifier.height(22.dp))
             BrushStrokeButton(
-                label = stringResource(R.string.welcome_cta),
+                label = stringResource(if (returning) R.string.welcome_cta_back else R.string.welcome_cta),
                 onClick = onEnter,
                 animate = animate,
-                modifier = Modifier.appear(shown, 2),
+                modifier = Modifier.appear(shown, 3),
+                color = Play.Coral,
+                labelStyle = TextStyle(fontFamily = Fraunces, fontWeight = FontWeight.ExtraBold, fontSize = 21.sp),
+                labelColor = Color.White,
             )
         }
     }

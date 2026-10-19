@@ -9,8 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import app.atelier.maitres.core.PaintingSession
+import app.atelier.maitres.data.Career
 import app.atelier.maitres.data.LoadedCanvas
+import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
+import app.atelier.maitres.data.canvasBonus
+import app.atelier.maitres.data.colourBonus
+import app.atelier.maitres.data.zonePoints
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,6 +32,17 @@ sealed interface Tool {
     data object Eraser : Tool
 }
 
+/** Petit mot de jeu affiché un instant au-dessus de la toile. */
+sealed interface GameToast {
+    val id: Long
+
+    data class Combo(val count: Int, override val id: Long = System.nanoTime()) : GameToast
+
+    data class ColourDone(val number: Int, val color: Int, override val id: Long = System.nanoTime()) : GameToast
+
+    data class RankUp(val rank: Int, override val id: Long = System.nanoTime()) : GameToast
+}
+
 /**
  * État de l'atelier pour une toile ouverte : session de peinture, rendu, outil courant,
  * sauvegarde automatique. Toutes les méthodes s'appellent depuis le thread principal.
@@ -35,6 +51,9 @@ sealed interface Tool {
 class StudioState(
     val loaded: LoadedCanvas,
     private val repository: PaintingRepository,
+    private val career: Career,
+    /** Toile du jour : chaque touche gagnée compte double. */
+    val daily: Boolean,
     private val scope: CoroutineScope,
 ) {
     val canvas = loaded.canvas
@@ -71,6 +90,49 @@ class StudioState(
     var colorsFinished by mutableIntStateOf(0)
         private set
 
+    // ---------------------------------------------------------------- jeu
+
+    private val painting = loaded.painting
+    private val difficulty = loaded.difficulty
+    private val mult = if (daily) 2 else 1
+
+    /** Seules les zones au-delà du meilleur score déjà atteint rapportent des touches. */
+    private var highWater = maxOf(career.highWater(painting, difficulty), session.faithfulCount)
+    private val coloursDone = career.coloursDone(painting, difficulty).toMutableSet()
+    private var streakOfGood = 0
+
+    /** Un nouveau rang prime sur les autres petits mots de la même touche. */
+    private var rankedNow = false
+
+    /** Touches gagnées pendant la séance. */
+    var earned by mutableIntStateOf(0)
+        private set
+
+    /** Rangs atteints pendant la séance, dans l'ordre. */
+    val rankUps = mutableStateListOf<Int>()
+
+    /** Vrai si la toile vient d'être finie à ce niveau pour la première fois. */
+    var firstWin by mutableStateOf(false)
+        private set
+
+    var toast by mutableStateOf<GameToast?>(null)
+        private set
+
+    /** Toiles déballées grâce aux rangs gagnés pendant la séance. */
+    fun unlockedPaintings(): List<Painting> =
+        repository.paintings.value.filter { it.unlockRank > 0 && it.unlockRank in rankUps }
+
+    private fun gain(points: Int) {
+        if (points <= 0) return
+        earned += points
+        val rank = career.earn(points)
+        if (rank >= 0) {
+            rankUps += rank
+            rankedNow = true
+            toast = GameToast.RankUp(rank)
+        }
+    }
+
     private var saveJob: Job? = null
     private var dirty = false
 
@@ -78,6 +140,7 @@ class StudioState(
 
     init {
         renderer.setHighlight((tool as? Tool.Palette)?.index ?: -1)
+        career.setHighWater(painting, difficulty, highWater)
     }
 
     // ---------------------------------------------------------------- gestes
@@ -143,12 +206,32 @@ class StudioState(
         val changed = session.paint(region, color)
         if (changed.isEmpty()) return
         lastStroke = Stroke(point, color, System.nanoTime())
+        rankedNow = false
         commit(changed)
+        score(region)
         advanceIfColorDone(region)
         if (session.isComplete && !celebrated) {
             celebrated = true
+            firstWin = career.markWon(painting, difficulty)
+            if (firstWin) gain(difficulty.canvasBonus * mult)
             showCompletion = true
         }
+    }
+
+    /** Touches pour les zones jamais encore réussies, et une série tous les dix coups justes. */
+    private fun score(region: Int) {
+        if (!session.isFaithful(region)) {
+            streakOfGood = 0
+            return
+        }
+        streakOfGood++
+        val faithful = session.faithfulCount
+        if (faithful > highWater) {
+            gain((faithful - highWater) * difficulty.zonePoints * mult)
+            highWater = faithful
+            career.setHighWater(painting, difficulty, highWater)
+        }
+        if (streakOfGood % COMBO == 0 && !rankedNow) toast = GameToast.Combo(streakOfGood)
     }
 
     private fun commit(changed: IntArray) {
@@ -164,7 +247,14 @@ class StudioState(
         val current = (tool as? Tool.Palette)?.index ?: return
         if (session.remainingPerColor[current] > 0) return
         // Seule la touche qui achève la couleur compte, pas celles posées ensuite avec elle.
-        if (canvas.regionColor[painted] == current && session.isFaithful(painted)) colorsFinished++
+        if (canvas.regionColor[painted] == current && session.isFaithful(painted)) {
+            colorsFinished++
+            if (coloursDone.add(current)) {
+                career.setColoursDone(painting, difficulty, coloursDone)
+                gain(difficulty.colourBonus * mult)
+            }
+            if (!rankedNow) toast = GameToast.ColourDone(current + 1, canvas.palette[current])
+        }
         nextUnfinishedColor(after = current)?.let { select(Tool.Palette(it)) }
     }
 
@@ -216,5 +306,6 @@ class StudioState(
 
     private companion object {
         const val SAVE_DELAY_MS = 800L
+        const val COMBO = 10
     }
 }
