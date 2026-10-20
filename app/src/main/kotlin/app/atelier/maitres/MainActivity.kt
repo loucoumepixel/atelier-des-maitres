@@ -10,12 +10,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
+import app.atelier.maitres.ui.intro.StudioIntro
 import app.atelier.maitres.ui.studio.StudioScreen
 import app.atelier.maitres.ui.theme.AtelierTheme
 import app.atelier.maitres.ui.welcome.WelcomeScreen
@@ -36,33 +40,41 @@ class MainActivity : ComponentActivity() {
                 // WELCOME à l'ouverture de l'application, "id|NIVEAU" quand une toile est ouverte,
                 // null pour la galerie.
                 var open by rememberSaveable { mutableStateOf<String?>(WELCOME) }
+                // L'intro du studio, une fois par lancement (pas à chaque rotation de l'écran).
+                var introShown by rememberSaveable { mutableStateOf(false) }
+                var revealed by rememberSaveable { mutableStateOf(false) }
 
-                AnimatedContent(
-                    targetState = open,
-                    transitionSpec = {
-                        (fadeIn(tween(320)) + scaleIn(tween(320), initialScale = 0.96f)) togetherWith fadeOut(tween(200))
-                    },
-                    label = "navigation",
-                ) { target ->
-                    val parts = target?.split('|')
-                    val painting = parts?.let { repository.painting(it[0]) }
-                    val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
-                    if (target == WELCOME) {
-                        WelcomeScreen(career = career, onEnter = { open = null })
-                    } else if (painting != null && difficulty != null) {
-                        StudioScreen(
-                            painting = painting,
-                            difficulty = difficulty,
-                            repository = repository,
-                            career = career,
-                            onBack = { open = null },
-                        )
-                    } else {
-                        GalleryScreen(
-                            repository = repository,
-                            career = career,
-                            onOpen = { p, d -> open = "${p.id}|${d.name}" },
-                        )
+                Box(Modifier.fillMaxSize()) {
+                    if (revealed) AnimatedContent(
+                        targetState = open,
+                        transitionSpec = {
+                            (fadeIn(tween(320)) + scaleIn(tween(320), initialScale = 0.96f)) togetherWith fadeOut(tween(200))
+                        },
+                        label = "navigation",
+                    ) { target ->
+                        val parts = target?.split('|')
+                        val painting = parts?.let { repository.painting(it[0]) }
+                        val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
+                        if (target == WELCOME) {
+                            WelcomeScreen(career = career, onEnter = { open = null })
+                        } else if (painting != null && difficulty != null) {
+                            StudioScreen(
+                                painting = painting,
+                                difficulty = difficulty,
+                                repository = repository,
+                                career = career,
+                                onBack = { open = null },
+                            )
+                        } else {
+                            GalleryScreen(
+                                repository = repository,
+                                career = career,
+                                onOpen = { p, d -> open = "${p.id}|${d.name}" },
+                            )
+                        }
+                    }
+                    if (!introShown) {
+                        StudioIntro(sound = career.soundOn, onReveal = { revealed = true }, onDone = { introShown = true })
                     }
                 }
             }
