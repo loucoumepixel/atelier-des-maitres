@@ -1,10 +1,12 @@
 package app.atelier.maitres.ui.studio
 
 import android.graphics.Bitmap
+import app.atelier.maitres.core.OilRelief
 import app.atelier.maitres.core.PaintByNumber
 import app.atelier.maitres.core.PaintingSession
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sqrt
 
 /**
  * Produit l'image affichée : papier, contours, zones peintes et surlignage.
@@ -15,12 +17,14 @@ import kotlin.math.min
  *
  * Les zones peintes reprennent la matière de l'original : la couleur choisie est modulée
  * par la luminosité locale du tableau, si bien que les coups de pinceau du maître
- * réapparaissent sous la couleur posée.
+ * réapparaissent sous la couleur posée, puis [relief] lui donne l'épaisseur d'une pâte
+ * d'huile éclairée. Une couleur posée au pinceau s'étale depuis le point touché ([spread]).
  */
 class CanvasRenderer(
     private val canvas: PaintByNumber,
     private val session: PaintingSession,
     original: Bitmap,
+    private val relief: OilRelief? = null,
 ) {
     val width = canvas.width
     val height = canvas.height
@@ -43,9 +47,57 @@ class CanvasRenderer(
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
     }
 
+    /** Une couleur qui s'étale dans sa zone depuis le point touché. */
+    private class Spread(val x: Float, val y: Float, val reach: Float, val before: Int, val start: Long, val duration: Long) {
+        var radius = 0f
+    }
+
+    private val spreading = HashMap<Int, Spread>()
+
+    /** Vrai tant qu'une couleur est encore en train de s'étaler. */
+    val isSpreading: Boolean get() = spreading.isNotEmpty()
+
+    /**
+     * Fait s'étaler la couleur déjà posée sur [region] depuis le point ([x], [y]) de l'image,
+     * par-dessus [before], son ancienne couleur. [tick] fait avancer l'animation.
+     */
+    fun spread(region: Int, x: Float, y: Float, before: Int, now: Long) {
+        val o = 4 * region
+        var reach = 0f
+        for ((cx, cy) in listOf(o to o + 1, o + 2 to o + 1, o to o + 3, o + 2 to o + 3)) {
+            val dx = canvas.bounds[cx] - x
+            val dy = canvas.bounds[cy] - y
+            reach = max(reach, sqrt(dx * dx + dy * dy))
+        }
+        // Une petite zone se couvre d'un coup de pinceau, une grande prend un peu plus de temps.
+        val duration = (180f + reach * 1.6f).coerceAtMost(520f).toLong() * 1_000_000L
+        spreading[region] = Spread(x, y, reach + 1f, before, now, duration)
+        refresh(intArrayOf(region), keepSpreads = true)
+    }
+
+    /** Fait avancer les couleurs qui s'étalent ; renvoie vrai s'il en reste. */
+    fun tick(now: Long): Boolean {
+        if (spreading.isEmpty()) return false
+        val regions = spreading.keys.toIntArray()
+        val done = ArrayList<Int>()
+        for ((region, s) in spreading) {
+            val k = ((now - s.start).toFloat() / s.duration).coerceIn(0f, 1f)
+            // Démarrage franc puis ralenti, comme la pâte qui s'écrase sous le pinceau.
+            s.radius = s.reach * (1f - (1f - k) * (1f - k) * (1f - k))
+            if (k >= 1f) done += region
+        }
+        for (r in done) spreading.remove(r)
+        refresh(regions, keepSpreads = true)
+        return spreading.isNotEmpty()
+    }
+
     /** Redessine les zones modifiées. À appeler sur le thread principal. */
-    fun refresh(regions: IntArray) {
+    fun refresh(regions: IntArray) = refresh(regions, keepSpreads = false)
+
+    private fun refresh(regions: IntArray, keepSpreads: Boolean) {
         if (regions.isEmpty()) return
+        // Annuler, gommer ou repeindre arrête net une couleur qui s'étalait.
+        if (!keepSpreads) for (r in regions) spreading.remove(r)
         var minX = Int.MAX_VALUE; var minY = Int.MAX_VALUE; var maxX = -1; var maxY = -1
         for (r in regions) {
             drawRegion(r)
@@ -93,36 +145,45 @@ class CanvasRenderer(
         val fill = session.fills[region]
         val start = canvas.regionStart[region]
         val end = canvas.regionStart[region + 1]
-        when {
-            fill != PaintingSession.EMPTY -> {
-                val r = (fill shr 16) and 0xFF
-                val g = (fill shr 8) and 0xFF
-                val b = fill and 0xFF
-                for (k in start until end) {
-                    val p = canvas.regionPixels[k]
-                    val t = 100 + texture[p]
-                    pixels[p] = (0xFF shl 24) or
-                        (min(255, r * t / 100) shl 16) or
-                        (min(255, g * t / 100) shl 8) or
-                        min(255, b * t / 100)
-                }
-            }
-            canvas.regionColor[region] == highlight -> {
-                for (k in start until end) {
-                    val p = canvas.regionPixels[k]
-                    val base = paper[p]
-                    pixels[p] = if (base != PAPER) base else {
-                        val x = p % width
-                        val y = p / width
-                        if (((x + y) / HATCH) % 2 == 0) HATCH_DARK else HATCH_LIGHT
-                    }
-                }
-            }
-            else -> for (k in start until end) {
+        val s = spreading[region]
+        if (s != null) {
+            val r2 = s.radius * s.radius
+            for (k in start until end) {
                 val p = canvas.regionPixels[k]
-                pixels[p] = paper[p]
+                val dx = p % width - s.x
+                val dy = p / width - s.y
+                pixels[p] = if (dx * dx + dy * dy <= r2) painted(p, fill) else bare(p, region, s.before)
+            }
+            return
+        }
+        for (k in start until end) {
+            val p = canvas.regionPixels[k]
+            pixels[p] = bare(p, region, fill)
+        }
+    }
+
+    /** Le pixel [p] de [region] sous la couleur [fill] (toile vierge si [PaintingSession.EMPTY]). */
+    private fun bare(p: Int, region: Int, fill: Int): Int = when {
+        fill != PaintingSession.EMPTY -> painted(p, fill)
+        canvas.regionColor[region] == highlight -> {
+            val base = paper[p]
+            if (base != PAPER) base else {
+                val x = p % width
+                val y = p / width
+                if (((x + y) / HATCH) % 2 == 0) HATCH_DARK else HATCH_LIGHT
             }
         }
+        else -> paper[p]
+    }
+
+    /** La couleur [fill] posée au pixel [p] : matière de l'original, puis relief d'huile. */
+    private fun painted(p: Int, fill: Int): Int {
+        val t = 100 + texture[p]
+        val c = (0xFF shl 24) or
+            (min(255, ((fill shr 16) and 0xFF) * t / 100) shl 16) or
+            (min(255, ((fill shr 8) and 0xFF) * t / 100) shl 8) or
+            min(255, (fill and 0xFF) * t / 100)
+        return relief?.apply(p, c) ?: c
     }
 
     /** Papier légèrement chaud, contours d'un pixel en gris graphite. */

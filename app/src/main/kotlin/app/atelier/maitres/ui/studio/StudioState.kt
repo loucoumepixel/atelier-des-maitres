@@ -58,7 +58,7 @@ class StudioState(
 ) {
     val canvas = loaded.canvas
     val session = PaintingSession(canvas, loaded.savedFills)
-    val renderer = CanvasRenderer(canvas, session, loaded.original)
+    val renderer = CanvasRenderer(canvas, session, loaded.original, loaded.relief)
     val camera = CanvasCamera(canvas.width, canvas.height)
 
     /** Incrémenté à chaque modification visible : le dessin le lit pour se rafraîchir. */
@@ -204,10 +204,12 @@ class StudioState(
     fun restart() = commit(session.paintAll(IntArray(canvas.regionCount) { it }, PaintingSession.EMPTY))
 
     private fun paint(region: Int, color: Int, point: Offset) {
+        val before = session.fills[region]
         val changed = session.paint(region, color)
         if (changed.isEmpty()) return
         rankedNow = false
         commit(changed)
+        if (color != PaintingSession.EMPTY) renderer.spread(region, point.x, point.y, before, System.nanoTime())
         score(region)
         lastStroke = Stroke(point, color, session.isFaithful(region), streakOfGood, System.nanoTime())
         advanceIfColorDone(region)
@@ -233,6 +235,13 @@ class StudioState(
             career.setHighWater(painting, difficulty, highWater)
         }
         if (streakOfGood % COMBO == 0 && !rankedNow) toast = GameToast.Combo(streakOfGood)
+    }
+
+    /** Fait avancer les couleurs qui s'étalent, à chaque image ; vrai s'il en reste. */
+    fun animate(now: Long): Boolean {
+        val going = renderer.tick(now)
+        version++
+        return going
     }
 
     private fun commit(changed: IntArray) {
