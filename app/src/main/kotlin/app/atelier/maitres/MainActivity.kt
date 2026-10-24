@@ -20,12 +20,16 @@ import androidx.compose.ui.Modifier
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
 import app.atelier.maitres.ui.intro.StudioIntro
+import app.atelier.maitres.ui.museum.MuseumScreen
 import app.atelier.maitres.ui.studio.StudioScreen
 import app.atelier.maitres.ui.theme.AtelierTheme
 import app.atelier.maitres.ui.welcome.WelcomeScreen
 
 /** Écran d'accueil, montré à chaque ouverture de l'application. */
 private const val WELCOME = "accueil"
+
+/** Mon musée, la galerie des toiles terminées. */
+private const val MUSEUM = "musee"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +61,8 @@ class MainActivity : ComponentActivity() {
                         val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
                         if (target == WELCOME) {
                             WelcomeScreen(career = career, onEnter = { open = null })
+                        } else if (target == MUSEUM) {
+                            MuseumScreen(repository = repository, career = career, onBack = { open = null })
                         } else if (painting != null && difficulty != null) {
                             StudioScreen(
                                 painting = painting,
@@ -70,6 +76,7 @@ class MainActivity : ComponentActivity() {
                                 repository = repository,
                                 career = career,
                                 onOpen = { p, d -> open = "${p.id}|${d.name}" },
+                                onMuseum = { open = MUSEUM },
                             )
                         }
                     }

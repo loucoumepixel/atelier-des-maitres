@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import app.atelier.maitres.core.PaintingSession
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Exhibition
+import app.atelier.maitres.data.Exhibitions
 import app.atelier.maitres.data.LoadedCanvas
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
@@ -58,7 +60,18 @@ class StudioState(
 ) {
     val canvas = loaded.canvas
     val session = PaintingSession(canvas, loaded.savedFills)
-    val renderer = CanvasRenderer(canvas, session, loaded.original)
+    val renderer = CanvasRenderer(canvas, session, loaded.original, loaded.relief, career.matter.percent)
+
+    /** L'épaisseur de la peinture, choisie dans le menu de l'atelier. */
+    var matter by mutableStateOf(career.matter)
+        private set
+
+    fun changeMatter(value: app.atelier.maitres.data.Matter) {
+        matter = value
+        career.matter = value
+        renderer.reliefPercent = value.percent
+        version++
+    }
     val camera = CanvasCamera(canvas.width, canvas.height)
 
     /** Incrémenté à chaque modification visible : le dessin le lit pour se rafraîchir. */
@@ -113,6 +126,10 @@ class StudioState(
 
     /** Vrai si la toile vient d'être finie à ce niveau pour la première fois. */
     var firstWin by mutableStateOf(false)
+        private set
+
+    /** L'exposition du mois, si cette toile vient de la compléter. */
+    var exhibitionWon by mutableStateOf<Exhibition?>(null)
         private set
 
     var toast by mutableStateOf<GameToast?>(null)
@@ -204,10 +221,12 @@ class StudioState(
     fun restart() = commit(session.paintAll(IntArray(canvas.regionCount) { it }, PaintingSession.EMPTY))
 
     private fun paint(region: Int, color: Int, point: Offset) {
+        val before = session.fills[region]
         val changed = session.paint(region, color)
         if (changed.isEmpty()) return
         rankedNow = false
         commit(changed)
+        if (color != PaintingSession.EMPTY) renderer.spread(region, point.x, point.y, before, System.nanoTime())
         score(region)
         lastStroke = Stroke(point, color, session.isFaithful(region), streakOfGood, System.nanoTime())
         advanceIfColorDone(region)
@@ -215,6 +234,8 @@ class StudioState(
             celebrated = true
             firstWin = career.markWon(painting, difficulty)
             if (firstWin) gain(difficulty.canvasBonus * mult)
+            exhibitionWon = career.recordFinish(painting)
+            if (exhibitionWon != null) gain(Exhibitions.BONUS)
             showCompletion = true
         }
     }
@@ -233,6 +254,13 @@ class StudioState(
             career.setHighWater(painting, difficulty, highWater)
         }
         if (streakOfGood % COMBO == 0 && !rankedNow) toast = GameToast.Combo(streakOfGood)
+    }
+
+    /** Fait avancer les couleurs qui s'étalent, à chaque image ; vrai s'il en reste. */
+    fun animate(now: Long): Boolean {
+        val going = renderer.tick(now)
+        version++
+        return going
     }
 
     private fun commit(changed: IntArray) {

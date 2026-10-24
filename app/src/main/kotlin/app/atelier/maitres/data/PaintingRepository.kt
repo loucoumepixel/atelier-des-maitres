@@ -9,12 +9,14 @@ import android.util.LruCache
 import androidx.core.content.FileProvider
 import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
+import app.atelier.maitres.core.OilRelief
 import app.atelier.maitres.core.PaintByNumber
 import app.atelier.maitres.core.PbnCodec
 import app.atelier.maitres.core.Segmenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -43,6 +45,8 @@ class LoadedCanvas(
     val canvas: PaintByNumber,
     val original: Bitmap,
     val savedFills: IntArray?,
+    /** La matière de peinture à l'huile, ou null si elle n'a pas pu être préparée. */
+    val relief: OilRelief?,
 )
 
 /**
@@ -55,6 +59,7 @@ class PaintingRepository(private val context: Context) {
     private val canvasDir = File(context.filesDir, "canvas").apply { mkdirs() }
     private val progressDir = File(context.filesDir, "progress").apply { mkdirs() }
     private val importDir = File(context.filesDir, "imports").apply { mkdirs() }
+    private val reliefDir = File(context.cacheDir, "relief").apply { mkdirs() }
     private val importIndex = AtomicFile(File(importDir, "index.json"))
     private val prefs = context.getSharedPreferences("atelier", Context.MODE_PRIVATE)
 
@@ -110,6 +115,8 @@ class PaintingRepository(private val context: Context) {
     suspend fun load(painting: Painting, difficulty: Difficulty, onProgress: (Float) -> Unit): LoadedCanvas =
         withContext(Dispatchers.Default) {
             val original = decode(painting, WORKING_SIZE)
+            // La matière d'huile se prépare en même temps que le découpage (une fois par toile).
+            val relief = async { relief(painting, original) }
             val cache = canvasFile(painting, difficulty)
             val cached = runCatching { cache.inputStream().use(PbnCodec::readCanvas) }
                 .getOrNull()
@@ -125,8 +132,43 @@ class PaintingRepository(private val context: Context) {
             val fills = runCatching { progressFile(painting, difficulty).readFully().inputStream().use(PbnCodec::readProgress) }
                 .getOrNull()
                 ?.takeIf { it.size == canvas.regionCount }
-            LoadedCanvas(painting, difficulty, canvas, original, fills)
+                ?.let { if (cached == null) migrateColours(painting, difficulty, canvas, it) else it }
+            LoadedCanvas(painting, difficulty, canvas, original, fills, relief.await())
         }
+
+    /** Relief de peinture à l'huile de la toile, relu du cache ou calculé la première fois. */
+    private fun relief(painting: Painting, original: Bitmap): OilRelief? = runCatching {
+        val file = File(reliefDir, "${painting.id}_v$RELIEF_FORMAT.oil")
+        runCatching { file.inputStream().use(OilRelief::read) }.getOrNull()
+            ?.takeIf { it.width == original.width && it.height == original.height }
+            ?: run {
+                val pixels = IntArray(original.width * original.height)
+                original.getPixels(pixels, 0, original.width, 0, 0, original.width, original.height)
+                OilRelief.compute(pixels, original.width, original.height)
+                    .also { result -> AtomicFile(file).write { result.write(it) } }
+            }
+    }.getOrNull()
+
+    /**
+     * Après une mise à jour qui ravive les couleurs, les zones restent les mêmes mais la palette
+     * change : les touches déjà posées prennent la nouvelle teinte de leur couleur, pour que la
+     * progression reste fidèle. L'ancien découpage est ensuite effacé.
+     */
+    private fun migrateColours(painting: Painting, difficulty: Difficulty, canvas: PaintByNumber, fills: IntArray): IntArray {
+        var result = fills
+        for (format in 1 until CANVAS_FORMAT) {
+            val file = File(canvasDir, "${painting.id}_${difficulty.name}_v$format.pbn")
+            if (!file.exists()) continue
+            val old = runCatching { file.inputStream().use(PbnCodec::readCanvas) }.getOrNull()
+            if (old != null && old.palette.size == canvas.palette.size && old.regionColor.contentEquals(canvas.regionColor)) {
+                val map = HashMap<Int, Int>()
+                old.palette.forEachIndexed { i, c -> map[c] = canvas.palette[i] }
+                result = IntArray(fills.size) { r -> map[fills[r]] ?: fills[r] }
+            }
+            file.delete()
+        }
+        return result
+    }
 
     // ------------------------------------------------------------------ progression
 
@@ -207,6 +249,7 @@ class PaintingRepository(private val context: Context) {
             resetProgress(painting, d)
         }
         prefs.edit().remove(lastKey(painting)).apply()
+        reliefDir.listFiles { f -> f.name.startsWith("${painting.id}_") }?.forEach { it.delete() }
         thumbnails.remove(painting.id)
         _paintings.value = _paintings.value.filterNot { it.id == painting.id }
         writeImports()
@@ -276,7 +319,13 @@ class PaintingRepository(private val context: Context) {
         /** Numéro final d'un titre d'import, quelle que soit la langue (« Ma toile n° 3 », « My canvas no. 3 »). */
         private val IMPORT_NUMBER = Regex("(\\d+)$")
 
-        /** À incrémenter si l'algorithme de découpage change, pour invalider le cache. */
-        private const val CANVAS_FORMAT = 1
+        /**
+         * À incrémenter si l'algorithme de découpage change, pour invalider le cache.
+         * 2 : couleurs de palette ravivées (mêmes zones qu'en 1).
+         */
+        private const val CANVAS_FORMAT = 2
+
+        /** À incrémenter si le calcul de la matière d'huile change. */
+        private const val RELIEF_FORMAT = 1
     }
 }

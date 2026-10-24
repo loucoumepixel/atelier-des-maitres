@@ -16,7 +16,7 @@ class SegmenterTest {
 
     @Test
     fun `deux aplats donnent deux zones de deux couleurs`() {
-        val pbn = Segmenter(SegmentationParams(colorCount = 4, minRegionArea = 50))
+        val pbn = Segmenter(SegmentationParams(colorCount = 4, minRegionArea = 50, vividness = 1f, contrast = 1f))
             .segment(image(80, 40) { x, _ -> if (x < 40) red else blue }, 80, 40)
 
         assertEquals(2, pbn.regionCount)
@@ -24,6 +24,21 @@ class SegmenterTest {
         assertTrue(pbn.regionAt(5, 5) != pbn.regionAt(75, 5))
         assertTrue(ColorSpace.deltaE(pbn.referenceColor(pbn.regionAt(5, 5)), red) < 3f)
         assertTrue(ColorSpace.deltaE(pbn.referenceColor(pbn.regionAt(75, 5)), blue) < 3f)
+    }
+
+    @Test
+    fun `la palette ravive les couleurs sans changer leur teinte`() {
+        // Un rouge brique moucheté de deux teintes voisines : sa moyenne est plus terne que ses touches.
+        val pixels = image(60, 60) { x, y -> if ((x + y) % 2 == 0) 0xFFB5482E.toInt() else 0xFFA83A4A.toInt() }
+        val faithful = Segmenter(SegmentationParams(colorCount = 2, minRegionArea = 40, vividness = 1f, contrast = 1f)).segment(pixels, 60, 60)
+        val vivid = Segmenter(SegmentationParams(colorCount = 2, minRegionArea = 40)).segment(pixels, 60, 60)
+
+        val a = FloatArray(3).also { ColorSpace.argbToLab(faithful.palette[0], it) }
+        val b = FloatArray(3).also { ColorSpace.argbToLab(vivid.palette[0], it) }
+        val chroma = { lab: FloatArray -> kotlin.math.hypot(lab[1], lab[2]) }
+        val hue = { lab: FloatArray -> kotlin.math.atan2(lab[2], lab[1]) }
+        assertTrue(chroma(b) > chroma(a) * 1.1f, "plus saturée : ${chroma(a)} -> ${chroma(b)}")
+        assertTrue(kotlin.math.abs(hue(b) - hue(a)) < 0.05f, "même teinte")
     }
 
     @Test

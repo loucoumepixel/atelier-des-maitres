@@ -44,6 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -141,16 +144,18 @@ fun WelcomeScreen(career: Career, onEnter: () -> Unit) {
             .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        AppTitle(Modifier.padding(top = 22.dp).appear(shown, 0))
+
         // Le polaroïd qui se peint tout seul, avec son autocollant de rang.
         Box(
             Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 34.dp, vertical = 18.dp)
+                .padding(start = 34.dp, end = 34.dp, top = 28.dp, bottom = 18.dp)
                 .clearAndSetSemantics {},
             contentAlignment = Alignment.Center,
         ) {
-            Box(Modifier.appear(shown, 0)) {
+            Box(Modifier.appear(shown, 1)) {
                 Column(
                     Modifier
                         .rotate(-3f)
@@ -234,10 +239,10 @@ fun WelcomeScreen(career: Career, onEnter: () -> Unit) {
                 emphasized(R.string.welcome_title, R.string.welcome_title_em),
                 style = PlayTitle.copy(fontSize = 34.sp, lineHeight = 36.sp),
                 color = colors.ink,
-                modifier = Modifier.appear(shown, 1),
+                modifier = Modifier.appear(shown, 2),
             )
             Spacer(Modifier.height(10.dp))
-            Row(Modifier.appear(shown, 2), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.appear(shown, 3), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     if (returning) stringResource(R.string.welcome_back, rankNames()[career.rank])
                     else stringResource(R.string.welcome_new),
@@ -255,12 +260,36 @@ fun WelcomeScreen(career: Career, onEnter: () -> Unit) {
                 label = stringResource(if (returning) R.string.welcome_cta_back else R.string.welcome_cta),
                 onClick = onEnter,
                 animate = animate,
-                modifier = Modifier.appear(shown, 3),
+                modifier = Modifier.appear(shown, 4),
                 color = Play.Coral,
                 labelStyle = TextStyle(fontFamily = Fraunces, fontWeight = FontWeight.ExtraBold, fontSize = 21.sp),
                 labelColor = Color.White,
             )
         }
+    }
+}
+
+/**
+ * Le nom du jeu, en haut de l'accueil : « Atelier » et « Maîtres » en grandes capitales
+ * d'imprimerie, le « des » écrit à la main entre les deux, comme sur une enseigne peinte.
+ */
+@Composable
+private fun AppTitle(modifier: Modifier = Modifier) {
+    val colors = LocalPlayColors.current
+    val name = stringResource(R.string.app_name)
+    val big = TextStyle(fontFamily = Fraunces, fontWeight = FontWeight.Black, fontSize = 32.sp, lineHeight = 34.sp, letterSpacing = 0.2.sp)
+    Row(
+        modifier.semantics(mergeDescendants = true) { heading(); contentDescription = name },
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        Text("Atelier", style = big, color = colors.ink)
+        Text(
+            " des ",
+            style = HandStyle.copy(fontSize = 27.sp, lineHeight = 30.sp),
+            color = colors.kraft,
+            modifier = Modifier.padding(bottom = 1.dp),
+        )
+        Text("Maîtres", style = big, color = Play.Coral)
     }
 }
 
@@ -333,7 +362,7 @@ private class WelcomeDemo(
             val mean = max(1f, sum / max(1, end - start))
             for (k in start until end) {
                 val p = canvas.regionPixels[k]
-                texture[p] = (1f + TEXTURE_STRENGTH * (luminance(original[p]) / mean - 1f)).coerceIn(0.7f, 1.3f)
+                texture[p] = (1f + TEXTURE_STRENGTH * (luminance(original[p]) / mean - 1f)).coerceIn(0.6f, 1.4f)
             }
         }
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
@@ -379,7 +408,7 @@ private class WelcomeDemo(
         private const val SIZE = 520
         private const val PAPER = 0xFFFBF8F2.toInt()
         private const val OUTLINE = 0xFFB4AC9F.toInt()
-        private const val TEXTURE_STRENGTH = 0.55f
+        private const val TEXTURE_STRENGTH = 0.85f
 
         private fun luminance(c: Int): Float =
             0.299f * ((c shr 16) and 0xFF) + 0.587f * ((c shr 8) and 0xFF) + 0.114f * (c and 0xFF)

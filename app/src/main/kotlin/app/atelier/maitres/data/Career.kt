@@ -41,6 +41,19 @@ class Career(context: Context, private val repository: PaintingRepository) {
         get() = prefs.getBoolean(MUSIC, true)
         set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
 
+    /** Épaisseur de la peinture à l'huile choisie par le joueur. */
+    var matter: Matter
+        get() = Matter.entries.firstOrNull { it.name == prefs.getString(MATTER, null) } ?: Matter.LEGERE
+        set(value) = prefs.edit().putString(MATTER, value.name).apply()
+
+    /**
+     * Combien de fois encore montrer la bulle qui explique le petit œil. Elle se tait dès que
+     * le joueur s'en est servi une fois.
+     */
+    var peekTipsLeft: Int
+        get() = prefs.getInt(PEEK_TIPS, 3)
+        set(value) = prefs.edit().putInt(PEEK_TIPS, value.coerceAtLeast(0)).apply()
+
     /** Ajoute [points] et renvoie le nouveau rang s'il vient d'être atteint, sinon -1. */
     fun earn(points: Int): Int {
         val before = rank
@@ -57,8 +70,49 @@ class Career(context: Context, private val repository: PaintingRepository) {
         return rank.takeIf { it > before } ?: -1
     }
 
+    /** Les toiles de l'exposition du mois sont prêtées à tous, même celles d'un rang à venir. */
     fun isUnlocked(painting: Painting): Boolean =
-        painting.isImported || rank >= painting.unlockRank || repository.stats(painting).any { it.faithful > 0 }
+        painting.isImported || rank >= painting.unlockRank || painting.id in Exhibitions.current().paintings ||
+            repository.stats(painting).any { it.faithful > 0 }
+
+    // ------------------------------------------------------------ expositions et cadres
+
+    /** Toiles de l'exposition du mois déjà terminées (à un niveau quelconque) ce mois-ci. */
+    fun exhibitionDone(): Set<String> =
+        prefs.getStringSet(EXPO_DONE + Exhibitions.monthKey(), emptySet())!!.toSet()
+
+    /**
+     * Note qu'une toile vient d'être terminée. Renvoie l'exposition du mois si c'est elle qui
+     * la complète, la première fois : son cadre est alors acquis (les touches restent à donner).
+     */
+    fun recordFinish(painting: Painting): Exhibition? {
+        val expo = Exhibitions.current()
+        if (painting.id !in expo.paintings) return null
+        val done = exhibitionDone() + painting.id
+        prefs.edit().putStringSet(EXPO_DONE + Exhibitions.monthKey(), done).apply()
+        if (!done.containsAll(expo.paintings) || expo.frame in framesWon()) return null
+        prefs.edit().putStringSet(FRAMES_WON, framesWon().map { it.name }.toSet() + expo.frame.name).apply()
+        return expo
+    }
+
+    private fun framesWon(): Set<Frame> =
+        prefs.getStringSet(FRAMES_WON, emptySet())!!.mapNotNull { n -> Frame.entries.firstOrNull { it.name == n } }.toSet()
+
+    /** Toiles du catalogue terminées au moins à un niveau. */
+    fun finishedCount(paintings: List<Painting>): Int = paintings.count { p -> stars(p).any { it } }
+
+    /** Les cadres que le joueur peut choisir, dans l'ordre de l'étagère. */
+    fun frames(paintings: List<Painting>): List<Frame> {
+        val won = framesWon()
+        val baroque = finishedCount(paintings) >= Frame.BAROQUE_AT
+        return Frame.entries.filter { it in Frame.FREE || (it == Frame.BAROQUE && baroque) || it in won }
+    }
+
+    /** Le cadre choisi pour une toile du musée, chêne par défaut. */
+    fun frameOf(painting: Painting): Frame =
+        Frame.entries.firstOrNull { it.name == prefs.getString(FRAME + painting.id, null) } ?: Frame.CHENE
+
+    fun setFrame(painting: Painting, frame: Frame) = prefs.edit().putString(FRAME + painting.id, frame.name).apply()
 
     /** Une étoile par niveau terminé, dans l'ordre Facile, Normal, Expert. */
     fun stars(painting: Painting): List<Boolean> {
@@ -140,7 +194,19 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val LAST_DAY = "career_last_day"
         private const val SOUND = "sound"
         private const val MUSIC = "music"
+        private const val PEEK_TIPS = "peek_tips_left"
+        private const val MATTER = "matter"
+        private const val EXPO_DONE = "expo_done_"
+        private const val FRAMES_WON = "frames_won"
+        private const val FRAME = "frame_"
     }
+}
+
+/** L'épaisseur de la peinture : plate, légère ou épaisse (force du relief d'huile, en %). */
+enum class Matter(val percent: Int) {
+    PLATE(0),
+    LEGERE(35),
+    EPAISSE(65),
 }
 
 /** Touches par zone bien peinte, selon le niveau. */

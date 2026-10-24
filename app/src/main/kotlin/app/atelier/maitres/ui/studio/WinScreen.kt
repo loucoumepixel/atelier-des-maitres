@@ -1,6 +1,19 @@
 package app.atelier.maitres.ui.studio
 
 import android.graphics.Bitmap
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Headphones
+import androidx.compose.material.icons.outlined.StopCircle
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -60,6 +73,7 @@ import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.PaintingSession
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Exhibitions
 import app.atelier.maitres.ui.play.Stars
 import app.atelier.maitres.ui.play.XpBar
 import app.atelier.maitres.ui.play.flatShadow
@@ -92,6 +106,18 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
     val unlocked = remember { state.unlockedPaintings() }
     val enter = remember { Animatable(0f) }
     LaunchedEffect(Unit) { enter.animateTo(1f, tween(600)) }
+
+    // Le guide de musée prend la parole quand la fanfare se tait, si le son est mis.
+    val context = LocalContext.current
+    var speaking by remember { mutableStateOf(false) }
+    val guide = remember { MuseumGuide(context) { speaking = it } }
+    DisposableEffect(guide) { onDispose { guide.release() } }
+    LaunchedEffect(Unit) {
+        if (career.soundOn && guide.hasStory(painting)) {
+            delay(1_800)
+            guide.play(painting)
+        }
+    }
 
     Box(
         Modifier
@@ -163,6 +189,14 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
                 Spacer(Modifier.height(10.dp))
                 Pill(stringResource(R.string.unlocked, p.title), Play.Coral, Color.White)
             }
+            state.exhibitionWon?.let { expo ->
+                Spacer(Modifier.height(10.dp))
+                Pill(stringResource(R.string.expo_won, stringResource(expo.frame.labelRes), Exhibitions.BONUS), Play.Sun, Play.Ink)
+            }
+            if (guide.hasStory(painting)) {
+                Spacer(Modifier.height(16.dp))
+                GuideButton(speaking) { if (speaking) guide.stop() else guide.play(painting) }
+            }
             if (painting.note.isNotBlank()) {
                 Spacer(Modifier.height(16.dp))
                 Text(
@@ -182,6 +216,34 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
                 Text(stringResource(R.string.admire), color = Play.Cream, fontSize = 16.sp)
             }
         }
+    }
+}
+
+/** Le bouton du guide de musée : un casque, et l'onde qui bat pendant qu'il parle. */
+@Composable
+private fun GuideButton(speaking: Boolean, onClick: () -> Unit) {
+    val beat = rememberInfiniteTransition(label = "guide")
+    val k by beat.animateFloat(0f, 1f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "guideBeat")
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(Color.White.copy(alpha = if (speaking) 0.22f + 0.08f * k else 0.14f))
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 18.dp, vertical = 10.dp),
+    ) {
+        Icon(
+            if (speaking) Icons.Outlined.StopCircle else Icons.Outlined.Headphones,
+            contentDescription = null,
+            tint = Play.Sun,
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            stringResource(if (speaking) R.string.guide_stop else R.string.guide_listen),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+        )
     }
 }
 

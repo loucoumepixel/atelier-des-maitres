@@ -11,6 +11,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -91,6 +93,8 @@ fun PaintCanvas(state: StudioState, peekOriginal: Boolean, look: AtelierLook, mo
         if (stroke != null) {
             // Un « tic » léger sous le doigt à chaque touche de pinceau.
             view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+            // La couleur s'étale depuis le doigt, image après image.
+            launch { while (withFrameNanos { state.animate(System.nanoTime()) }) Unit }
             splash.snapTo(0f)
             splash.animateTo(1f, tween(420, easing = FastOutSlowInEasing))
         }
