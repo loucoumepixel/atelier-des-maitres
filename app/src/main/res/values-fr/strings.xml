@@ -180,4 +180,5 @@
         <item quantity="many">%1$d jours</item>
         <item quantity="other">%1$d jours</item>
     </plurals>
+    <string name="peek_tip">Maintenez l\'œil pour voir le vrai tableau du maître. Relâchez : votre toile revient.</string>
 </resources>

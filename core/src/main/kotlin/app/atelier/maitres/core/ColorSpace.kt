@@ -52,6 +52,19 @@ object ColorSpace {
         return (0xFF shl 24) or (encode(rl) shl 16) or (encode(gl) shl 8) or encode(bl)
     }
 
+    /** Vrai si la couleur Lab s'affiche telle quelle en sRGB (sans être écrêtée). */
+    fun inGamut(l: Float, a: Float, b: Float): Boolean {
+        val fy = (l + 16f) / 116f
+        val x = fInv(fy + a / 500f) * XN
+        val y = fInv(fy) * YN
+        val z = fInv(fy - b / 200f) * ZN
+        val e = 0.002f
+        val rl = 3.2404542f * x - 1.5371385f * y - 0.4985314f * z
+        val gl = -0.9692660f * x + 1.8760108f * y + 0.0415560f * z
+        val bl = 0.0556434f * x - 0.2040259f * y + 1.0572252f * z
+        return rl in -e..1f + e && gl in -e..1f + e && bl in -e..1f + e
+    }
+
     /** Distance perceptuelle ΔE76 entre deux couleurs ARGB. */
     fun deltaE(argb1: Int, argb2: Int): Float {
         val p = FloatArray(6)

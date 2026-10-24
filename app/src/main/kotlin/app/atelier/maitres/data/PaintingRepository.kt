@@ -125,8 +125,30 @@ class PaintingRepository(private val context: Context) {
             val fills = runCatching { progressFile(painting, difficulty).readFully().inputStream().use(PbnCodec::readProgress) }
                 .getOrNull()
                 ?.takeIf { it.size == canvas.regionCount }
+                ?.let { if (cached == null) migrateColours(painting, difficulty, canvas, it) else it }
             LoadedCanvas(painting, difficulty, canvas, original, fills)
         }
+
+    /**
+     * Après une mise à jour qui ravive les couleurs, les zones restent les mêmes mais la palette
+     * change : les touches déjà posées prennent la nouvelle teinte de leur couleur, pour que la
+     * progression reste fidèle. L'ancien découpage est ensuite effacé.
+     */
+    private fun migrateColours(painting: Painting, difficulty: Difficulty, canvas: PaintByNumber, fills: IntArray): IntArray {
+        var result = fills
+        for (format in 1 until CANVAS_FORMAT) {
+            val file = File(canvasDir, "${painting.id}_${difficulty.name}_v$format.pbn")
+            if (!file.exists()) continue
+            val old = runCatching { file.inputStream().use(PbnCodec::readCanvas) }.getOrNull()
+            if (old != null && old.palette.size == canvas.palette.size && old.regionColor.contentEquals(canvas.regionColor)) {
+                val map = HashMap<Int, Int>()
+                old.palette.forEachIndexed { i, c -> map[c] = canvas.palette[i] }
+                result = IntArray(fills.size) { r -> map[fills[r]] ?: fills[r] }
+            }
+            file.delete()
+        }
+        return result
+    }
 
     // ------------------------------------------------------------------ progression
 
@@ -276,7 +298,10 @@ class PaintingRepository(private val context: Context) {
         /** Numéro final d'un titre d'import, quelle que soit la langue (« Ma toile n° 3 », « My canvas no. 3 »). */
         private val IMPORT_NUMBER = Regex("(\\d+)$")
 
-        /** À incrémenter si l'algorithme de découpage change, pour invalider le cache. */
-        private const val CANVAS_FORMAT = 1
+        /**
+         * À incrémenter si l'algorithme de découpage change, pour invalider le cache.
+         * 2 : couleurs de palette ravivées (mêmes zones qu'en 1).
+         */
+        private const val CANVAS_FORMAT = 2
     }
 }

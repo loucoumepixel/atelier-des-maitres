@@ -41,6 +41,14 @@ class Career(context: Context, private val repository: PaintingRepository) {
         get() = prefs.getBoolean(MUSIC, true)
         set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
 
+    /**
+     * Combien de fois encore montrer la bulle qui explique le petit œil. Elle se tait dès que
+     * le joueur s'en est servi une fois.
+     */
+    var peekTipsLeft: Int
+        get() = prefs.getInt(PEEK_TIPS, 3)
+        set(value) = prefs.edit().putInt(PEEK_TIPS, value.coerceAtLeast(0)).apply()
+
     /** Ajoute [points] et renvoie le nouveau rang s'il vient d'être atteint, sinon -1. */
     fun earn(points: Int): Int {
         val before = rank
@@ -140,6 +148,7 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val LAST_DAY = "career_last_day"
         private const val SOUND = "sound"
         private const val MUSIC = "music"
+        private const val PEEK_TIPS = "peek_tips_left"
     }
 }
 

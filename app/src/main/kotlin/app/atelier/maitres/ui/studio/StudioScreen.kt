@@ -7,6 +7,7 @@ import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -62,6 +63,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -208,6 +210,23 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
         showHint = false
     }
 
+    // La bulle du petit œil, les premières fois : après le bandeau d'aide, puis elle s'efface.
+    var eyeTip by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (career.peekTipsLeft <= 0) return@LaunchedEffect
+        delay(if (showHint) 5_600 else 1_200)
+        career.peekTipsLeft--
+        eyeTip = true
+        delay(8_000)
+        eyeTip = false
+    }
+    LaunchedEffect(peek) {
+        if (peek) {
+            eyeTip = false
+            career.peekTipsLeft = 0
+        }
+    }
+
     Box(Modifier.fillMaxSize()) {
         // Tout l'atelier est posé sur le mur : barre du haut, toile et palette.
         Column(
@@ -289,6 +308,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(48.dp)
+                        .eyePulse(eyeTip)
                         .padding(2.dp)
                         .wallButtonShadow(look)
                         .clip(CircleShape)
@@ -366,6 +386,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                 PaintCanvas(state, peekOriginal = peek, look = look, modifier = Modifier.fillMaxSize())
 
                 HintBanner(visible = showHint, look = look, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
+                EyeTip(visible = eyeTip, look = look, onDismiss = { eyeTip = false }, modifier = Modifier.align(Alignment.TopEnd).padding(end = 8.dp, top = 2.dp))
                 ToastPill(state.toast, Modifier.align(Alignment.TopCenter).padding(top = 14.dp))
 
                 // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
@@ -501,6 +522,59 @@ private fun HintBanner(visible: Boolean, look: AtelierLook, modifier: Modifier =
                 .padding(horizontal = 16.dp, vertical = 10.dp)
                 .widthIn(max = 320.dp),
         )
+    }
+}
+
+/**
+ * Bulle accrochée sous le petit œil : elle explique qu'on le maintient pour voir le vrai tableau.
+ * Sa pointe vise le bouton (deuxième en partant de la droite de la barre du haut).
+ */
+@Composable
+private fun EyeTip(visible: Boolean, look: AtelierLook, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + slideInVertically { -it / 3 },
+        exit = fadeOut(),
+        modifier = modifier,
+    ) {
+        val paper = if (look.evening) Color(0xF21E140E) else Color(0xF7FFFCF5)
+        Column(horizontalAlignment = Alignment.End, modifier = Modifier.widthIn(max = 280.dp)) {
+            // La pointe, sous le centre de l'œil (barre : 10 dp de marge, menu de 48 dp, œil de 48 dp).
+            androidx.compose.foundation.Canvas(Modifier.padding(end = 66.dp).size(16.dp, 9.dp)) {
+                val path = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(size.width / 2f, 0f); lineTo(size.width, size.height); lineTo(0f, size.height); close()
+                }
+                drawPath(path, paper)
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(paper)
+                    .pointerInput(Unit) { detectTapGestures { onDismiss() } }
+                    .padding(start = 12.dp, end = 14.dp, top = 10.dp, bottom = 10.dp)
+                    .semantics { liveRegion = LiveRegionMode.Polite },
+            ) {
+                Icon(Icons.Outlined.Visibility, contentDescription = null, tint = Play.Coral, modifier = Modifier.size(22.dp))
+                Spacer(Modifier.width(10.dp))
+                Text(stringResource(R.string.peek_tip), style = MaterialTheme.typography.bodyMedium, color = look.ink)
+            }
+        }
+    }
+}
+
+/** Un anneau corail qui bat doucement autour du petit œil tant que sa bulle est affichée. */
+@Composable
+private fun Modifier.eyePulse(active: Boolean): Modifier {
+    if (!active) return this
+    val beat = androidx.compose.animation.core.rememberInfiniteTransition(label = "eye")
+    val k by beat.animateFloat(
+        0f, 1f,
+        androidx.compose.animation.core.infiniteRepeatable(androidx.compose.animation.core.tween(1_300)),
+        label = "eyePulse",
+    )
+    return drawBehind {
+        drawCircle(Play.Coral, radius = size.minDimension / 2f * (0.85f + 0.35f * k), alpha = 0.55f * (1f - k))
     }
 }
 

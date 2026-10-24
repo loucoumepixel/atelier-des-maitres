@@ -178,4 +178,5 @@
         <item quantity="one">%1$d day</item>
         <item quantity="other">%1$d days</item>
     </plurals>
+    <string name="peek_tip">Hold the eye to see the master\'s real painting. Let go and your canvas comes back.</string>
 </resources>

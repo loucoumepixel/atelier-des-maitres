@@ -32,6 +32,14 @@ data class SegmentationParams(
     val modeFilterPasses: Int = 2,
     /** Graine du k-means : un même tableau donne toujours le même découpage. */
     val seed: Long = 7L,
+    /**
+     * Éclat des couleurs de la palette. La moyenne d'une zone mélange des touches de teintes
+     * voisines et ternit la couleur ; on lui rend la saturation moyenne de ses pixels,
+     * multipliée par ce facteur (1 = fidèle à cette moyenne, 0 = gris).
+     */
+    val vividness: Float = 1.25f,
+    /** Contraste des clartés de la palette autour du gris moyen (1 = inchangé). */
+    val contrast: Float = 1.08f,
 )
 
 /**
@@ -73,7 +81,7 @@ class Segmenter(private val params: SegmentationParams) {
         val merged = mergeSmallRegions(components, quantized, width, height, centers, k, onProgress)
         onProgress(0.9f)
 
-        return finish(merged, width, height, centers, k).also { onProgress(1f) }
+        return finish(merged, width, height, vivid(lab, quantized, centers, k), k).also { onProgress(1f) }
     }
 
     // ---------------------------------------------------------------- 1. lissage
@@ -363,7 +371,42 @@ class Segmenter(private val params: SegmentationParams) {
         return Merged(labels, regionColor.toIntArray(), count)
     }
 
-    // ---------------------------------------------------------------- 6. finalisation
+    // ---------------------------------------------------------------- 6. éclat des couleurs
+
+    /**
+     * Couleurs de palette ravivées : même teinte que le centre du k-means, clartés un peu
+     * plus contrastées, et la saturation est la moyenne des saturations des pixels (et non celle de leur
+     * moyenne, toujours plus terne), multipliée par [SegmentationParams.vividness].
+     */
+    private fun vivid(lab: FloatArray, quantized: IntArray, centers: FloatArray, k: Int): FloatArray {
+        val chromaSum = DoubleArray(k)
+        val counts = IntArray(k)
+        for (i in quantized.indices) {
+            val c = quantized[i]
+            val a = lab[i * 3 + 1]
+            val b = lab[i * 3 + 2]
+            chromaSum[c] += sqrt(a * a + b * b).toDouble()
+            counts[c]++
+        }
+        val out = centers.copyOf()
+        for (c in 0 until k) {
+            out[c * 3] = (50f + (centers[c * 3] - 50f) * params.contrast).coerceIn(0f, 100f)
+            if (counts[c] == 0) continue
+            val a = centers[c * 3 + 1]
+            val b = centers[c * 3 + 2]
+            val chroma = sqrt(a * a + b * b)
+            if (chroma < 1e-3f) continue
+            val target = (chromaSum[c] / counts[c]).toFloat() * params.vividness
+            // On ne fait que raviver : jamais moins saturé que le centre, et dans le gamut sRGB.
+            var f = max(1f, target / chroma)
+            while (f > 1f && !ColorSpace.inGamut(out[c * 3], a * f, b * f)) f = max(1f, f - 0.02f)
+            out[c * 3 + 1] = a * f
+            out[c * 3 + 2] = b * f
+        }
+        return out
+    }
+
+    // ---------------------------------------------------------------- 7. finalisation
 
     private fun finish(merged: Merged, w: Int, h: Int, centers: FloatArray, k: Int): PaintByNumber {
         // Palette : couleurs réellement utilisées, triées (gris d'abord, puis par teinte).

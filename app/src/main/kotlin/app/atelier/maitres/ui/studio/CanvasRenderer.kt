@@ -29,7 +29,7 @@ class CanvasRenderer(
     private val paper = IntArray(width * height)
     private val pixels = IntArray(width * height)
 
-    /** Facteur de matière par pixel, en centièmes autour de 100 (de 70 à 130). */
+    /** Facteur de matière par pixel, en centièmes autour de 100 (de 60 à 140). */
     private val texture = ByteArray(width * height)
 
     /** Couleur de palette dont les zones à peindre sont hachurées, ou -1. */
@@ -154,7 +154,7 @@ class CanvasRenderer(
             for (k in start until end) {
                 val p = canvas.regionPixels[k]
                 val t = 1f + TEXTURE_STRENGTH * (luminance[p] / mean - 1f)
-                texture[p] = ((t.coerceIn(0.7f, 1.3f) - 1f) * 100f).toInt().toByte()
+                texture[p] = ((t.coerceIn(0.6f, 1.4f) - 1f) * 100f).toInt().toByte()
             }
         }
     }
@@ -165,6 +165,6 @@ class CanvasRenderer(
         const val HATCH_DARK = 0xFFDCD5C8.toInt()
         const val HATCH_LIGHT = 0xFFEDE8DF.toInt()
         const val HATCH = 5
-        const val TEXTURE_STRENGTH = 0.55f
+        const val TEXTURE_STRENGTH = 0.85f
     }
 }
