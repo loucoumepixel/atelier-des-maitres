@@ -211,4 +211,46 @@
     <string name="guide_joconde">Léonard de Vinci commence ce portrait vers 1503, à Florence. Il ne s\'en séparera jamais : il l\'emporte en France, où il passe ses dernières années, et le retouche sans cesse. Son secret s\'appelle le sfumato : des contours si doux qu\'ils semblent fondre dans l\'ombre, surtout au coin des lèvres. C\'est pour cela que son sourire paraît changer quand on la regarde. Volée en 1911, retrouvée deux ans plus tard, elle est aujourd\'hui au Louvre.</string>
     <string name="guide_listen">Écouter le guide</string>
     <string name="guide_stop">Arrêter le guide</string>
+
+    <!-- Expositions du mois -->
+    <string name="expo_of_month">l\'exposition du mois</string>
+    <string name="expo_progress">%1$d toile sur %2$d</string>
+    <string name="expo_complete">Exposition terminée, bravo !</string>
+    <plurals name="expo_days_left">
+        <item quantity="one">dernier jour</item>
+        <item quantity="other">encore %1$d jours</item>
+    </plurals>
+    <string name="expo_prize">À gagner</string>
+    <string name="expo_bonus">+%1$d touches</string>
+    <string name="expo_won">Exposition terminée : %1$s et %2$d touches gagnés !</string>
+    <string name="expo_vincent">Vincent, toute une vie</string>
+    <string name="expo_vincent_text">Quatre toiles de Van Gogh, d\'Arles à Auvers. Finissez-les toutes avant la fin du mois.</string>
+    <string name="expo_mer">La mer et ses colères</string>
+    <string name="expo_mer_text">Quatre toiles où l\'eau gronde, de Hokusai à Turner. Finissez-les toutes avant la fin du mois.</string>
+    <string name="expo_impressionnistes">Les impressionnistes</string>
+    <string name="expo_impressionnistes_text">La lumière qui tremble, peinte en plein air. Finissez les quatre toiles avant la fin du mois.</string>
+    <string name="expo_crepuscule">Du crépuscule à l\'aube</string>
+    <string name="expo_crepuscule_text">Soleils levants, nuits étoilées et ciels en feu. Finissez les quatre toiles avant la fin du mois.</string>
+    <string name="expo_visages">Visages célèbres</string>
+    <string name="expo_visages_text">Quatre regards que le monde entier connaît. Finissez-les tous avant la fin du mois.</string>
+    <string name="expo_paris">Paris en peinture</string>
+    <string name="expo_paris_text">Ponts, îles et barricades de la capitale. Finissez les trois toiles avant la fin du mois.</string>
+    <string name="expo_voyages">Voyages lointains</string>
+    <string name="expo_voyages_text">Du Japon au Maroc, jusqu\'à l\'Iowa. Finissez les quatre toiles avant la fin du mois.</string>
+    <string name="expo_natures">Natures en fête</string>
+    <string name="expo_natures_text">Fruits, fleurs, blés et nénuphars. Finissez les quatre toiles avant la fin du mois.</string>
+
+    <!-- Cadres du musée -->
+    <string name="frame_chene">Chêne</string>
+    <string name="frame_noyer">Noyer</string>
+    <string name="frame_dore">Doré</string>
+    <string name="frame_baroque">Baroque</string>
+    <string name="frame_tournesol">Cadre tournesol</string>
+    <string name="frame_ecume">Cadre d\'écume</string>
+    <string name="frame_nenuphar">Cadre nénuphar</string>
+    <string name="frame_nocturne">Cadre nocturne</string>
+    <string name="frame_velours">Cadre de velours</string>
+    <string name="frame_zinc">Cadre de zinc</string>
+    <string name="frame_laque">Cadre laqué</string>
+    <string name="frame_vigne">Cadre de vigne</string>
 </resources>

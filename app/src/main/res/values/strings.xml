@@ -209,4 +209,46 @@
     <string name="guide_joconde">Leonardo da Vinci begins this portrait around 1503, in Florence. He never parts with it: he takes it to France, where he spends his last years, and keeps retouching it. His secret is called sfumato: outlines so soft they seem to melt into shadow, especially at the corners of the mouth. That is why her smile seems to change as you look at her. Stolen in 1911 and found two years later, she now lives in the Louvre.</string>
     <string name="guide_listen">Listen to the guide</string>
     <string name="guide_stop">Stop the guide</string>
+
+    <!-- Monthly exhibitions -->
+    <string name="expo_of_month">this month\'s exhibition</string>
+    <string name="expo_progress">%1$d of %2$d canvases</string>
+    <string name="expo_complete">Exhibition complete, well done!</string>
+    <plurals name="expo_days_left">
+        <item quantity="one">last day</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
+    <string name="expo_prize">To win</string>
+    <string name="expo_bonus">+%1$d touches</string>
+    <string name="expo_won">Exhibition complete: %1$s and %2$d touches won!</string>
+    <string name="expo_vincent">Vincent, a whole life</string>
+    <string name="expo_vincent_text">Four Van Gogh canvases, from Arles to Auvers. Finish them all before the month ends.</string>
+    <string name="expo_mer">The sea in a rage</string>
+    <string name="expo_mer_text">Four canvases where the water roars, from Hokusai to Turner. Finish them all before the month ends.</string>
+    <string name="expo_impressionnistes">The Impressionists</string>
+    <string name="expo_impressionnistes_text">Trembling light, painted outdoors. Finish all four canvases before the month ends.</string>
+    <string name="expo_crepuscule">From dusk till dawn</string>
+    <string name="expo_crepuscule_text">Rising suns, starry nights and skies on fire. Finish all four canvases before the month ends.</string>
+    <string name="expo_visages">Famous faces</string>
+    <string name="expo_visages_text">Four gazes the whole world knows. Finish them all before the month ends.</string>
+    <string name="expo_paris">Paris in paint</string>
+    <string name="expo_paris_text">Bridges, islands and barricades of the capital. Finish all three canvases before the month ends.</string>
+    <string name="expo_voyages">Faraway journeys</string>
+    <string name="expo_voyages_text">From Japan to Morocco, all the way to Iowa. Finish all four canvases before the month ends.</string>
+    <string name="expo_natures">Nature in bloom</string>
+    <string name="expo_natures_text">Fruit, flowers, wheat and water lilies. Finish all four canvases before the month ends.</string>
+
+    <!-- Museum frames -->
+    <string name="frame_chene">Oak</string>
+    <string name="frame_noyer">Walnut</string>
+    <string name="frame_dore">Gilded</string>
+    <string name="frame_baroque">Baroque</string>
+    <string name="frame_tournesol">Sunflower frame</string>
+    <string name="frame_ecume">Sea-foam frame</string>
+    <string name="frame_nenuphar">Water-lily frame</string>
+    <string name="frame_nocturne">Nocturne frame</string>
+    <string name="frame_velours">Velvet frame</string>
+    <string name="frame_zinc">Zinc frame</string>
+    <string name="frame_laque">Lacquer frame</string>
+    <string name="frame_vigne">Vine frame</string>
 </resources>

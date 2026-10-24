@@ -73,6 +73,7 @@ import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.PaintingSession
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Exhibitions
 import app.atelier.maitres.ui.play.Stars
 import app.atelier.maitres.ui.play.XpBar
 import app.atelier.maitres.ui.play.flatShadow
@@ -187,6 +188,10 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
             unlocked.forEach { p ->
                 Spacer(Modifier.height(10.dp))
                 Pill(stringResource(R.string.unlocked, p.title), Play.Coral, Color.White)
+            }
+            state.exhibitionWon?.let { expo ->
+                Spacer(Modifier.height(10.dp))
+                Pill(stringResource(R.string.expo_won, stringResource(expo.frame.labelRes), Exhibitions.BONUS), Play.Sun, Play.Ink)
             }
             if (guide.hasStory(painting)) {
                 Spacer(Modifier.height(16.dp))

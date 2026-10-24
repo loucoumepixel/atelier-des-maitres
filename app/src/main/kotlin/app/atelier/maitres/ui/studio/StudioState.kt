@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import app.atelier.maitres.core.PaintingSession
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Exhibition
+import app.atelier.maitres.data.Exhibitions
 import app.atelier.maitres.data.LoadedCanvas
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
@@ -126,6 +128,10 @@ class StudioState(
     var firstWin by mutableStateOf(false)
         private set
 
+    /** L'exposition du mois, si cette toile vient de la compléter. */
+    var exhibitionWon by mutableStateOf<Exhibition?>(null)
+        private set
+
     var toast by mutableStateOf<GameToast?>(null)
         private set
 
@@ -228,6 +234,8 @@ class StudioState(
             celebrated = true
             firstWin = career.markWon(painting, difficulty)
             if (firstWin) gain(difficulty.canvasBonus * mult)
+            exhibitionWon = career.recordFinish(painting)
+            if (exhibitionWon != null) gain(Exhibitions.BONUS)
             showCompletion = true
         }
     }

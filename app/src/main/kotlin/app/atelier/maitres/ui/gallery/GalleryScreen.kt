@@ -77,6 +77,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -88,6 +89,8 @@ import androidx.compose.ui.unit.sp
 import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Exhibition
+import app.atelier.maitres.data.Exhibitions
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
 import app.atelier.maitres.data.PaintingStats
@@ -194,6 +197,17 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
                     style = PlayTitle.copy(fontSize = 27.sp, lineHeight = 29.sp),
                     color = colors.ink,
                     modifier = Modifier.padding(top = 4.dp).semantics { heading() },
+                )
+            }
+            item(key = "expo", span = StaggeredGridItemSpan.FullLine) {
+                val expo = remember(LocalDate.now().monthValue) { Exhibitions.current() }
+                val done = remember(statsVersion, expo) { career.exhibitionDone() }
+                ExhibitionCard(
+                    expo = expo,
+                    paintings = expo.paintings.mapNotNull { id -> paintings.firstOrNull { it.id == id } },
+                    done = done,
+                    repository = repository,
+                    onOpen = { open(it) },
                 )
             }
             daily?.let { painting ->
@@ -404,6 +418,129 @@ private fun DailyCard(painting: Painting, repository: PaintingRepository, onClic
         }
     }
 }
+
+/**
+ * L'exposition du mois : son thème, ses toiles (cochées une fois finies ce mois-ci), la
+ * progression, les jours restants et le cadre à gagner, en étiquette collée de travers.
+ */
+@Composable
+private fun ExhibitionCard(
+    expo: Exhibition,
+    paintings: List<Painting>,
+    done: Set<String>,
+    repository: PaintingRepository,
+    onOpen: (Painting) -> Unit,
+) {
+    val count = paintings.count { it.id in done }
+    val days = Exhibitions.daysLeft()
+    Box(Modifier.fillMaxWidth().padding(top = 14.dp, end = 6.dp)) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .rotate(-0.8f)
+                .flatShadow(Play.Ink, 4.dp, 6.dp, 6.dp)
+                .background(EXPO_TEAL, RoundedCornerShape(6.dp))
+                .padding(16.dp),
+        ) {
+            Text(stringResource(R.string.expo_of_month), style = HandStyle, color = Play.Sun)
+            Text(
+                stringResource(expo.titleRes),
+                fontFamily = Fraunces,
+                fontWeight = FontWeight.Black,
+                fontSize = 24.sp,
+                lineHeight = 25.sp,
+                color = Color.White,
+                modifier = Modifier.padding(end = 96.dp).semantics { heading() },
+            )
+            Text(
+                stringResource(expo.textRes),
+                fontSize = 13.sp,
+                lineHeight = 18.sp,
+                color = Color(0xFFD9ECEA),
+                modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                paintings.forEach { painting ->
+                    ExhibitionThumb(painting, painting.id in done, repository, Modifier.weight(1f)) { onOpen(painting) }
+                }
+            }
+            Spacer(Modifier.height(12.dp))
+            XpBar(count.toFloat() / paintings.size.coerceAtLeast(1), Color.White)
+            Row(Modifier.fillMaxWidth().padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    if (count >= paintings.size) stringResource(R.string.expo_complete)
+                    else stringResource(R.string.expo_progress, count, paintings.size),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    pluralStringResource(R.plurals.expo_days_left, days, days),
+                    style = HandStyle,
+                    color = Play.Sun,
+                )
+            }
+        }
+        // L'étiquette du prix, collée en coin.
+        Column(
+            Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = 4.dp, y = (-12).dp)
+                .rotate(10f)
+                .background(Play.Coral, RoundedCornerShape(10.dp))
+                .border(3.dp, Play.Ink, RoundedCornerShape(10.dp))
+                .padding(horizontal = 10.dp, vertical = 5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(stringResource(R.string.expo_prize), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.ExtraBold)
+            Text(stringResource(expo.frame.labelRes), fontFamily = Fraunces, fontWeight = FontWeight.Black, fontSize = 15.sp, color = Color.White)
+            Text(stringResource(R.string.expo_bonus, Exhibitions.BONUS), color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.ExtraBold)
+        }
+    }
+}
+
+@Composable
+private fun ExhibitionThumb(painting: Painting, done: Boolean, repository: PaintingRepository, modifier: Modifier, onClick: () -> Unit) {
+    val thumbnail by rememberThumbnail(painting, repository)
+    val doneLabel = stringResource(R.string.cap_done)
+    Box(modifier.padding(top = 6.dp, end = 6.dp)) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .border(3.dp, Color.White)
+                .padding(3.dp)
+                .background(Color.White.copy(alpha = 0.2f))
+                .clickable(onClickLabel = stringResource(R.string.action_choose_level), onClick = onClick)
+                .semantics { contentDescription = if (done) "${painting.title}, $doneLabel" else painting.title },
+        ) {
+            thumbnail?.let { bitmap ->
+                Image(
+                    bitmap = remember(bitmap) { bitmap.asImageBitmap() },
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+        if (done) {
+            Box(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = 6.dp, y = (-6).dp)
+                    .size(22.dp)
+                    .background(Play.Sun, CircleShape)
+                    .border(2.dp, Play.Ink, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("✓", color = Play.Ink, fontWeight = FontWeight.Black, fontSize = 13.sp)
+            }
+        }
+    }
+}
+
+private val EXPO_TEAL = Color(0xFF1F5C63)
 
 /** Une toile disponible, en polaroïd : photo, scotch, légende manuscrite et trois étoiles. */
 @OptIn(ExperimentalFoundationApi::class)
