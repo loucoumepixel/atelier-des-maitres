@@ -8,21 +8,24 @@ import java.time.LocalDate
  * Les cadres du musée : trois offerts d'emblée, un baroque pour les grands collectionneurs,
  * et un cadre propre à chaque exposition, gagné en la terminant.
  *
- * [wood] est la teinte du bois (ou de la dorure), [light] celle de ses arêtes éclairées.
+ * [wood] est la teinte du bois (ou de la dorure), avant l'éclairage de la moulure.
  */
-enum class Frame(@StringRes val labelRes: Int, val wood: Long, val light: Long, val ornate: Boolean = false) {
-    CHENE(R.string.frame_chene, 0xFFB98A55, 0xFFE0BC88),
-    NOYER(R.string.frame_noyer, 0xFF5C3A22, 0xFF8E6343),
-    DORE(R.string.frame_dore, 0xFFC49A3E, 0xFFF3D98A),
-    BAROQUE(R.string.frame_baroque, 0xFFB0802A, 0xFFFFE29A, ornate = true),
-    TOURNESOL(R.string.frame_tournesol, 0xFFE2A82B, 0xFFFFDD6E),
-    ECUME(R.string.frame_ecume, 0xFF2F6E86, 0xFFBFE6EE),
-    NENUPHAR(R.string.frame_nenuphar, 0xFF5E8A62, 0xFFC9E3B5),
-    NOCTURNE(R.string.frame_nocturne, 0xFF22264A, 0xFF7A80C2),
-    VELOURS(R.string.frame_velours, 0xFF7A2333, 0xFFC4606F),
-    ZINC(R.string.frame_zinc, 0xFF7D858A, 0xFFD3D9DC),
-    LAQUE(R.string.frame_laque, 0xFF1E1A18, 0xFFB5432F),
-    VIGNE(R.string.frame_vigne, 0xFF6B3A55, 0xFFB58AA3);
+enum class Frame(@StringRes val labelRes: Int, val wood: Long, val style: Style = Style.DORURE) {
+    CHENE(R.string.frame_chene, 0xFFA87847, Style.BOIS),
+    NOYER(R.string.frame_noyer, 0xFF54331F, Style.BOIS),
+    DORE(R.string.frame_dore, 0xFFC79942),
+    BAROQUE(R.string.frame_baroque, 0xFFCC993D, Style.BAROQUE),
+    TOURNESOL(R.string.frame_tournesol, 0xFFE0A62A),
+    ECUME(R.string.frame_ecume, 0xFF40859E),
+    NENUPHAR(R.string.frame_nenuphar, 0xFF6E9A6A),
+    NOCTURNE(R.string.frame_nocturne, 0xFF3A3F78),
+    VELOURS(R.string.frame_velours, 0xFF8E2A3B),
+    ZINC(R.string.frame_zinc, 0xFF9AA2A7),
+    LAQUE(R.string.frame_laque, 0xFFB5432F),
+    VIGNE(R.string.frame_vigne, 0xFF7E4766);
+
+    /** La matière de la moulure : bois veiné, dorure qui accroche la lumière, ou dorure sculptée. */
+    enum class Style { BOIS, DORURE, BAROQUE }
 
     companion object {
         /** Les cadres offerts dès la première toile accrochée. */

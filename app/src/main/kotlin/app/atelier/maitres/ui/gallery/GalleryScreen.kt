@@ -69,6 +69,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
@@ -120,7 +121,7 @@ import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Painting, Difficulty) -> Unit) {
+fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Painting, Difficulty) -> Unit, onMuseum: () -> Unit) {
     val paintings by repository.paintings.collectAsState()
     val statsVersion by repository.statsVersion.collectAsState()
     val state by career.state.collectAsState()
@@ -209,6 +210,10 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
                     repository = repository,
                     onOpen = { open(it) },
                 )
+            }
+            item(key = "museum", span = StaggeredGridItemSpan.FullLine) {
+                val hung = remember(paintings, statsVersion) { career.finishedCount(paintings) }
+                MuseumCard(hung, onMuseum)
             }
             daily?.let { painting ->
                 item(key = "daily", span = StaggeredGridItemSpan.FullLine) {
@@ -541,6 +546,50 @@ private fun ExhibitionThumb(painting: Painting, done: Boolean, repository: Paint
 }
 
 private val EXPO_TEAL = Color(0xFF1F5C63)
+
+/** L'entrée du musée : un pan de mur de damas rouge, avec le nombre de toiles accrochées. */
+@Composable
+private fun MuseumCard(hung: Int, onClick: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp, end = 6.dp)
+            .rotate(0.6f)
+            .flatShadow(Play.Ink, 4.dp, 6.dp, 6.dp)
+            .background(Brush.verticalGradient(listOf(Color(0xFF7A2A2E), Color(0xFF4E1A1D))), RoundedCornerShape(6.dp))
+            .border(3.dp, Color(0xFFC79942), RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                stringResource(R.string.museum_open),
+                fontFamily = Fraunces,
+                fontWeight = FontWeight.Black,
+                fontSize = 22.sp,
+                color = Color.White,
+            )
+            Text(
+                pluralStringResource(R.plurals.museum_open_text, hung, hung),
+                style = HandStyle,
+                color = Color(0xFFF2D9B0),
+            )
+        }
+        Spacer(Modifier.width(10.dp))
+        Text(
+            stringResource(R.string.museum_visit),
+            color = Play.Ink,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+            modifier = Modifier
+                .background(Color(0xFFE9C46A), RoundedCornerShape(20.dp))
+                .border(2.dp, Play.Ink, RoundedCornerShape(20.dp))
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+    }
+}
 
 /** Une toile disponible, en polaroïd : photo, scotch, légende manuscrite et trois étoiles. */
 @OptIn(ExperimentalFoundationApi::class)

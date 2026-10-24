@@ -251,4 +251,21 @@
     <string name="frame_zinc">Zinc frame</string>
     <string name="frame_laque">Lacquer frame</string>
     <string name="frame_vigne">Vine frame</string>
+
+    <!-- My museum -->
+    <string name="museum_title">My museum</string>
+    <plurals name="museum_count">
+        <item quantity="one">%1$d canvas on the walls · swipe to stroll</item>
+        <item quantity="other">%1$d canvases on the walls · swipe to stroll</item>
+    </plurals>
+    <string name="museum_hint">tap a canvas to change its frame</string>
+    <string name="museum_frame_hint">%1$s · tap a frame to dress it</string>
+    <string name="museum_empty">Finish a canvas to hang it in your museum.</string>
+    <string name="museum_baroque_at">at %1$d canvases</string>
+    <string name="museum_open">My museum</string>
+    <plurals name="museum_open_text">
+        <item quantity="one">%1$d canvas hanging in its gallery</item>
+        <item quantity="other">%1$d canvases hanging in their gallery</item>
+    </plurals>
+    <string name="museum_visit">Visit</string>
 </resources>

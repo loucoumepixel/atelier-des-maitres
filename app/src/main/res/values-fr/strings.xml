@@ -253,4 +253,21 @@
     <string name="frame_zinc">Cadre de zinc</string>
     <string name="frame_laque">Cadre laqué</string>
     <string name="frame_vigne">Cadre de vigne</string>
+
+    <!-- Mon musée -->
+    <string name="museum_title">Mon musée</string>
+    <plurals name="museum_count">
+        <item quantity="one">%1$d toile accrochée · glissez pour vous promener</item>
+        <item quantity="other">%1$d toiles accrochées · glissez pour vous promener</item>
+    </plurals>
+    <string name="museum_hint">touchez une toile pour changer son cadre</string>
+    <string name="museum_frame_hint">%1$s · touchez un cadre pour l\'habiller</string>
+    <string name="museum_empty">Terminez une toile pour l\'accrocher dans votre musée.</string>
+    <string name="museum_baroque_at">à %1$d toiles</string>
+    <string name="museum_open">Mon musée</string>
+    <plurals name="museum_open_text">
+        <item quantity="one">%1$d toile accrochée, à admirer dans sa galerie</item>
+        <item quantity="other">%1$d toiles accrochées, à admirer dans leur galerie</item>
+    </plurals>
+    <string name="museum_visit">Visiter</string>
 </resources>
