@@ -181,4 +181,12 @@
         <item quantity="other">%1$d jours</item>
     </plurals>
     <string name="peek_tip">Maintenez l\'œil pour voir le vrai tableau du maître. Relâchez : votre toile revient.</string>
+    <string name="matter_menu">Matière : %1$s</string>
+    <string name="matter_title">Matière de la peinture</string>
+    <string name="matter_plate">Plate</string>
+    <string name="matter_plate_text">La couleur seule, comme une impression.</string>
+    <string name="matter_light">Légère</string>
+    <string name="matter_light_text">Un léger relief d\'huile qui accroche la lumière.</string>
+    <string name="matter_thick">Épaisse</string>
+    <string name="matter_thick_text">Une pâte généreuse, coups de pinceau bien visibles.</string>
 </resources>

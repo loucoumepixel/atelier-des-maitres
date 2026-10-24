@@ -3,6 +3,7 @@ package app.atelier.maitres.data
 import android.content.res.Resources
 import androidx.annotation.StringRes
 import app.atelier.maitres.R
+import app.atelier.maitres.core.Era
 
 /** Une toile de la galerie : œuvre du domaine public fournie, ou image importée. */
 data class Painting(
@@ -16,6 +17,8 @@ data class Painting(
     val unlockRank: Int = 0,
     /** Petit nom du maître, pour le féliciter à la fin (« Bravo, Vincent ! »). */
     val nickname: String? = null,
+    /** L'époque du tableau, qui choisit la musique de l'atelier. */
+    val era: Era = Era.POSTIMPRESSIONNISME,
 ) {
     sealed interface Source {
         /** Image embarquée dans l'APK, sous `assets/`. */
@@ -48,29 +51,30 @@ object MasterCatalog {
         val year: Any,
         val unlockRank: Int = 0,
         val nickname: Any,
+        val era: Era,
     )
 
     private val entries = listOf(
-        Entry("nuit_etoilee", R.string.nuit_etoilee_title, R.string.nuit_etoilee_note, artist = "Vincent van Gogh", year = "1889", nickname = "Vincent"),
-        Entry("champ_de_ble_cypres", R.string.champ_de_ble_cypres_title, R.string.champ_de_ble_cypres_note, artist = "Vincent van Gogh", year = "1889", nickname = "Vincent"),
-        Entry("cafe_de_nuit", R.string.cafe_de_nuit_title, R.string.cafe_de_nuit_note, artist = "Vincent van Gogh", year = "1888", nickname = "Vincent"),
-        Entry("maisons_personnage", R.string.maisons_personnage_title, R.string.maisons_personnage_note, artist = "Vincent van Gogh", year = "1890", nickname = "Vincent"),
-        Entry("grande_vague", R.string.grande_vague_title, R.string.grande_vague_note, artist = "Katsushika Hokusai", year = R.string.grande_vague_year, nickname = "Hokusai"),
-        Entry("monet_impression", R.string.monet_impression_title, R.string.monet_impression_note, artist = "Claude Monet", year = "1872", nickname = "Claude"),
-        Entry("monet_nympheas", R.string.monet_nympheas_title, R.string.monet_nympheas_note, artist = "Claude Monet", year = "1906", nickname = "Claude"),
-        Entry("monet_prairie", R.string.monet_prairie_title, R.string.monet_prairie_note, artist = "Claude Monet", year = "1886", nickname = "Claude"),
-        Entry("panier_pommes", R.string.panier_pommes_title, R.string.panier_pommes_note, artist = "Paul Cézanne", year = R.string.panier_pommes_year, nickname = "Paul"),
-        Entry("voyageur_brume", R.string.voyageur_brume_title, R.string.voyageur_brume_note, artist = "Caspar David Friedrich", year = R.string.voyageur_brume_year, nickname = "Caspar"),
-        Entry("pont_neuf", R.string.pont_neuf_title, R.string.pont_neuf_note, artist = "Pierre-Auguste Renoir", year = "1872", nickname = "Auguste"),
-        Entry("grande_jatte", R.string.grande_jatte_title, R.string.grande_jatte_note, artist = "Georges Seurat", year = "1884-1886", nickname = "Georges"),
-        Entry("noce_juive", R.string.noce_juive_title, R.string.noce_juive_note, artist = "Eugène Delacroix", year = R.string.noce_juive_year, nickname = "Eugène"),
-        Entry("vermeer_laitiere", R.string.vermeer_laitiere_title, R.string.vermeer_laitiere_note, artist = "Johannes Vermeer", year = R.string.vermeer_laitiere_year, nickname = "Johannes"),
-        Entry("american_gothic", R.string.american_gothic_title, R.string.american_gothic_note, artist = "Grant Wood", year = "1930", nickname = "Grant"),
-        Entry("naufrage_minotaure", R.string.naufrage_minotaure_title, R.string.naufrage_minotaure_note, artist = "J. M. W. Turner", year = R.string.naufrage_minotaure_year, unlockRank = 1, nickname = "William"),
-        Entry("le_cri", R.string.le_cri_title, R.string.le_cri_note, artist = "Edvard Munch", year = "1893", unlockRank = 2, nickname = "Edvard"),
-        Entry("liberte_peuple", R.string.liberte_peuple_title, R.string.liberte_peuple_note, artist = "Eugène Delacroix", year = "1830", unlockRank = 3, nickname = "Eugène"),
-        Entry("naissance_venus", R.string.naissance_venus_title, R.string.naissance_venus_note, artist = "Sandro Botticelli", year = R.string.naissance_venus_year, unlockRank = 4, nickname = "Sandro"),
-        Entry("joconde", R.string.joconde_title, R.string.joconde_note, artist = R.string.joconde_artist, year = "1503-1519", unlockRank = 5, nickname = R.string.joconde_nickname),
+        Entry("nuit_etoilee", R.string.nuit_etoilee_title, R.string.nuit_etoilee_note, artist = "Vincent van Gogh", year = "1889", nickname = "Vincent", era = Era.POSTIMPRESSIONNISME),
+        Entry("champ_de_ble_cypres", R.string.champ_de_ble_cypres_title, R.string.champ_de_ble_cypres_note, artist = "Vincent van Gogh", year = "1889", nickname = "Vincent", era = Era.POSTIMPRESSIONNISME),
+        Entry("cafe_de_nuit", R.string.cafe_de_nuit_title, R.string.cafe_de_nuit_note, artist = "Vincent van Gogh", year = "1888", nickname = "Vincent", era = Era.POSTIMPRESSIONNISME),
+        Entry("maisons_personnage", R.string.maisons_personnage_title, R.string.maisons_personnage_note, artist = "Vincent van Gogh", year = "1890", nickname = "Vincent", era = Era.POSTIMPRESSIONNISME),
+        Entry("grande_vague", R.string.grande_vague_title, R.string.grande_vague_note, artist = "Katsushika Hokusai", year = R.string.grande_vague_year, nickname = "Hokusai", era = Era.JAPON),
+        Entry("monet_impression", R.string.monet_impression_title, R.string.monet_impression_note, artist = "Claude Monet", year = "1872", nickname = "Claude", era = Era.IMPRESSIONNISME),
+        Entry("monet_nympheas", R.string.monet_nympheas_title, R.string.monet_nympheas_note, artist = "Claude Monet", year = "1906", nickname = "Claude", era = Era.IMPRESSIONNISME),
+        Entry("monet_prairie", R.string.monet_prairie_title, R.string.monet_prairie_note, artist = "Claude Monet", year = "1886", nickname = "Claude", era = Era.IMPRESSIONNISME),
+        Entry("panier_pommes", R.string.panier_pommes_title, R.string.panier_pommes_note, artist = "Paul Cézanne", year = R.string.panier_pommes_year, nickname = "Paul", era = Era.POSTIMPRESSIONNISME),
+        Entry("voyageur_brume", R.string.voyageur_brume_title, R.string.voyageur_brume_note, artist = "Caspar David Friedrich", year = R.string.voyageur_brume_year, nickname = "Caspar", era = Era.ROMANTISME),
+        Entry("pont_neuf", R.string.pont_neuf_title, R.string.pont_neuf_note, artist = "Pierre-Auguste Renoir", year = "1872", nickname = "Auguste", era = Era.IMPRESSIONNISME),
+        Entry("grande_jatte", R.string.grande_jatte_title, R.string.grande_jatte_note, artist = "Georges Seurat", year = "1884-1886", nickname = "Georges", era = Era.IMPRESSIONNISME),
+        Entry("noce_juive", R.string.noce_juive_title, R.string.noce_juive_note, artist = "Eugène Delacroix", year = R.string.noce_juive_year, nickname = "Eugène", era = Era.ROMANTISME),
+        Entry("vermeer_laitiere", R.string.vermeer_laitiere_title, R.string.vermeer_laitiere_note, artist = "Johannes Vermeer", year = R.string.vermeer_laitiere_year, nickname = "Johannes", era = Era.RENAISSANCE),
+        Entry("american_gothic", R.string.american_gothic_title, R.string.american_gothic_note, artist = "Grant Wood", year = "1930", nickname = "Grant", era = Era.AMERIQUE),
+        Entry("naufrage_minotaure", R.string.naufrage_minotaure_title, R.string.naufrage_minotaure_note, artist = "J. M. W. Turner", year = R.string.naufrage_minotaure_year, unlockRank = 1, nickname = "William", era = Era.ROMANTISME),
+        Entry("le_cri", R.string.le_cri_title, R.string.le_cri_note, artist = "Edvard Munch", year = "1893", unlockRank = 2, nickname = "Edvard", era = Era.EXPRESSIONNISME),
+        Entry("liberte_peuple", R.string.liberte_peuple_title, R.string.liberte_peuple_note, artist = "Eugène Delacroix", year = "1830", unlockRank = 3, nickname = "Eugène", era = Era.ROMANTISME),
+        Entry("naissance_venus", R.string.naissance_venus_title, R.string.naissance_venus_note, artist = "Sandro Botticelli", year = R.string.naissance_venus_year, unlockRank = 4, nickname = "Sandro", era = Era.RENAISSANCE),
+        Entry("joconde", R.string.joconde_title, R.string.joconde_note, artist = R.string.joconde_artist, year = "1503-1519", unlockRank = 5, nickname = R.string.joconde_nickname, era = Era.RENAISSANCE),
     )
 
     fun paintings(resources: Resources): List<Painting> = entries.map { e ->
@@ -84,6 +88,7 @@ object MasterCatalog {
             source = Painting.Source.Asset("paintings/${e.id}.jpg"),
             unlockRank = e.unlockRank,
             nickname = text(e.nickname),
+            era = e.era,
         )
     }
 }

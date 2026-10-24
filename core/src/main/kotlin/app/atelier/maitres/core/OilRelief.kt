@@ -33,10 +33,14 @@ class OilRelief(
         require(shade.size == width * height && gloss.size == width * height)
     }
 
-    /** Applique la matière au pixel [p] d'une couleur ARGB posée. */
-    fun apply(p: Int, argb: Int): Int {
-        val s = 100 + shade[p]
-        val g = gloss[p].toInt() and 0xFF
+    /**
+     * Applique la matière au pixel [p] d'une couleur ARGB posée, avec la force [percent]
+     * (0 : peinture plate, 100 : la pâte la plus épaisse).
+     */
+    fun apply(p: Int, argb: Int, percent: Int = 100): Int {
+        if (percent <= 0) return argb
+        val s = 100 + shade[p] * percent / 100
+        val g = (gloss[p].toInt() and 0xFF) * percent / 100
         val r = min(255, ((argb shr 16) and 0xFF) * s / 100 + g)
         val gr = min(255, ((argb shr 8) and 0xFF) * s / 100 + g)
         val b = min(255, (argb and 0xFF) * s / 100 + g)
@@ -74,11 +78,11 @@ class OilRelief(
         private const val SHADE = 0.7f
         private const val GLOSS = 0.16f
 
-        /** Force de la matière : 1 = pâte épaisse, 0 = peinture plate. */
-        const val STRENGTH = 0.35f
-
-        /** Calcule le relief à partir de l'image d'origine [argb] (ligne par ligne), avec la force [strength]. */
-        fun compute(argb: IntArray, w: Int, h: Int, strength: Float = STRENGTH, seed: Long = 3L): OilRelief {
+        /**
+         * Calcule le relief à partir de l'image d'origine [argb] (ligne par ligne), à la force
+         * [strength] (1 : la pâte la plus épaisse ; [apply] la dose ensuite au goût du joueur).
+         */
+        fun compute(argb: IntArray, w: Int, h: Int, strength: Float = 1f, seed: Long = 3L): OilRelief {
             val n = w * h
             require(argb.size == n && n > 0)
             val lum = FloatArray(n) { i ->

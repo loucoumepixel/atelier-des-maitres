@@ -179,4 +179,12 @@
         <item quantity="other">%1$d days</item>
     </plurals>
     <string name="peek_tip">Hold the eye to see the master\'s real painting. Let go and your canvas comes back.</string>
+    <string name="matter_menu">Paint texture: %1$s</string>
+    <string name="matter_title">Paint texture</string>
+    <string name="matter_plate">Flat</string>
+    <string name="matter_plate_text">Just the colour, like a print.</string>
+    <string name="matter_light">Light</string>
+    <string name="matter_light_text">A light oil relief that catches the light.</string>
+    <string name="matter_thick">Thick</string>
+    <string name="matter_thick_text">Generous impasto, brushstrokes clearly visible.</string>
 </resources>

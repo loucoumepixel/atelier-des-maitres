@@ -30,12 +30,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Redo
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.outlined.Brush
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.FitScreen
 import androidx.compose.material.icons.outlined.MoreVert
@@ -48,6 +51,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -91,6 +95,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import app.atelier.maitres.R
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.data.Career
+import app.atelier.maitres.data.Matter
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
 import app.atelier.maitres.ui.labelRes
@@ -148,6 +153,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     var peek by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
     var confirmRestart by remember { mutableStateOf(false) }
+    var chooseMatter by remember { mutableStateOf(false) }
     var showHint by remember { mutableStateOf(state.session.paintedCount == 0) }
     val painting = state.loaded.painting
     val context = LocalContext.current
@@ -156,7 +162,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     var soundOn by remember { mutableStateOf(career.soundOn) }
     var musicOn by remember { mutableStateOf(career.musicOn) }
     var inFront by remember { mutableStateOf(true) }
-    val sound = remember { runCatching { StudioSound(context.applicationContext) }.getOrNull() }
+    val sound = remember { runCatching { StudioSound(context.applicationContext, painting.era) }.getOrNull() }
     DisposableEffect(sound) { onDispose { sound?.release() } }
     LaunchedEffect(sound) { sound?.prepare() }
     LifecycleEventEffect(Lifecycle.Event.ON_START) { inFront = true }
@@ -363,6 +369,14 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                             )
                         }
                         DropdownMenuItem(
+                            text = { Text(stringResource(R.string.matter_menu, stringResource(state.matter.labelRes).lowercase())) },
+                            leadingIcon = { Icon(Icons.Outlined.Brush, contentDescription = null) },
+                            onClick = {
+                                menu = false
+                                chooseMatter = true
+                            },
+                        )
+                        DropdownMenuItem(
                             text = { Text(stringResource(R.string.share_canvas)) },
                             leadingIcon = { Icon(Icons.Outlined.Share, contentDescription = null) },
                             onClick = {
@@ -414,6 +428,36 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
 
         if (state.pickerOpen) ColorPickerSheet(state)
 
+        if (chooseMatter) {
+            AlertDialog(
+                onDismissRequest = { chooseMatter = false },
+                icon = { Icon(Icons.Outlined.Brush, contentDescription = null) },
+                title = { Text(stringResource(R.string.matter_title)) },
+                text = {
+                    Column(Modifier.selectableGroup()) {
+                        Matter.entries.forEach { m ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .selectable(selected = state.matter == m, role = Role.RadioButton) { state.changeMatter(m) }
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                RadioButton(selected = state.matter == m, onClick = null)
+                                Spacer(Modifier.width(12.dp))
+                                Column {
+                                    Text(stringResource(m.labelRes), style = MaterialTheme.typography.titleSmall)
+                                    Text(stringResource(m.textRes), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = { TextButton(onClick = { chooseMatter = false }) { Text(stringResource(R.string.ok)) } },
+            )
+        }
+
         if (confirmRestart) {
             AlertDialog(
                 onDismissRequest = { confirmRestart = false },
@@ -448,6 +492,20 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
         }
     }
 }
+
+private val Matter.labelRes: Int
+    get() = when (this) {
+        Matter.PLATE -> R.string.matter_plate
+        Matter.LEGERE -> R.string.matter_light
+        Matter.EPAISSE -> R.string.matter_thick
+    }
+
+private val Matter.textRes: Int
+    get() = when (this) {
+        Matter.PLATE -> R.string.matter_plate_text
+        Matter.LEGERE -> R.string.matter_light_text
+        Matter.EPAISSE -> R.string.matter_thick_text
+    }
 
 /** Petit mot de jeu (série, couleur finie, nouveau rang) qui s'affiche un instant puis s'en va. */
 @Composable

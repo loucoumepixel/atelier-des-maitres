@@ -58,7 +58,18 @@ class StudioState(
 ) {
     val canvas = loaded.canvas
     val session = PaintingSession(canvas, loaded.savedFills)
-    val renderer = CanvasRenderer(canvas, session, loaded.original, loaded.relief)
+    val renderer = CanvasRenderer(canvas, session, loaded.original, loaded.relief, career.matter.percent)
+
+    /** L'épaisseur de la peinture, choisie dans le menu de l'atelier. */
+    var matter by mutableStateOf(career.matter)
+        private set
+
+    fun changeMatter(value: app.atelier.maitres.data.Matter) {
+        matter = value
+        career.matter = value
+        renderer.reliefPercent = value.percent
+        version++
+    }
     val camera = CanvasCamera(canvas.width, canvas.height)
 
     /** Incrémenté à chaque modification visible : le dessin le lit pour se rafraîchir. */

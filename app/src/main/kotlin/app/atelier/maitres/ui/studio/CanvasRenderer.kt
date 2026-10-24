@@ -25,6 +25,7 @@ class CanvasRenderer(
     private val session: PaintingSession,
     original: Bitmap,
     private val relief: OilRelief? = null,
+    reliefPercent: Int = 0,
 ) {
     val width = canvas.width
     val height = canvas.height
@@ -35,6 +36,14 @@ class CanvasRenderer(
 
     /** Facteur de matière par pixel, en centièmes autour de 100 (de 60 à 140). */
     private val texture = ByteArray(width * height)
+
+    /** Force du relief d'huile, en % (0 : peinture plate). Changer la redessine toute. */
+    var reliefPercent: Int = reliefPercent
+        set(value) {
+            if (value == field) return
+            field = value
+            refresh(IntArray(canvas.regionCount) { it })
+        }
 
     /** Couleur de palette dont les zones à peindre sont hachurées, ou -1. */
     var highlight: Int = -1
@@ -183,7 +192,7 @@ class CanvasRenderer(
             (min(255, ((fill shr 16) and 0xFF) * t / 100) shl 16) or
             (min(255, ((fill shr 8) and 0xFF) * t / 100) shl 8) or
             min(255, (fill and 0xFF) * t / 100)
-        return relief?.apply(p, c) ?: c
+        return relief?.apply(p, c, reliefPercent) ?: c
     }
 
     /** Papier légèrement chaud, contours d'un pixel en gris graphite. */

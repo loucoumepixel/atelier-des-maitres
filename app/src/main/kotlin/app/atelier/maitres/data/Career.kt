@@ -41,6 +41,11 @@ class Career(context: Context, private val repository: PaintingRepository) {
         get() = prefs.getBoolean(MUSIC, true)
         set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
 
+    /** Épaisseur de la peinture à l'huile choisie par le joueur. */
+    var matter: Matter
+        get() = Matter.entries.firstOrNull { it.name == prefs.getString(MATTER, null) } ?: Matter.LEGERE
+        set(value) = prefs.edit().putString(MATTER, value.name).apply()
+
     /**
      * Combien de fois encore montrer la bulle qui explique le petit œil. Elle se tait dès que
      * le joueur s'en est servi une fois.
@@ -149,7 +154,15 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val SOUND = "sound"
         private const val MUSIC = "music"
         private const val PEEK_TIPS = "peek_tips_left"
+        private const val MATTER = "matter"
     }
+}
+
+/** L'épaisseur de la peinture : plate, légère ou épaisse (force du relief d'huile, en %). */
+enum class Matter(val percent: Int) {
+    PLATE(0),
+    LEGERE(35),
+    EPAISSE(65),
 }
 
 /** Touches par zone bien peinte, selon le niveau. */
