@@ -8,6 +8,7 @@ import android.util.AtomicFile
 import android.util.LruCache
 import androidx.core.content.FileProvider
 import app.atelier.maitres.R
+import app.atelier.maitres.core.ColourMigration
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.core.OilRelief
 import app.atelier.maitres.core.PaintByNumber
@@ -132,7 +133,7 @@ class PaintingRepository(private val context: Context) {
             val fills = runCatching { progressFile(painting, difficulty).readFully().inputStream().use(PbnCodec::readProgress) }
                 .getOrNull()
                 ?.takeIf { it.size == canvas.regionCount }
-                ?.let { if (cached == null) migrateColours(painting, difficulty, canvas, it) else it }
+                ?.let { restoreColours(painting, difficulty, canvas, original, it) }
             LoadedCanvas(painting, difficulty, canvas, original, fills, relief.await())
         }
 
@@ -152,20 +153,33 @@ class PaintingRepository(private val context: Context) {
     /**
      * Après une mise à jour qui ravive les couleurs, les zones restent les mêmes mais la palette
      * change : les touches déjà posées prennent la nouvelle teinte de leur couleur, pour que la
-     * progression reste fidèle. L'ancien découpage est ensuite effacé.
+     * progression reste fidèle (sinon elles s'affichent comme des erreurs).
+     *
+     * L'ancien découpage sert de correspondance s'il est encore sur le disque ; sinon on le
+     * recalcule une fois avec les réglages d'avant. La progression corrigée est enregistrée.
      */
-    private fun migrateColours(painting: Painting, difficulty: Difficulty, canvas: PaintByNumber, fills: IntArray): IntArray {
-        var result = fills
-        for (format in 1 until CANVAS_FORMAT) {
-            val file = File(canvasDir, "${painting.id}_${difficulty.name}_v$format.pbn")
-            if (!file.exists()) continue
-            val old = runCatching { file.inputStream().use(PbnCodec::readCanvas) }.getOrNull()
-            if (old != null && old.palette.size == canvas.palette.size && old.regionColor.contentEquals(canvas.regionColor)) {
-                val map = HashMap<Int, Int>()
-                old.palette.forEachIndexed { i, c -> map[c] = canvas.palette[i] }
-                result = IntArray(fills.size) { r -> map[fills[r]] ?: fills[r] }
-            }
-            file.delete()
+    private fun restoreColours(painting: Painting, difficulty: Difficulty, canvas: PaintByNumber, original: Bitmap, fills: IntArray): IntArray {
+        val legacyFiles = (1 until CANVAS_FORMAT).map { File(canvasDir, "${painting.id}_${difficulty.name}_v$it.pbn") }
+        val repairedKey = "colours_v${CANVAS_FORMAT}_${painting.id}_${difficulty.name}"
+        if (!ColourMigration.hasForeignColours(canvas, fills) || prefs.getBoolean(repairedKey, false)) {
+            legacyFiles.forEach { it.delete() }
+            return fills
+        }
+        val onDisk = legacyFiles.firstNotNullOfOrNull { f ->
+            runCatching { f.inputStream().use(PbnCodec::readCanvas) }.getOrNull()
+        }
+        val legacy = onDisk?.takeIf { it.labels.contentEquals(canvas.labels) } ?: run {
+            val pixels = IntArray(original.width * original.height)
+            original.getPixels(pixels, 0, original.width, 0, 0, original.width, original.height)
+            Segmenter(ColourMigration.legacyParams(difficulty.params(original.width, original.height)))
+                .segment(pixels, original.width, original.height)
+        }
+        val result = ColourMigration.carryOver(legacy, canvas, fills) ?: fills
+        legacyFiles.forEach { it.delete() }
+        prefs.edit().putBoolean(repairedKey, true).apply()
+        if (!result.contentEquals(fills)) {
+            val faithful = result.indices.count { result[it] == canvas.referenceColor(it) }
+            saveProgress(painting, difficulty, result.copyOf(), faithful)
         }
         return result
     }
