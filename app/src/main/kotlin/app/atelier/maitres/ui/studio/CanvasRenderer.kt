@@ -49,19 +49,20 @@ class CanvasRenderer(
     var highlight: Int = -1
         private set
 
+    /** Une couleur qui s'étale dans sa zone depuis le point touché. */
+    private class Spread(val x: Float, val y: Float, val reach: Float, val before: Int, val start: Long, val duration: Long) {
+        var radius = 0f
+    }
+
+    // Déclaré avant init : drawRegion() le lit dès le premier dessin.
+    private val spreading = HashMap<Int, Spread>()
+
     init {
         buildPaper()
         buildTexture(original)
         for (r in 0 until canvas.regionCount) drawRegion(r)
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
     }
-
-    /** Une couleur qui s'étale dans sa zone depuis le point touché. */
-    private class Spread(val x: Float, val y: Float, val reach: Float, val before: Int, val start: Long, val duration: Long) {
-        var radius = 0f
-    }
-
-    private val spreading = HashMap<Int, Spread>()
 
     /** Vrai tant qu'une couleur est encore en train de s'étaler. */
     val isSpreading: Boolean get() = spreading.isNotEmpty()
