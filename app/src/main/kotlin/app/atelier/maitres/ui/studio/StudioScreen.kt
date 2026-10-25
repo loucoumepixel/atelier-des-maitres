@@ -701,7 +701,7 @@ private fun FloatingTool(
 private fun LoadingScreen(painting: Painting, difficulty: Difficulty, progress: Float?, onBack: () -> Unit) {
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(32.dp)) {
-            Text(painting.title, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
+            Text(painting.title, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onBackground)
             Text(painting.artist, style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(28.dp))
             if (progress != null) {
@@ -718,7 +718,7 @@ private fun LoadingScreen(painting: Painting, difficulty: Difficulty, progress: 
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
-                Text(stringResource(R.string.open_failed), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.open_failed), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
                 Spacer(Modifier.height(12.dp))
                 TextButton(onClick = onBack) { Text(stringResource(R.string.back_to_gallery)) }
             }
