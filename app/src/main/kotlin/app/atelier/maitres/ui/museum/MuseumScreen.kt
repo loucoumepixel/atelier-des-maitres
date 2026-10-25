@@ -14,7 +14,10 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.Typeface
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -49,7 +52,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -73,7 +75,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -95,8 +96,8 @@ import kotlin.math.min
 
 /**
  * Mon musée : les toiles terminées, accrochées dans une grande galerie aux murs de damas rouge,
- * que l'on parcourt en glissant le doigt. Toucher une toile la sélectionne ; l'étagère du bas
- * change son cadre.
+ * que l'on parcourt en glissant le doigt. Toucher une toile nous arrête face à elle ([FaceToFace]) :
+ * on l'admire de près, on change son cadre et le guide raconte son histoire.
  */
 @Composable
 fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> Unit) {
@@ -107,7 +108,7 @@ fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> U
     val frames = remember(all) { career.frames(all) }
     val thumbnails = remember { mutableStateMapOf<String, Bitmap>() }
     val chosen = remember { mutableStateMapOf<String, Frame>().apply { hung.forEach { put(it.id, career.frameOf(it)) } } }
-    var selected by remember { mutableIntStateOf(-1) }
+    var facing by remember { mutableStateOf<Int?>(null) }
     var viewSize by remember { mutableStateOf(IntSize.Zero) }
     val corridor = remember(hung.size, viewSize) { Corridor(hung.size, viewSize.width.toFloat(), viewSize.height.toFloat()) }
     val camera = remember { Animatable(0f) }
@@ -153,7 +154,7 @@ fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> U
                         val hit = hung.indices
                             .filter { shown[it] && Corridor.contains(quads[it], at.x, at.y) }
                             .minByOrNull { corridor.hangAt(it) }
-                        selected = if (hit == null || hit == selected) -1 else hit
+                        if (hit != null) facing = hit
                     }
                 }
                 .semantics { contentDescription = hung.joinToString { it.title } },
@@ -168,7 +169,7 @@ fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> U
                 val painting = hung[i]
                 shown[i] = painter.painting(
                     native, corridor, cam, i, painting, thumbnails[painting.id],
-                    chosen[painting.id] ?: Frame.CHENE, i == selected, quads[i],
+                    chosen[painting.id] ?: Frame.CHENE, quads[i],
                 )
             }
             painter.vignette(native, corridor)
@@ -209,49 +210,50 @@ fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> U
             }
         }
 
-        // Étagère des cadres.
-        if (hung.isNotEmpty()) Column(
-            Modifier
+        if (hung.isNotEmpty()) Text(
+            stringResource(R.string.museum_hint),
+            fontFamily = Caveat,
+            fontWeight = FontWeight.Bold,
+            fontSize = 21.sp,
+            color = WARM,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .background(Brush.verticalGradient(listOf(Color.Transparent, DARK.copy(alpha = 0.95f))))
                 .windowInsetsPadding(WindowInsets.safeDrawing)
-                .padding(top = 40.dp, bottom = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val target = hung.getOrNull(selected)
-            Text(
-                if (target == null) stringResource(R.string.museum_hint) else stringResource(R.string.museum_frame_hint, target.title),
-                fontFamily = Caveat,
-                fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
-                color = WARM,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-            Spacer(Modifier.height(12.dp))
-            Row(
-                Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val shelf = (frames + if (Frame.BAROQUE in frames) emptyList() else listOf(Frame.BAROQUE)).sortedBy { it.ordinal }
-                shelf.forEach { frame ->
-                    val locked = frame !in frames
-                    FrameSwatch(
-                        frame = frame,
-                        painter = textures,
-                        on = target != null && chosen[target.id] == frame,
-                        enabled = target != null && !locked,
-                        caption = if (locked) stringResource(R.string.museum_baroque_at, Frame.BAROQUE_AT) else null,
-                    ) {
-                        if (target != null) {
-                            chosen[target.id] = frame
-                            career.setFrame(target, frame)
-                        }
-                    }
-                }
+                .padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 22.dp),
+        )
+
+        AnimatedVisibility(facing != null, enter = fadeIn(), exit = fadeOut()) {
+            // Gardée pendant le fondu de sortie, quand facing redevient null.
+            val start = remember { facing ?: 0 }
+            FaceToFace(hung, start, textures, thumbnails, repository, career, frames, chosen) { at ->
+                facing = null
+                // De retour dans le couloir, on se tient devant la toile que l'on regardait.
+                scope.launch { camera.snapTo((corridor.hangAt(at) - 1.6f).coerceIn(0f, corridor.maxCamera)) }
             }
+        }
+    }
+}
+
+/** L'étagère des cadres : ceux que l'on a gagnés, et le baroque en vue tant qu'il n'est pas gagné. */
+@Composable
+internal fun FrameShelf(frames: List<Frame>, painter: GalleryPainter?, target: Painting, chosen: Map<String, Frame>, onPick: (Frame) -> Unit) {
+    Row(
+        Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        val shelf = (frames + if (Frame.BAROQUE in frames) emptyList() else listOf(Frame.BAROQUE)).sortedBy { it.ordinal }
+        shelf.forEach { frame ->
+            val locked = frame !in frames
+            FrameSwatch(
+                frame = frame,
+                painter = painter,
+                on = chosen[target.id] == frame,
+                enabled = !locked,
+                caption = if (locked) stringResource(R.string.museum_baroque_at, Frame.BAROQUE_AT) else null,
+            ) { onPick(frame) }
         }
     }
 }
@@ -291,7 +293,9 @@ private fun FrameSwatch(frame: Frame, painter: GalleryPainter?, on: Boolean, ena
  * plaquées en perspective (une matrice par surface) ; chaque toile est dessinée dans son propre
  * repère, plaqué sur son mur : halo du spot, ombre, cadre mouluré, toile et cartel.
  */
-private class GalleryPainter(wall: Bitmap, floor: Bitmap, ceiling: Bitmap, private val end: Bitmap) {
+internal class GalleryPainter(val wallBitmap: Bitmap, val floorBitmap: Bitmap, ceiling: Bitmap, private val end: Bitmap) {
+    private val wall = wallBitmap
+    private val floor = floorBitmap
     private val wallHeight = wall.height.toFloat()
     private val floorWidth = floor.width.toFloat()
     private val ceilingWidth = ceiling.width.toFloat()
@@ -375,7 +379,7 @@ private class GalleryPainter(wall: Bitmap, floor: Bitmap, ceiling: Bitmap, priva
      */
     fun painting(
         c: android.graphics.Canvas, k: Corridor, camera: Float, i: Int, painting: Painting, bitmap: Bitmap?,
-        frame: Frame, selected: Boolean, out: FloatArray,
+        frame: Frame, out: FloatArray,
     ): Boolean {
         val pw = (bitmap?.width ?: 400).toFloat()
         val ph = (bitmap?.height ?: 500).toFloat()
@@ -435,11 +439,6 @@ private class GalleryPainter(wall: Bitmap, floor: Bitmap, ceiling: Bitmap, priva
         fill.color = 0xFFFAF4E6.toInt()
         c.drawRect(pw / 2f - tw / 2f - ph * 0.04f, ly, pw / 2f + tw / 2f + ph * 0.04f, ly + ph * 0.075f, fill)
         c.drawText(label, pw / 2f, ly + ph * 0.051f, text)
-        if (selected) {
-            stroke.color = 0xFFFFC93C.toInt()
-            stroke.strokeWidth = b * 0.22f
-            c.drawRect(-b * 1.3f, -b * 1.3f, pw + b * 1.3f, ph + b * 1.3f, stroke)
-        }
         if (count >= 0) c.restoreToCount(count)
         c.restore()
         return true

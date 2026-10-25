@@ -258,8 +258,14 @@
         <item quantity="one">%1$d canvas on the walls · swipe to stroll</item>
         <item quantity="other">%1$d canvases on the walls · swipe to stroll</item>
     </plurals>
-    <string name="museum_hint">tap a canvas to change its frame</string>
-    <string name="museum_frame_hint">%1$s · tap a frame to dress it</string>
+    <string name="museum_hint">tap a painting to stand before it</string>
+    <string name="museum_back">Corridor</string>
+    <string name="museum_position">%1$d / %2$d</string>
+    <string name="museum_swipe">swipe to the next painting · pinch to look closer</string>
+    <string name="museum_frames">Frame</string>
+    <string name="museum_listen">Listen to the guide</string>
+    <string name="museum_listen_stop">Stop the guide</string>
+    <string name="museum_listen_sub">the story of this painting</string>
     <string name="museum_empty">Finish a canvas to hang it in your museum.</string>
     <string name="museum_baroque_at">at %1$d canvases</string>
     <string name="museum_open">My museum</string>

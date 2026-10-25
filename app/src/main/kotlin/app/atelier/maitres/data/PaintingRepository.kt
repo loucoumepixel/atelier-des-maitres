@@ -87,6 +87,9 @@ class PaintingRepository(private val context: Context) {
         thumbnails.get(painting.id) ?: decode(painting, THUMBNAIL_SIZE).also { thumbnails.put(painting.id, it) }
     }
 
+    /** La toile en grand, pour l'admirer de près dans le musée (sans cache : une à trois à la fois). */
+    suspend fun artwork(painting: Painting): Bitmap = withContext(Dispatchers.IO) { decode(painting, ARTWORK_SIZE) }
+
     private fun decode(painting: Painting, longSide: Int): Bitmap {
         val source = when (val s = painting.source) {
             is Painting.Source.Asset -> ImageDecoder.createSource(context.assets, s.path)
@@ -329,6 +332,7 @@ class PaintingRepository(private val context: Context) {
         /** Côté long de l'image de travail : assez fin pour des contours nets une fois zoomé. */
         const val WORKING_SIZE = 1200
         private const val THUMBNAIL_SIZE = 480
+        private const val ARTWORK_SIZE = 1600
         private const val IMPORT_SIZE = 1600
         /** Numéro final d'un titre d'import, quelle que soit la langue (« Ma toile n° 3 », « My canvas no. 3 »). */
         private val IMPORT_NUMBER = Regex("(\\d+)$")
