@@ -5,9 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.click
-import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
@@ -18,8 +19,11 @@ import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
 import app.atelier.maitres.ui.museum.MuseumScreen
 import app.atelier.maitres.ui.studio.StudioScreen
+import app.atelier.maitres.ui.studio.TAG_TOILE
+import app.atelier.maitres.ui.studio.TAG_TROUVER
 import app.atelier.maitres.ui.theme.AtelierTheme
 import app.atelier.maitres.ui.welcome.WelcomeScreen
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,10 +44,6 @@ class ParcoursEcransTest {
     private fun laisserVivre(ms: Long) {
         val fin = System.currentTimeMillis() + ms
         rule.waitUntil(ms + 5_000) { System.currentTimeMillis() >= fin }
-    }
-
-    private fun attendre(description: String, ms: Long = 120_000) {
-        rule.waitUntil(ms) { rule.onAllNodes(hasContentDescription(description)).fetchSemanticsNodes().isNotEmpty() }
     }
 
     @Test
@@ -71,7 +71,6 @@ class ParcoursEcransTest {
 
     @Test
     fun atelierPeintAvecLeBoutonTrouver() {
-        val trouver = rule.activity.getString(R.string.find_area)
         val toile = Banc.toiles.first()
         var ouvert by mutableStateOf(true)
         rule.setContent {
@@ -80,20 +79,21 @@ class ParcoursEcransTest {
             }
         }
         // Le découpage de la toile peut prendre un moment sur un téléphone virtuel.
-        attendre(trouver)
+        rule.waitUntil(120_000) { rule.onAllNodesWithTag(TAG_TROUVER).fetchSemanticsNodes().isNotEmpty() }
         val avant = app.repository.stats(toile).firstOrNull { it.difficulty == Difficulty.FACILE }?.faithful ?: 0
-        repeat(3) {
-            rule.onAllNodes(hasContentDescription(trouver))[0].performClick()
+        repeat(4) {
+            // Le bouton amène au centre de la toile la prochaine zone (ou une zone fausse), couleur choisie.
+            rule.onNodeWithTag(TAG_TROUVER).performClick()
             laisserVivre(1_500)
-            // La zone trouvée est amenée au centre de la toile : on la touche.
-            rule.onRoot().performTouchInput { click(center) }
+            rule.onNodeWithTag(TAG_TOILE).performTouchInput { click(center) }
             laisserVivre(800)
         }
-        // Retour à la galerie : la sauvegarde part en quittant l'écran.
+        // Quitter l'atelier : la sauvegarde part en quittant l'écran.
         rule.runOnUiThread { ouvert = false }
-        laisserVivre(2_000)
-        val apres = app.repository.stats(toile).firstOrNull { it.difficulty == Difficulty.FACILE }?.faithful ?: 0
-        check(apres >= avant) { "la progression a reculé : $avant zones avant, $apres après" }
+        val limite = System.currentTimeMillis() + 10_000
+        fun apres() = app.repository.stats(toile).firstOrNull { it.difficulty == Difficulty.FACILE }?.faithful ?: 0
+        while (apres() <= avant && System.currentTimeMillis() < limite) Thread.sleep(100)
+        assertTrue("aucune zone peinte avec le bouton trouver : ${apres()} zones justes, $avant avant", apres() > avant)
     }
 
     @Test

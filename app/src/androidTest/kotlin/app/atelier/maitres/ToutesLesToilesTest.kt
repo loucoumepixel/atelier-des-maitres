@@ -19,7 +19,7 @@ class ToutesLesToilesTest {
     fun chaqueToileSOuvreEtSePeint() {
         val toiles = Banc.toiles
         assertTrue("le catalogue est vide", toiles.isNotEmpty())
-        for (toile in toiles) {
+        for (toile in toiles) try {
             Banc.ouvrir(toile, Difficulty.FACILE) { state ->
                 Banc.surLeFilPrincipal {
                     val avant = state.session.faithfulCount
@@ -42,6 +42,9 @@ class ToutesLesToilesTest {
                     state.saveNow()
                 }
             }
+        } catch (e: Throwable) {
+            // Le nom de la toile en tête du rapport, la cause complète en dessous.
+            throw AssertionError("${toile.id} : $e", e)
         }
     }
 

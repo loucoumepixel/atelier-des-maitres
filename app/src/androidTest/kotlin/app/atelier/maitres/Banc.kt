@@ -53,6 +53,11 @@ object Banc {
 
     /** Termine [toile] au [niveau] et attend que la sauvegarde soit écrite. */
     fun terminer(toile: Painting, niveau: Difficulty) {
+        // Déjà terminée par un autre test : on repart d'une toile vierge pour revoir la fête.
+        if (app.repository.stats(toile).any { it.difficulty == niveau }) {
+            app.repository.resetProgress(toile, niveau)
+            attendre("${toile.id} : la toile ne se remet pas à zéro") { app.repository.stats(toile).none { it.difficulty == niveau } }
+        }
         ouvrir(toile, niveau) { state ->
             surLeFilPrincipal {
                 // Le numéro d'une zone est toujours posé dans la zone : la toucher la peint.
@@ -62,9 +67,16 @@ object Banc {
             assertTrue("${toile.id} : la toile n'est pas terminée", state.session.isComplete)
             assertTrue("${toile.id} : l'écran de fin ne s'affiche pas", state.showCompletion)
         }
+        attendre("${toile.id} : la sauvegarde de la toile terminée n'arrive pas") {
+            app.repository.stats(toile).any { it.difficulty == niveau && it.isComplete }
+        }
+    }
+
+    /** Attend jusqu'à 15 secondes que [condition] soit vraie, sinon échoue avec [message]. */
+    private fun attendre(message: String, condition: () -> Boolean) {
         val limite = System.currentTimeMillis() + 15_000
-        while (app.repository.stats(toile).none { it.difficulty == niveau && it.isComplete }) {
-            check(System.currentTimeMillis() < limite) { "${toile.id} : la sauvegarde de la toile terminée n'arrive pas" }
+        while (!condition()) {
+            check(System.currentTimeMillis() < limite) { message }
             Thread.sleep(100)
         }
     }

@@ -72,6 +72,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -114,6 +115,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+/** Repères des tests du parcours : la toile, et le bouton qui trouve la prochaine zone. */
+const val TAG_TOILE = "toile"
+const val TAG_TROUVER = "trouver"
 
 @Composable
 fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: PaintingRepository, career: Career, onBack: () -> Unit) {
@@ -397,7 +402,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
             }
 
             Box(Modifier.weight(1f).fillMaxWidth()) {
-                PaintCanvas(state, peekOriginal = peek, look = look, modifier = Modifier.fillMaxSize())
+                PaintCanvas(state, peekOriginal = peek, look = look, modifier = Modifier.fillMaxSize().testTag(TAG_TOILE))
 
                 HintBanner(visible = showHint, look = look, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
                 EyeTip(visible = eyeTip, look = look, onDismiss = { eyeTip = false }, modifier = Modifier.align(Alignment.TopEnd).padding(end = 8.dp, top = 2.dp))
@@ -420,7 +425,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     look,
                     enabled = true,
                     badge = mistakes,
-                    modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
+                    modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp).testTag(TAG_TROUVER),
                 ) { scope.launch { state.findNextRegion() } }
             }
             PaletteBar(state, look, Modifier.padding(start = 10.dp, end = 10.dp, top = 4.dp, bottom = 10.dp))
