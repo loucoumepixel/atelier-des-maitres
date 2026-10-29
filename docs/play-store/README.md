@@ -26,8 +26,9 @@ Utiliser le même mot de passe pour le magasin et la clé. Conserver `upload.jks
 1. Créer un compte développeur sur https://play.google.com/console (25 $ une fois, vérification d'identité).
 2. Créer l'application « Atelier des Maîtres », langue par défaut français, application gratuite.
 3. Remplir la fiche, la confidentialité et les questionnaires avec [fiche.md](fiche.md). Ajouter 2 à 8 captures d'écran prises sur le téléphone.
-4. Comptes personnels récents : faire un **test fermé** avec au moins 12 testeurs pendant 14 jours avant de pouvoir publier en production.
-5. Déposer `atelier-des-maitres.aab` de la dernière Release, puis envoyer en examen.
+4. Comptes personnels récents : faire un **test fermé** avec au moins 12 testeurs pendant 14 jours avant de pouvoir publier en production, pas à pas dans [test-ferme.md](test-ferme.md).
+5. Avant chaque publication, faire la [vérification avant sortie](../verification-avant-sortie.md) sur un vrai téléphone.
+6. Déposer `atelier-des-maitres.aab` de la dernière Release, puis envoyer en examen.
 
 ## Droits sur les images
-Les sept œuvres sont dans le domaine public (artistes morts avant 1955). Les reproductions photographiques fidèles d'œuvres en deux dimensions ne créent pas de nouveau droit (directive européenne 2019/790, article 14 ; jurisprudence Bridgeman aux États-Unis). La reproduction de *Maisons et personnage* provient de la collection domaine public de rawpixel (CC0).
+Les vingt œuvres sont dans le domaine public (artistes morts avant 1955). Les reproductions photographiques fidèles d'œuvres en deux dimensions ne créent pas de nouveau droit (directive européenne 2019/790, article 14 ; jurisprudence Bridgeman aux États-Unis). La reproduction de *Maisons et personnage* provient de la collection domaine public de rawpixel (CC0).
