@@ -42,7 +42,7 @@ jobs:
           image='system-images;android-34;google_apis;x86_64'
           for essai in 1 2 3; do
             yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "$image" > /dev/null || true
-            if [ -f "$ANDROID_HOME/system-images/android-34/google_apis/x86_64/system.img" ]; then exit 0; fi
+            if [ -f "$ANDROID_HOME/system-images/android-34/google_apis/x86_64/package.xml" ]; then exit 0; fi
             echo "Essai $essai échoué, nouvel essai dans 60 secondes"
             sleep 60
           done
