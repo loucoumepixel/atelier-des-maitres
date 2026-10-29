@@ -35,6 +35,18 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - name: Compiler l'application et ses tests
         run: ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+      # Le serveur de Google qui fournit le système Android répond parfois par une erreur :
+      # trois essais espacés avant d'abandonner, pour ne pas bloquer une version pour rien.
+      - name: Télécharger le système du téléphone virtuel
+        run: |
+          image='system-images;android-34;google_apis;x86_64'
+          for essai in 1 2 3; do
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "$image" > /dev/null || true
+            if [ -f "$ANDROID_HOME/system-images/android-34/google_apis/x86_64/system.img" ]; then exit 0; fi
+            echo "Essai $essai échoué, nouvel essai dans 60 secondes"
+            sleep 60
+          done
+          exit 1
       - name: Jouer le parcours sur un téléphone virtuel
         uses: reactivecircus/android-emulator-runner@v2
         with:
