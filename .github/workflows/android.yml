@@ -50,15 +50,14 @@ jobs:
       - name: Montrer les échecs du parcours
         if: failure()
         run: |
-          for f in $(find app/build/outputs/androidTest-results -name '*.xml'); do
-            python3 - "$f" <<'PY'
-          import sys, xml.etree.ElementTree as ET
-          for case in ET.parse(sys.argv[1]).iter('testcase'):
-              for failure in case.findall('failure'):
-                  print('=' * 20, case.get('classname'), case.get('name'))
-                  print('\n'.join((failure.text or '').splitlines()[:60]))
+          python3 - <<'PY'
+          import pathlib, xml.etree.ElementTree as ET
+          for f in pathlib.Path('app/build/outputs/androidTest-results').rglob('*.xml'):
+              for case in ET.parse(f).iter('testcase'):
+                  for failure in case.findall('failure'):
+                      print('=' * 20, case.get('classname'), case.get('name'))
+                      print('\n'.join((failure.text or '').splitlines()[:80]))
           PY
-          done
       - name: Garder le rapport du parcours
         if: always()
         uses: actions/upload-artifact@v4
