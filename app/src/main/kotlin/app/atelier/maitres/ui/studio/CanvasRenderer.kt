@@ -145,10 +145,11 @@ class CanvasRenderer(
             }
         }
         val margin = max(width, height) / 24
-        return Bitmap.createBitmap(width + 2 * margin, height + 2 * margin, Bitmap.Config.ARGB_8888).apply {
-            eraseColor(PAPER)
-            setPixels(out, 0, width, margin, margin, width, height)
-        }
+        // Pas de apply { } ici : width et height y seraient ceux de l'image encadrée, plus grande.
+        val framed = Bitmap.createBitmap(width + 2 * margin, height + 2 * margin, Bitmap.Config.ARGB_8888)
+        framed.eraseColor(PAPER)
+        framed.setPixels(out, 0, width, margin, margin, width, height)
+        return framed
     }
 
     private fun drawRegion(region: Int) {
