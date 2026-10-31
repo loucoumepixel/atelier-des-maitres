@@ -169,9 +169,13 @@ internal fun FaceToFace(
                 .padding(start = 6.dp, end = 20.dp, top = 8.dp, bottom = 28.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // Une pastille sombre et bordée : le bouton reste lisible même quand la toile,
+            // approchée à deux doigts, remplit tout l'écran derrière lui (ciel clair, fond blanc…).
             Row(
                 Modifier
                     .clip(RoundedCornerShape(50))
+                    .background(DARK.copy(alpha = 0.85f))
+                    .border(1.5.dp, Play.Cream.copy(alpha = 0.55f), RoundedCornerShape(50))
                     .clickable(role = Role.Button) { onClose(pager.currentPage) }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -181,7 +185,15 @@ internal fun FaceToFace(
                 Text(stringResource(R.string.museum_back), color = Play.Cream, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             }
             Spacer(Modifier.weight(1f))
-            Text(stringResource(R.string.museum_position, pager.currentPage + 1, hung.size), color = WARM, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.museum_position, pager.currentPage + 1, hung.size),
+                color = WARM,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(DARK.copy(alpha = 0.7f))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+            )
         }
 
         // Le guide, l'aide au geste et les cadres.
