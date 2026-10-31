@@ -205,7 +205,7 @@ fun MuseumScreen(repository: PaintingRepository, career: Career, onBack: () -> U
                     color = WARM,
                 )
             }
-            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.TopEnd).background(Color.White.copy(alpha = 0.2f), CircleShape)) {
+            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.TopEnd).background(DARK.copy(alpha = 0.85f), CircleShape).border(1.5.dp, Color.White.copy(alpha = 0.55f), CircleShape)) {
                 Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.close), tint = Color.White)
             }
         }
