@@ -13,7 +13,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -324,6 +326,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                         .wallButtonShadow(look)
                         .clip(CircleShape)
                         .background(if (peek) MaterialTheme.colorScheme.secondaryContainer else look.button)
+                        .border(1.5.dp, look.buttonEdge, CircleShape)
                         .pointerInput(Unit) {
                             detectTapGestures(onPress = {
                                 peek = true
@@ -645,7 +648,7 @@ private fun Modifier.eyePulse(active: Boolean): Modifier {
 private fun Modifier.wallButtonShadow(look: AtelierLook) =
     if (look.buttonShadow) shadow(2.dp, CircleShape, ambientColor = Color(0xFF3C1E0A), spotColor = Color(0xFF3C1E0A)) else this
 
-/** Bouton rond, couleur crème le jour, à peine éclairé le soir. */
+/** Bouton rond bordé, crème le jour, brun sombre le soir : lisible sur le mur comme sur la toile. */
 @Composable
 private fun WallButton(look: AtelierLook, onClick: () -> Unit, content: @Composable () -> Unit) {
     Surface(
@@ -653,6 +656,7 @@ private fun WallButton(look: AtelierLook, onClick: () -> Unit, content: @Composa
         shape = CircleShape,
         color = look.button,
         contentColor = look.ink,
+        border = BorderStroke(1.5.dp, look.buttonEdge),
         modifier = Modifier.size(48.dp).padding(2.dp).wallButtonShadow(look),
     ) {
         Box(contentAlignment = Alignment.Center) { content() }
@@ -677,6 +681,7 @@ private fun FloatingTool(
             shape = CircleShape,
             color = look.button,
             contentColor = look.ink.copy(alpha = alpha),
+            border = BorderStroke(1.5.dp, look.buttonEdge),
             modifier = Modifier.size(48.dp).wallButtonShadow(look),
         ) {
             Box(contentAlignment = Alignment.Center) { Icon(icon, contentDescription = description) }
