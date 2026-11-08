@@ -101,6 +101,7 @@ import app.atelier.maitres.data.Career
 import app.atelier.maitres.data.Matter
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
+import app.atelier.maitres.ui.askForReview
 import app.atelier.maitres.ui.labelRes
 import app.atelier.maitres.ui.play.ColourDot
 import app.atelier.maitres.ui.play.rankNames
@@ -489,6 +490,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                 onShare = { share() },
                 onOneMore = {
                     state.showCompletion = false
+                    if (career.shouldAskReview(state.allPaintings)) askForReview(context)
                     onBack()
                 },
                 onAdmire = {

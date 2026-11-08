@@ -53,7 +53,15 @@ class Career(context: Context, private val repository: PaintingRepository) {
     /** La petite musique de piano, en fond dans l'atelier. */
     var musicOn: Boolean
         get() = prefs.getBoolean(MUSIC, true)
-        set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
+        set(value) {
+            prefs.edit().putBoolean(MUSIC, value).apply()
+            _music.value = value
+        }
+
+    private val _music = MutableStateFlow(prefs.getBoolean(MUSIC, true))
+
+    /** La musique (et l'ambiance de salle) est-elle voulue ? Suit [musicOn]. */
+    val musicFlow: StateFlow<Boolean> = _music.asStateFlow()
 
     /** Épaisseur de la peinture à l'huile choisie par le joueur. */
     var matter: Matter

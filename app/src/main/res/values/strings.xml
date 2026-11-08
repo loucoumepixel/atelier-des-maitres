@@ -315,4 +315,83 @@
     <string name="expo_japon_text">Waves, a mountain and a shower, carved in wood. Finish all three canvases before the month ends.</string>
     <string name="frame_craie">Chalk frame</string>
     <string name="frame_indigo">Indigo frame</string>
+
+    <!-- Apprentice's notebook: achievements, story, streak (waves 2 and 3) -->
+    <string name="journal_title">My notebook</string>
+    <string name="journal_open">Open my notebook</string>
+    <string name="journal_streak">%1$d-day streak</string>
+    <string name="journal_grace_ready">One grace day in reserve: a missed day won’t break your streak.</string>
+    <string name="journal_grace_used_today">Yesterday went by without painting: paint today and your grace day will save your streak.</string>
+    <string name="journal_grace_none">%1$d more days in a row to earn a grace day.</string>
+    <string name="journal_achievements">Achievements · %1$d of %2$d</string>
+    <string name="journal_story">Chapter %1$d · %2$s</string>
+    <string name="journal_masterpiece">Beyond Genius: the Masterpiece</string>
+    <string name="journal_masterpiece_text">Three Expert stars on every canvas: %1$d of %2$d</string>
+    <string name="achievement_won">Achievement: %1$s!</string>
+    <string-array name="story_titles">
+        <item>The scribbler</item>
+        <item>The dauber</item>
+        <item>The apprentice</item>
+        <item>The journeyman</item>
+        <item>The artist</item>
+        <item>The master</item>
+        <item>The genius</item>
+    </string-array>
+    <string-array name="story_texts">
+        <item>“I came into the studio through the back door, with empty hands and a lot of hope. The master handed me a brush: ‘Start with one area. Just one.’”</item>
+        <item>“I’ve already stained three aprons. The master laughs: ‘Paint on the floor is proof that someone worked.’ He showed me how to hold the brush closer to the bristles.”</item>
+        <item>“Today I ground my first colours. Ultramarine blue comes from a stone that crossed the sea. Now I know why we never waste a drop.”</item>
+        <item>“The master let me use his brushes for the first time. He looked at my canvas for a long while, then said: ‘Tomorrow, you’ll paint the sky.’ I didn’t sleep all night.”</item>
+        <item>“Visitors stopped in front of one of my canvases. They looked for my signature in the corner. The master smiled and said nothing.”</item>
+        <item>“This morning, a young boy pushed open the studio’s back door. I handed him a brush: ‘Start with one area. Just one.’”</item>
+        <item>“The master left me the keys to the studio. They say one last challenge remains: to paint every canvas at the highest level. The great masters call it a masterpiece.”</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>First canvas</item>
+        <item>Five canvases</item>
+        <item>Ten canvases</item>
+        <item>Twenty canvases</item>
+        <item>The whole gallery</item>
+        <item>First Normal</item>
+        <item>First Expert</item>
+        <item>Three stars</item>
+        <item>Ten on Expert</item>
+        <item>All seven Vincents</item>
+        <item>All five Monets</item>
+        <item>Japan</item>
+        <item>Night painter</item>
+        <item>3 days in a row</item>
+        <item>7 days in a row</item>
+        <item>30 days in a row</item>
+        <item>Exhibitor</item>
+        <item>Curator</item>
+        <item>First varnish</item>
+        <item>Ten varnishes</item>
+        <item>My own canvas</item>
+        <item>Master</item>
+        <item>Genius</item>
+        <item>Masterpiece</item>
+    </string-array>
+    <string name="varnish">Varnish the canvas</string>
+    <string name="varnished">Varnished</string>
+    <string name="rank_party_title">You are now…</string>
+    <string name="rank_party_rank">Rank %1$d of %2$d · %3$d touches</string>
+    <string name="rank_party_unlocked">New canvases unpacked:</string>
+    <string name="rank_party_go">Continue</string>
+    <string name="matter_button">Paint: %1$s</string>
+    <string name="guided_skip">Skip</string>
+    <string name="guided_step">Step %1$d of %2$d</string>
+    <string name="guided_next">Next</string>
+    <string-array name="guided_titles">
+        <item>Pick a colour</item>
+        <item>Paint the areas</item>
+        <item>Come closer</item>
+        <item>The little eye</item>
+    </string-array>
+    <string-array name="guided_texts">
+        <item>Each pot on the palette has a number. Tap a pot: the areas with that number light up on the canvas.</item>
+        <item>Tap a lit area to paint it. Each area painted in the right colour earns touches.</item>
+        <item>Spread two fingers to zoom in on small areas, and drag to move around.</item>
+        <item>Hold the eye to see the original painting at any time.</item>
+    </string-array>
 </resources>

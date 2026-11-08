@@ -317,4 +317,83 @@
     <string name="expo_japon_text">Vagues, montagne et averse, gravées sur bois. Finissez les trois toiles avant la fin du mois.</string>
     <string name="frame_craie">Cadre de craie</string>
     <string name="frame_indigo">Cadre indigo</string>
+
+    <!-- Carnet de l'apprenti : succès, histoire, série (vagues 2 et 3) -->
+    <string name="journal_title">Mon carnet</string>
+    <string name="journal_open">Ouvrir mon carnet</string>
+    <string name="journal_streak">Série de %1$d jours</string>
+    <string name="journal_grace_ready">Un jour de grâce en réserve : un oubli ne cassera pas votre série.</string>
+    <string name="journal_grace_used_today">Hier est passé sans peinture : peignez aujourd\'hui, le jour de grâce sauvera votre série.</string>
+    <string name="journal_grace_none">Encore %1$d jours d\'affilée pour gagner un jour de grâce.</string>
+    <string name="journal_achievements">Succès · %1$d sur %2$d</string>
+    <string name="journal_story">Chapitre %1$d · %2$s</string>
+    <string name="journal_masterpiece">Après Génie : le Chef-d\'œuvre</string>
+    <string name="journal_masterpiece_text">Trois étoiles Expert sur toutes les toiles : %1$d sur %2$d</string>
+    <string name="achievement_won">Succès : %1$s !</string>
+    <string-array name="story_titles">
+        <item>Le gribouilleur</item>
+        <item>Le barbouilleur</item>
+        <item>L\'apprenti</item>
+        <item>Le compagnon</item>
+        <item>L\'artiste</item>
+        <item>Le maître</item>
+        <item>Le génie</item>
+    </string-array>
+    <string-array name="story_texts">
+        <item>« Je suis entré dans l\'atelier par la petite porte, avec mes mains vides et beaucoup d\'envie. Le maître m\'a tendu un pinceau : “Commence par une zone. Une seule.” »</item>
+        <item>« J\'ai déjà taché trois tabliers. Le maître rit : “La peinture qui tombe par terre, c\'est la preuve qu\'on a travaillé.” Il m\'a montré comment tenir le pinceau plus près des poils. »</item>
+        <item>« Aujourd\'hui, j\'ai broyé mes premières couleurs. Le bleu outremer vient d\'une pierre qui a traversé la mer. J\'ai compris pourquoi on n\'en gâche pas une goutte. »</item>
+        <item>« Le maître m\'a confié ses pinceaux pour la première fois. Il a regardé longtemps ma toile, puis il a dit : “Demain, tu peindras le ciel.” Je n\'ai pas dormi de la nuit. »</item>
+        <item>« Des visiteurs se sont arrêtés devant une de mes toiles. Ils ont cherché ma signature dans le coin. Le maître a souri sans rien dire. »</item>
+        <item>« Ce matin, un jeune garçon a poussé la petite porte de l\'atelier. Je lui ai tendu un pinceau : “Commence par une zone. Une seule.” »</item>
+        <item>« Le maître m\'a laissé les clés de l\'atelier. Il paraît qu\'il reste un dernier défi : peindre chaque toile au plus haut niveau. Les grands maîtres appellent ça un chef-d\'œuvre. »</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>Première toile</item>
+        <item>Cinq toiles</item>
+        <item>Dix toiles</item>
+        <item>Vingt toiles</item>
+        <item>Toute la galerie</item>
+        <item>Premier Normal</item>
+        <item>Premier Expert</item>
+        <item>Trois étoiles</item>
+        <item>Dix en Expert</item>
+        <item>Les sept Vincent</item>
+        <item>Les cinq Monet</item>
+        <item>Le Japon</item>
+        <item>Peintre de nuit</item>
+        <item>3 jours d\'affilée</item>
+        <item>7 jours d\'affilée</item>
+        <item>30 jours d\'affilée</item>
+        <item>Exposant</item>
+        <item>Commissaire</item>
+        <item>Premier vernis</item>
+        <item>Dix vernis</item>
+        <item>Ma toile</item>
+        <item>Maître</item>
+        <item>Génie</item>
+        <item>Chef-d\'œuvre</item>
+    </string-array>
+    <string name="varnish">Vernir la toile</string>
+    <string name="varnished">Toile vernie</string>
+    <string name="rank_party_title">Vous voilà…</string>
+    <string name="rank_party_rank">Rang %1$d sur %2$d · %3$d touches</string>
+    <string name="rank_party_unlocked">Nouvelles toiles déballées :</string>
+    <string name="rank_party_go">Continuer</string>
+    <string name="matter_button">Matière : %1$s</string>
+    <string name="guided_skip">Passer</string>
+    <string name="guided_step">Étape %1$d sur %2$d</string>
+    <string name="guided_next">Suivant</string>
+    <string-array name="guided_titles">
+        <item>Choisissez une couleur</item>
+        <item>Peignez les zones</item>
+        <item>Approchez-vous</item>
+        <item>Le petit œil</item>
+    </string-array>
+    <string-array name="guided_texts">
+        <item>Chaque pot de la palette porte un numéro. Touchez un pot : les zones de ce numéro s\'allument sur la toile.</item>
+        <item>Touchez une zone allumée pour la peindre. Une zone peinte avec la bonne couleur rapporte des touches.</item>
+        <item>Écartez deux doigts pour zoomer sur les petites zones, glissez pour vous déplacer.</item>
+        <item>Maintenez l\'œil pour revoir le tableau original à tout moment.</item>
+    </string-array>
 </resources>

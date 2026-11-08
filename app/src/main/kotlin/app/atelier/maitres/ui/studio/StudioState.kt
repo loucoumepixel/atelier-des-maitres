@@ -135,6 +135,9 @@ class StudioState(
     var toast by mutableStateOf<GameToast?>(null)
         private set
 
+    /** Toutes les toiles de la galerie (catalogue et imports). */
+    val allPaintings: List<Painting> get() = repository.paintings.value
+
     /** Toiles déballées grâce aux rangs gagnés pendant la séance. */
     fun unlockedPaintings(): List<Painting> =
         repository.paintings.value.filter { it.unlockRank > 0 && it.unlockRank in rankUps }

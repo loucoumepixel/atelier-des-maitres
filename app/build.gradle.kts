@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     // Installe le profil de démarrage même hors Play Store (APK des Releases).
     implementation(libs.androidx.profileinstaller)
+    // La fenêtre « Noter l'application » du Play Store, proposée une seule fois.
+    implementation(libs.play.review.ktx)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
