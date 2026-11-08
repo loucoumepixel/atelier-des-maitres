@@ -2,7 +2,7 @@
 
 Langue par défaut de la fiche : français. Ajouter l'anglais (Présence sur le Play Store › Fiche principale › Gérer les traductions › Anglais (États-Unis), puis Anglais (Royaume-Uni) avec le même texte) : la version anglaise est en bas de ce document.
 
-Fiche mise à jour pour la version 1.0.33 : 20 toiles, peinture à l'huile, guide de musée, expositions du mois, musée et musique par époque.
+Fiche mise à jour pour la prochaine version : 30 toiles, tout public, peinture à l'huile, guide de musée, expositions du mois, musée et musique par époque.
 
 ## Français
 
@@ -10,14 +10,14 @@ Fiche mise à jour pour la version 1.0.33 : 20 toiles, peinture à l'huile, guid
 Atelier des Maîtres
 
 ## Description courte (80 caractères max)
-Repeignez 20 chefs-d'œuvre zone par zone, de Van Gogh à Vermeer, à l'huile.
+Repeignez 30 chefs-d'œuvre zone par zone, de Van Gogh à Vermeer, à l'huile.
 
 ## Description complète
 Prenez le pinceau des plus grands peintres.
 
 Atelier des Maîtres découpe les chefs-d'œuvre de la peinture en zones numérotées. Choisissez une couleur, touchez une zone : la toile renaît sous vos doigts, en vraie peinture à l'huile, avec son relief et ses coups de pinceau.
 
-20 CHEFS-D'ŒUVRE
+30 CHEFS-D'ŒUVRE
 • Vincent van Gogh : La Nuit étoilée, Champ de blé avec cyprès, Le Café de nuit, Maisons et personnage
 • Claude Monet : Impression, soleil levant, Nymphéas, Prairie à Giverny
 • Léonard de Vinci : La Joconde
@@ -25,7 +25,7 @@ Atelier des Maîtres découpe les chefs-d'œuvre de la peinture en zones numéro
 • Hokusai : La Grande Vague de Kanagawa
 • Edvard Munch : Le Cri
 • Georges Seurat : Un dimanche après-midi à l'île de la Grande Jatte
-• Et Botticelli, Cézanne, Delacroix, Friedrich, Renoir, Turner, Grant Wood…
+• Et Bruegel, Caillebotte, Cézanne, Delacroix, Friedrich, Hiroshige, Homer, Renoir, Turner…
 
 UN GUIDE DE MUSÉE
 Chaque toile terminée, une conteuse vous raconte son histoire : l'année, le lieu, l'anecdote, le détail à regarder, et le musée où voir l'original.
@@ -71,13 +71,13 @@ Jeux › Puzzle (ou Occasionnel). La catégorie Application › Art et design co
 - Politique de confidentialité : https://loucoumepixel.github.io/atelier-des-maitres/confidentialite.html une fois GitHub Pages activé (voir [test-ferme.md](test-ferme.md)), sinon https://github.com/loucoumepixel/atelier-des-maitres/blob/main/docs/confidentialite.md
 
 ## Notes de version (première publication)
-20 chefs-d'œuvre à repeindre en peinture à l'huile, un guide de musée pour chaque toile, votre propre musée, une exposition chaque mois et la musique de chaque époque. En français et en anglais.
+30 chefs-d'œuvre à repeindre en peinture à l'huile, un guide de musée pour chaque toile, votre propre musée, une exposition chaque mois et la musique de chaque époque. En français et en anglais.
 
 ## Réponses aux questionnaires de la Play Console
 - **Sécurité des données** : l'application ne collecte ni ne partage aucune donnée. Pas de chiffrement en transit à déclarer (aucune donnée transmise).
 - **Publicités** : non.
 - **Accès à l'application** : toutes les fonctionnalités sont accessibles sans identifiants.
-- **Classification du contenu** : catégorie « Jeu ». Aucune violence, langage grossier, substance, jeu d'argent ; pas d'interaction entre utilisateurs ; pas de partage de position ; pas d'achats numériques. **Nudité** : La Naissance de Vénus et La Liberté guidant le peuple montrent une nudité artistique non sexuelle ; la déclarer honnêtement (case « nudité » cochée lors de la première soumission). Si ces deux toiles sont un jour retirées, décocher la case à la mise à jour suivante.
+- **Classification du contenu** : catégorie « Jeu ». Aucune violence, langage grossier, substance, jeu d'argent ; pas d'interaction entre utilisateurs ; pas de partage de position ; pas d'achats numériques. **Nudité** : aucune depuis le retrait de La Naissance de Vénus et de La Liberté guidant le peuple ; décocher la case « nudité » dans le questionnaire pour obtenir la classification tout public (PEGI 3).
 - **Public cible** : 13 ans et plus (un public « enfants » soumet l'application au programme Familles et à des exigences supplémentaires).
 - **Application d'actualités / santé / gouvernementale / financière** : non.
 
@@ -87,14 +87,14 @@ Jeux › Puzzle (ou Occasionnel). La catégorie Application › Art et design co
 Atelier des Maîtres
 
 ### Short description (80 characters max)
-Repaint 20 masterpieces area by area, from Van Gogh to Vermeer, in oil paint.
+Repaint 30 masterpieces area by area, from Van Gogh to Vermeer, in oil paint.
 
 ### Full description
 Pick up the brush of the greatest painters.
 
 Atelier des Maîtres divides painting masterpieces into numbered areas. Choose a colour, tap an area: the canvas comes back to life under your fingers, in real oil paint, with its texture and brushstrokes.
 
-20 MASTERPIECES
+30 MASTERPIECES
 • Vincent van Gogh: The Starry Night, Wheat Field with Cypresses, The Night Café, Cottages and Figure
 • Claude Monet: Impression, Sunrise, Water Lilies, Meadow at Giverny
 • Leonardo da Vinci: Mona Lisa
@@ -102,7 +102,7 @@ Atelier des Maîtres divides painting masterpieces into numbered areas. Choose a
 • Hokusai: The Great Wave off Kanagawa
 • Edvard Munch: The Scream
 • Georges Seurat: A Sunday Afternoon on the Island of La Grande Jatte
-• And Botticelli, Cézanne, Delacroix, Friedrich, Renoir, Turner, Grant Wood…
+• And Bruegel, Caillebotte, Cézanne, Delacroix, Friedrich, Hiroshige, Homer, Renoir, Turner…
 
 A MUSEUM GUIDE
 Each time you finish a canvas, a guide tells you its story: the year, the place, the anecdote, the detail to look for, and the museum where the original hangs.
@@ -130,7 +130,7 @@ Import a photo from your phone: it is divided into areas in a few seconds, right
 No ads, no account, no purchases. Nothing leaves your phone.
 
 ### Release notes (first release)
-20 masterpieces to repaint in oil, a museum guide for every canvas, your own museum, a new exhibition every month and the music of each era. In English and French.
+30 masterpieces to repaint in oil, a museum guide for every canvas, your own museum, a new exhibition every month and the music of each era. In English and French.
 
 ### Privacy policy
 https://loucoumepixel.github.io/atelier-des-maitres/privacy.html (or https://github.com/loucoumepixel/atelier-des-maitres/blob/main/docs/privacy.md)
