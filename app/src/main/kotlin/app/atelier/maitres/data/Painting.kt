@@ -75,9 +75,19 @@ object MasterCatalog {
         Entry("american_gothic", R.string.american_gothic_title, R.string.american_gothic_note, artist = "Grant Wood", year = "1930", nickname = "Grant", era = Era.AMERIQUE, guide = R.string.guide_american_gothic),
         Entry("naufrage_minotaure", R.string.naufrage_minotaure_title, R.string.naufrage_minotaure_note, artist = "J. M. W. Turner", year = R.string.naufrage_minotaure_year, unlockRank = 1, nickname = "William", era = Era.ROMANTISME, guide = R.string.guide_naufrage_minotaure),
         Entry("le_cri", R.string.le_cri_title, R.string.le_cri_note, artist = "Edvard Munch", year = "1893", unlockRank = 2, nickname = "Edvard", era = Era.EXPRESSIONNISME, guide = R.string.guide_le_cri),
-        Entry("liberte_peuple", R.string.liberte_peuple_title, R.string.liberte_peuple_note, artist = "Eugène Delacroix", year = "1830", unlockRank = 3, nickname = "Eugène", era = Era.ROMANTISME, guide = R.string.guide_liberte_peuple),
-        Entry("naissance_venus", R.string.naissance_venus_title, R.string.naissance_venus_note, artist = "Sandro Botticelli", year = R.string.naissance_venus_year, unlockRank = 4, nickname = "Sandro", era = Era.RENAISSANCE, guide = R.string.guide_naissance_venus),
+        Entry("chambre_arles", R.string.chambre_arles_title, R.string.chambre_arles_note, artist = "Vincent van Gogh", year = "1889", nickname = "Vincent", era = Era.POSTIMPRESSIONNISME, guide = R.string.guide_chambre_arles),
+        Entry("monet_coquelicots", R.string.monet_coquelicots_title, R.string.monet_coquelicots_note, artist = "Claude Monet", year = "1873", nickname = "Claude", era = Era.IMPRESSIONNISME, guide = R.string.guide_monet_coquelicots),
+        Entry("fuji_rouge", R.string.fuji_rouge_title, R.string.fuji_rouge_note, artist = "Katsushika Hokusai", year = R.string.fuji_rouge_year, unlockRank = 1, nickname = "Hokusai", era = Era.JAPON, guide = R.string.guide_fuji_rouge),
+        Entry("jeu_du_fouet", R.string.jeu_du_fouet_title, R.string.jeu_du_fouet_note, artist = "Winslow Homer", year = "1872", unlockRank = 1, nickname = "Winslow", era = Era.AMERIQUE, guide = R.string.guide_jeu_du_fouet),
+        Entry("tournesols", R.string.tournesols_title, R.string.tournesols_note, artist = "Vincent van Gogh", year = "1888", unlockRank = 2, nickname = "Vincent", era = Era.POSTIMPRESSIONNISME, guide = R.string.guide_tournesols),
+        Entry("averse_ohashi", R.string.averse_ohashi_title, R.string.averse_ohashi_note, artist = "Utagawa Hiroshige", year = "1857", unlockRank = 2, nickname = "Hiroshige", era = Era.JAPON, guide = R.string.guide_averse_ohashi),
+        Entry("iris", R.string.iris_title, R.string.iris_note, artist = "Vincent van Gogh", year = "1889", unlockRank = 3, nickname = "Vincent", era = Era.POSTIMPRESSIONNISME, guide = R.string.guide_iris),
+        Entry("rue_paris_pluie", R.string.rue_paris_pluie_title, R.string.rue_paris_pluie_note, artist = "Gustave Caillebotte", year = "1877", unlockRank = 3, nickname = "Gustave", era = Era.IMPRESSIONNISME, guide = R.string.guide_rue_paris_pluie),
+        Entry("monet_ombrelle", R.string.monet_ombrelle_title, R.string.monet_ombrelle_note, artist = "Claude Monet", year = "1875", unlockRank = 4, nickname = "Claude", era = Era.IMPRESSIONNISME, guide = R.string.guide_monet_ombrelle),
+        Entry("arcimboldo_ete", R.string.arcimboldo_ete_title, R.string.arcimboldo_ete_note, artist = "Giuseppe Arcimboldo", year = "1573", unlockRank = 4, nickname = "Giuseppe", era = Era.RENAISSANCE, guide = R.string.guide_arcimboldo_ete),
         Entry("joconde", R.string.joconde_title, R.string.joconde_note, artist = R.string.joconde_artist, year = "1503-1519", unlockRank = 5, nickname = R.string.joconde_nickname, era = Era.RENAISSANCE, guide = R.string.guide_joconde),
+        Entry("chasseurs_neige", R.string.chasseurs_neige_title, R.string.chasseurs_neige_note, artist = "Pieter Bruegel", year = "1565", unlockRank = 5, nickname = "Pieter", era = Era.RENAISSANCE, guide = R.string.guide_chasseurs_neige),
+        Entry("vermeer_perle", R.string.vermeer_perle_title, R.string.vermeer_perle_note, artist = "Johannes Vermeer", year = R.string.vermeer_perle_year, unlockRank = 6, nickname = "Johannes", era = Era.RENAISSANCE, guide = R.string.guide_vermeer_perle),
     )
 
     fun paintings(resources: Resources): List<Painting> = entries.map { e ->

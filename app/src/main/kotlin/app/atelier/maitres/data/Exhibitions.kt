@@ -22,7 +22,9 @@ enum class Frame(@StringRes val labelRes: Int, val wood: Long, val style: Style 
     VELOURS(R.string.frame_velours, 0xFF8E2A3B),
     ZINC(R.string.frame_zinc, 0xFF9AA2A7),
     LAQUE(R.string.frame_laque, 0xFFB5432F),
-    VIGNE(R.string.frame_vigne, 0xFF7E4766);
+    VIGNE(R.string.frame_vigne, 0xFF7E4766),
+    CRAIE(R.string.frame_craie, 0xFFD8C9A3),
+    INDIGO(R.string.frame_indigo, 0xFF2E4A7A);
 
     /** La matière de la moulure : bois veiné, dorure qui accroche la lumière, ou dorure sculptée. */
     enum class Style { BOIS, DORURE, BAROQUE }
@@ -65,11 +67,15 @@ object Exhibitions {
         Exhibition("visages", R.string.expo_visages, R.string.expo_visages_text,
             listOf("joconde", "vermeer_laitiere", "american_gothic", "le_cri"), Frame.VELOURS),
         Exhibition("paris", R.string.expo_paris, R.string.expo_paris_text,
-            listOf("pont_neuf", "grande_jatte", "liberte_peuple"), Frame.ZINC),
+            listOf("pont_neuf", "grande_jatte", "rue_paris_pluie"), Frame.ZINC),
         Exhibition("voyages", R.string.expo_voyages, R.string.expo_voyages_text,
             listOf("grande_vague", "noce_juive", "voyageur_brume", "american_gothic"), Frame.LAQUE),
         Exhibition("natures", R.string.expo_natures, R.string.expo_natures_text,
-            listOf("panier_pommes", "monet_nympheas", "champ_de_ble_cypres", "naissance_venus"), Frame.VIGNE),
+            listOf("panier_pommes", "monet_nympheas", "champ_de_ble_cypres", "tournesols"), Frame.VIGNE),
+        Exhibition("enfances", R.string.expo_enfances, R.string.expo_enfances_text,
+            listOf("chambre_arles", "jeu_du_fouet", "monet_ombrelle", "monet_coquelicots"), Frame.CRAIE),
+        Exhibition("japon", R.string.expo_japon, R.string.expo_japon_text,
+            listOf("grande_vague", "fuji_rouge", "averse_ohashi"), Frame.INDIGO),
     )
 
     fun current(date: LocalDate = LocalDate.now()): Exhibition =

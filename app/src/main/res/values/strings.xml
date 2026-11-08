@@ -148,11 +148,6 @@
     <string name="vermeer_laitiere_note">A trickle of milk, a ray of light: Vermeer turns a kitchen gesture into a moment held still.</string>
     <string name="american_gothic_title">American Gothic</string>
     <string name="american_gothic_note">Wood posed his sister and his dentist in front of an Iowa house. People take them for husband and wife; he meant father and daughter.</string>
-    <string name="liberte_peuple_title">Liberty Leading the People</string>
-    <string name="liberte_peuple_note">Painted to honour the July Revolution of 1830. Restored in 2024, it has regained its bright colours.</string>
-    <string name="naissance_venus_title">The Birth of Venus</string>
-    <string name="naissance_venus_year">c. 1485</string>
-    <string name="naissance_venus_note">Zephyr blows the goddess towards the shore, where one of the Horae waits with a flowered cloak.</string>
     <string name="joconde_title">Mona Lisa</string>
     <string name="joconde_artist">Leonardo da Vinci</string>
     <string name="joconde_nickname">Leonardo</string>
@@ -204,8 +199,6 @@
     <string name="guide_american_gothic">Iowa, 1930. Grant Wood notices a small white house with a pointed Gothic window. He imagines the people who might live there, and asks his sister Nan and his dentist to pose. People often think they are husband and wife, but the painter saw them as a father and his daughter. The pitchfork is echoed in the seams of the overalls and in the window. This painting has become one of America\'s best-known images.</string>
     <string name="guide_naufrage_minotaure">Joseph Mallord William Turner, the English painter of light and storms. Here a great ship breaks apart in a raging sea, while small boats try to save the crew. Turner doesn\'t paint every wave: he paints the power of nature, with sweeping gestures and colours that run into each other. More than half a century early, he points the way to the impressionists.</string>
     <string name="guide_le_cri">Edvard Munch was walking at sunset near Oslo when, he wrote, the sky turned blood red. He felt, he said, an infinite scream passing through nature. So he painted this figure clutching its head on a bridge, under a sky in flames. Munch made several versions, in paint, pastel and print. This picture has become the symbol of modern anxiety.</string>
-    <string name="guide_liberte_peuple">Paris, July 1830. For three days Parisians rise up against King Charles the Tenth: the Three Glorious Days. Eugène Delacroix did not fight, but he wanted at least to paint for his country. Liberty, holding the tricolour flag, leads the people over the barricades. Beside her, a boy waves two pistols. The painting was restored at the Louvre in 2024 and has found its colours again.</string>
-    <string name="guide_naissance_venus">Florence, around 1485. Sandro Botticelli paints Venus, goddess of love, arriving at the shore standing on a shell. On the left, the wind Zephyr blows her towards land; on the right, a young woman holds out a cloak covered in flowers. It was one of the first large paintings since antiquity to show a mythological subject. It hangs in the Uffizi Gallery in Florence.</string>
     <string name="guide_joconde">Leonardo da Vinci begins this portrait around 1503, in Florence. He never parts with it: he takes it to France, where he spends his last years, and keeps retouching it. His secret is called sfumato: outlines so soft they seem to melt into shadow, especially at the corners of the mouth. That is why her smile seems to change as you look at her. Stolen in 1911 and found two years later, she now lives in the Louvre.</string>
     <string name="guide_listen">Listen to the guide</string>
     <string name="guide_stop">Stop the guide</string>
@@ -232,7 +225,7 @@
     <string name="expo_visages">Famous faces</string>
     <string name="expo_visages_text">Four gazes the whole world knows. Finish them all before the month ends.</string>
     <string name="expo_paris">Paris in paint</string>
-    <string name="expo_paris_text">Bridges, islands and barricades of the capital. Finish all three canvases before the month ends.</string>
+    <string name="expo_paris_text">Bridges, islands and rainy streets of the capital. Finish all three canvases before the month ends.</string>
     <string name="expo_voyages">Faraway journeys</string>
     <string name="expo_voyages_text">From Japan to Morocco, all the way to Iowa. Finish all four canvases before the month ends.</string>
     <string name="expo_natures">Nature in bloom</string>
@@ -274,4 +267,52 @@
         <item quantity="other">%1$d canvases hanging in their gallery</item>
     </plurals>
     <string name="museum_visit">Visit</string>
+
+    <!-- New paintings (all-ages update, November 2026) -->
+    <string name="vermeer_perle_title">Girl with a Pearl Earring</string>
+    <string name="vermeer_perle_year">c. 1665</string>
+    <string name="vermeer_perle_note">Not a portrait but a “tronie”, an imagined face, wearing a blue and yellow turban.</string>
+    <string name="monet_coquelicots_title">Poppy Field</string>
+    <string name="monet_coquelicots_note">Near Argenteuil, Camille and their son Jean appear twice: at the top of the hill, then in the foreground.</string>
+    <string name="monet_ombrelle_title">Woman with a Parasol</string>
+    <string name="monet_ombrelle_note">Camille and Jean seen from below, against the sky: Monet paints fast to catch the passing wind.</string>
+    <string name="chambre_arles_title">The Bedroom</string>
+    <string name="chambre_arles_note">Vincent wanted the colours alone to “rest the mind”. He painted his room in the Yellow House three times.</string>
+    <string name="iris_title">Irises</string>
+    <string name="iris_note">Painted in the garden at Saint-Rémy in his very first week there, in May 1889.</string>
+    <string name="tournesols_title">Sunflowers</string>
+    <string name="tournesols_note">Painted in Arles in August 1888 to decorate the room of his friend Paul Gauguin.</string>
+    <string name="fuji_rouge_title">Red Fuji</string>
+    <string name="fuji_rouge_year">c. 1831</string>
+    <string name="fuji_rouge_note">At the end of summer, at dawn, the sun turns the mountain red. Hokusai needs only three colours.</string>
+    <string name="averse_ohashi_title">Sudden Shower over Ōhashi Bridge</string>
+    <string name="averse_ohashi_note">A print from the One Hundred Views of Edo. Van Gogh loved it so much he copied it in oils in 1887.</string>
+    <string name="rue_paris_pluie_title">Paris Street; Rainy Day</string>
+    <string name="rue_paris_pluie_note">A brand-new crossroads near the Gare Saint-Lazare, where umbrellas pass on the wet cobblestones.</string>
+    <string name="chasseurs_neige_title">The Hunters in the Snow</string>
+    <string name="chasseurs_neige_note">One of Bruegel’s paintings of the seasons: far below, the whole village skates on the frozen ponds.</string>
+    <string name="arcimboldo_ete_title">Summer</string>
+    <string name="arcimboldo_ete_note">Look closely: this face is made of fruit, vegetables and ears of wheat. A cherry for the lip, a pear for the chin.</string>
+    <string name="jeu_du_fouet_title">Snap the Whip</string>
+    <string name="jeu_du_fouet_note">At playtime, the schoolboys hold hands and run in a line: the last one has to hang on!</string>
+
+    <string name="guide_vermeer_perle">Delft, in the Netherlands, around 1665. Johannes Vermeer paints a girl turning towards us, lips parted, as if we had just called her name. Nobody knows who she is: this is not a commissioned portrait but an imagined face. Her turban is painted with a precious blue made from a stone, lapis lazuli, which cost more than gold. And the pearl? Two small touches of white are enough to make it shine. The painting hangs in the Mauritshuis, in The Hague.</string>
+    <string name="guide_monet_coquelicots">Summer 1873, near Argenteuil, on the banks of the Seine. Claude Monet walks with his wife Camille and their son Jean through a field of poppies. Look closely: the mother with her parasol and the child appear twice, at the top of the hill and in the foreground, as if they were walking down towards us. The flowers are just quick dabs of red. The next year, Monet showed this painting at the very first Impressionist exhibition. It is now in the Musée d’Orsay, in Paris.</string>
+    <string name="guide_monet_ombrelle">Summer 1875. Claude Monet sets up his easel at the foot of a small hill. Up above, his wife Camille holds a green parasol, and their son Jean stands a little further off in the grass. The wind lifts her veil and the clouds race by. Monet paints in a few hours, with broad strokes, to keep the moment before it blows away. We seem to be looking up at them. The painting is in the National Gallery of Art, in Washington.</string>
+    <string name="guide_chambre_arles">Vincent van Gogh loved his little bedroom in the Yellow House in Arles so much that he painted it three times. This is the second version, from 1889. He wrote to his brother Theo that the colours should rest the mind: lavender-blue walls, a yellow bed, a red blanket. Look at the floor, it tilts a little, as if the room were opening its arms to us. On the walls, Vincent hung his own paintings. This bedroom is in the Art Institute of Chicago.</string>
+    <string name="guide_iris">May 1889. Vincent van Gogh has just arrived at the hospital in Saint-Rémy-de-Provence. In his very first week, he goes out into the garden and paints these irises. He calls painting his lightning rod: it helps him feel better. Look at the leaves, like green swords, and that single white iris on the left among all the blue ones. The painting is now in the Getty Museum, in Los Angeles.</string>
+    <string name="guide_tournesols">Arles, August 1888. Vincent van Gogh is waiting for a visit from his friend, the painter Paul Gauguin. To decorate his room, he paints sunflowers in a vase, almost entirely in yellows. He has to work fast, because the flowers wilt in a few days. Gauguin would love these paintings. Vincent signs on the vase, simply: Vincent. This version is in the National Gallery, in London.</string>
+    <string name="guide_fuji_rouge">Around 1831, in Japan. Katsushika Hokusai publishes his Thirty-six Views of Mount Fuji. In this one there is no wave and no people: only the mountain, turned red by the morning sun at the end of summer. The sky is blue, with rows of small white clouds. With barely three colours, Hokusai lets us feel the calm of a windless morning. These pictures were printed from carved wooden blocks, one for each colour.</string>
+    <string name="guide_averse_ohashi">Edo, the old name of Tokyo, 1857. Utagawa Hiroshige shows a sudden shower catching people on a big wooden bridge. The rain falls in fine straight lines, each one carved by hand. People hide under straw hats and umbrellas. Thirty years later, in Paris, Vincent van Gogh admired this print so much that he copied it in oil paint. Japan inspired many European painters.</string>
+    <string name="guide_rue_paris_pluie">Paris, 1877. Gustave Caillebotte paints a brand-new crossroads near the Gare Saint-Lazare. The tall buildings have just been built, and the cobblestones shine in the rain. People pass each other under their umbrellas, a little like in a photograph. Caillebotte was a painter but also a generous friend: he bought the Impressionists’ paintings to help them. This huge canvas is in the Art Institute of Chicago.</string>
+    <string name="guide_chasseurs_neige">Winter 1565, in Flanders. Pieter Bruegel paints a series of pictures of the seasons. In this one, hunters come back to the village with their dogs, through the snow. Below, everyone is having fun on the frozen ponds: skating, playing, sliding. The black trees and the pale green sky make you feel cold just looking at them. The painting is in the Kunsthistorisches Museum, in Vienna.</string>
+    <string name="guide_arcimboldo_ete">Giuseppe Arcimboldo was painter to the emperors of Austria. He had a funny idea: to paint the four seasons as faces made of what each season gives us. Here is Summer. His cheek is a peach, his nose a cucumber, his teeth are peas, and his hair is made of fruit. He even wove his signature into the straw collar. The emperors loved these painted riddles.</string>
+    <string name="guide_jeu_du_fouet">United States, 1872. Winslow Homer paints a little red country schoolhouse in the middle of a meadow. It is playtime: boys hold hands and run in a line. The ones at the end are flung like the tip of a whip, and two have already fallen over! Homer loved painting children and simple country life. This painting is in the Metropolitan Museum, in New York.</string>
+
+    <string name="expo_enfances">Childhoods</string>
+    <string name="expo_enfances_text">Playtime games, walks and a bedroom. Finish all four canvases before the month ends.</string>
+    <string name="expo_japon">Japanese prints</string>
+    <string name="expo_japon_text">Waves, a mountain and a shower, carved in wood. Finish all three canvases before the month ends.</string>
+    <string name="frame_craie">Chalk frame</string>
+    <string name="frame_indigo">Indigo frame</string>
 </resources>
