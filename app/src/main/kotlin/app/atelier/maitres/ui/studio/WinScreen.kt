@@ -52,7 +52,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.res.stringArrayResource
+import app.atelier.maitres.core.Achievement
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipRect
@@ -92,7 +100,14 @@ import kotlin.math.roundToInt
  * étoiles, les touches gagnées, le rang et les toiles déballées.
  */
 @Composable
-fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore: () -> Unit, onAdmire: () -> Unit) {
+fun WinScreen(
+    state: StudioState,
+    career: Career,
+    onShare: () -> Unit,
+    onOneMore: () -> Unit,
+    onAdmire: () -> Unit,
+    onVarnish: () -> Unit = {},
+) {
     val painting = state.loaded.painting
     val names = rankNames()
     val nickname = painting.nickname ?: stringResource(R.string.nickname_default)
@@ -104,6 +119,15 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
         career.stars(painting).mapIndexed { i, w -> w || Difficulty.entries[i] == state.loaded.difficulty }
     }
     val unlocked = remember { state.unlockedPaintings() }
+    // Les succès décrochés avec cette toile (puis avec le vernis), fêtés une seule fois.
+    val achievements = remember { mutableStateListOf<Achievement>().apply { addAll(career.takeNewAchievements(state.allPaintings)) } }
+    val achievementNames = stringArrayResource(R.array.achievement_names)
+    var party by remember { mutableStateOf(state.rankUps.isNotEmpty()) }
+    // Le vernis : un reflet qui traverse la toile, puis elle garde son lustre.
+    var varnished by remember { mutableStateOf(career.isVarnished(painting)) }
+    val sheen = remember { Animatable(-1f) }
+    var split by remember { mutableFloatStateOf(0.5f) }
+    val scope = rememberCoroutineScope()
     val enter = remember { Animatable(0f) }
     LaunchedEffect(Unit) { enter.animateTo(1f, tween(600)) }
 
@@ -114,6 +138,8 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
     DisposableEffect(guide) { onDispose { guide.release() } }
     LaunchedEffect(Unit) {
         if (career.soundOn && guide.hasStory(painting)) {
+            // Pendant la fête du rang, le guide attend qu'on revienne à la toile.
+            snapshotFlow { party }.first { !it }
             delay(1_800)
             guide.play(painting)
         }
@@ -149,7 +175,14 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
                 modifier = Modifier.semantics { heading() },
             )
             Spacer(Modifier.height(18.dp))
-            BeforeAfter(state, Modifier.widthIn(max = 460.dp))
+            BeforeAfter(
+                state,
+                split = split,
+                onSplit = { split = it },
+                sheen = sheen.value,
+                glossy = varnished,
+                modifier = Modifier.widthIn(max = 460.dp),
+            )
             Text(
                 stringResource(R.string.win_drag),
                 style = HandStyle,
@@ -157,6 +190,38 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 8.dp),
             )
+            if (!painting.isImported) {
+                Spacer(Modifier.height(14.dp))
+                if (varnished) {
+                    Text(
+                        "✨ " + stringResource(R.string.varnished),
+                        style = HandStyle,
+                        color = Play.Sun,
+                    )
+                } else {
+                    GameButton("✨ " + stringResource(R.string.varnish), Play.Coral, Color.White) {
+                        if (sheen.isRunning) return@GameButton
+                        onVarnish()
+                        scope.launch {
+                            // On montre la toile peinte en entier pendant que le reflet passe.
+                            split = 0f
+                            sheen.snapTo(-0.3f)
+                            sheen.animateTo(1.3f, tween(1_300))
+                            career.varnish(painting)
+                            varnished = true
+                            sheen.snapTo(-1f)
+                            achievements += career.takeNewAchievements(state.allPaintings)
+                        }
+                    }
+                    Text(
+                        stringResource(R.string.varnish_hint),
+                        style = HandStyle.copy(fontSize = 17.sp),
+                        color = Play.Cream.copy(alpha = 0.85f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 6.dp).widthIn(max = 360.dp),
+                    )
+                }
+            }
             Spacer(Modifier.height(16.dp))
             Stars(won, Color.White, 34.dp)
             if (state.earned > 0) {
@@ -189,6 +254,10 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
                 Spacer(Modifier.height(10.dp))
                 Pill(stringResource(R.string.unlocked, p.title), Play.Coral, Color.White)
             }
+            achievements.forEach { a ->
+                Spacer(Modifier.height(10.dp))
+                Pill(a.emoji + "  " + stringResource(R.string.achievement_won, achievementNames.getOrElse(a.ordinal) { a.name }), Color.White, Play.Ink)
+            }
             state.exhibitionWon?.let { expo ->
                 Spacer(Modifier.height(10.dp))
                 Pill(stringResource(R.string.expo_won, stringResource(expo.frame.labelRes), Exhibitions.BONUS), Play.Sun, Play.Ink)
@@ -215,6 +284,15 @@ fun WinScreen(state: StudioState, career: Career, onShare: () -> Unit, onOneMore
             TextButton(onClick = onAdmire, modifier = Modifier.padding(top = 6.dp)) {
                 Text(stringResource(R.string.admire), color = Play.Cream, fontSize = 16.sp)
             }
+        }
+        if (party) {
+            RankParty(
+                rank = state.rankUps.max(),
+                touches = touches,
+                unlocked = unlocked,
+                repository = state.repository,
+                onContinue = { party = false },
+            )
         }
     }
 }
@@ -249,7 +327,14 @@ private fun GuideButton(speaking: Boolean, onClick: () -> Unit) {
 
 /** Avant (la toile vierge, numérotée) et après (la toile peinte), séparés par un curseur à faire glisser. */
 @Composable
-private fun BeforeAfter(state: StudioState, modifier: Modifier = Modifier) {
+private fun BeforeAfter(
+    state: StudioState,
+    split: Float,
+    onSplit: (Float) -> Unit,
+    sheen: Float,
+    glossy: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val canvas = state.canvas
     val before by produceState<Bitmap?>(null) {
         value = withContext(Dispatchers.Default) {
@@ -257,7 +342,6 @@ private fun BeforeAfter(state: StudioState, modifier: Modifier = Modifier) {
         }
     }
     val after = remember { state.renderer.bitmap.asImageBitmap() }
-    var split by remember { mutableFloatStateOf(0.5f) }
     Box(
         modifier
             .fillMaxWidth()
@@ -272,10 +356,10 @@ private fun BeforeAfter(state: StudioState, modifier: Modifier = Modifier) {
                 .clip(RoundedCornerShape(2.dp))
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, _ ->
-                        split = (change.position.x / size.width).coerceIn(0f, 1f)
+                        onSplit((change.position.x / size.width).coerceIn(0f, 1f))
                     }
                 }
-                .pointerInput(Unit) { detectTapGestures { split = (it.x / size.width).coerceIn(0f, 1f) } }
+                .pointerInput(Unit) { detectTapGestures { onSplit((it.x / size.width).coerceIn(0f, 1f)) } }
                 .clearAndSetSemantics {},
         ) {
             val dst = IntSize(size.width.roundToInt(), size.height.roundToInt())
@@ -286,6 +370,27 @@ private fun BeforeAfter(state: StudioState, modifier: Modifier = Modifier) {
                     drawImage(image, srcOffset = IntOffset.Zero, srcSize = IntSize(image.width, image.height), dstSize = dst, filterQuality = FilterQuality.Medium)
                 }
             }
+            // Le lustre du vernis : une lumière douce venue d'en haut à gauche.
+            if (glossy) {
+                drawRect(
+                    Brush.linearGradient(
+                        0f to Color.White.copy(alpha = 0.22f), 0.35f to Color.Transparent, 1f to Color.Black.copy(alpha = 0.06f),
+                        start = Offset.Zero, end = Offset(size.width, size.height),
+                    ),
+                )
+            }
+            // Le reflet qui balaie la toile pendant qu'on la vernit.
+            if (sheen > -1f) {
+                val cx = size.width * sheen
+                val band = size.width * 0.18f
+                drawRect(
+                    Brush.linearGradient(
+                        0f to Color.Transparent, 0.5f to Color.White.copy(alpha = 0.75f), 1f to Color.Transparent,
+                        start = Offset(cx - band, 0f), end = Offset(cx + band, size.height * 0.35f),
+                    ),
+                )
+            }
+            if (sheen > -1f) return@Canvas
             val x = size.width * split
             drawLine(Color.White, Offset(x, 0f), Offset(x, size.height), strokeWidth = 3.dp.toPx())
             drawCircle(Play.Coral, 13.dp.toPx(), Offset(x, size.height / 2))

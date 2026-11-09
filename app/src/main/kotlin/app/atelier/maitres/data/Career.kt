@@ -41,6 +41,13 @@ class Career(context: Context, private val repository: PaintingRepository) {
     /** Vrai quand la série ne tient aujourd'hui que par le jour de grâce : peindre l'utilisera. */
     val streakNeedsGrace: Boolean get() = _state.value.streak.needsGrace(epochDay())
 
+    /** Jours d'affilée qu'il reste à peindre pour gagner un jour de grâce. */
+    val daysToGrace: Int
+        get() {
+            val s = _state.value.streak
+            return if (s.isAlive(epochDay())) (Streak.GRACE_AFTER - s.towardGrace).coerceAtLeast(1) else Streak.GRACE_AFTER
+        }
+
     /** La plus longue série jamais tenue. */
     val bestStreak: Int get() = maxOf(prefs.getInt(BEST_STREAK, 0), streak)
 
@@ -155,6 +162,15 @@ class Career(context: Context, private val repository: PaintingRepository) {
     private var announced: Set<String>
         get() = prefs.getStringSet(ANNOUNCED, emptySet())!!
         set(value) = prefs.edit().putStringSet(ANNOUNCED, value).apply()
+
+    /**
+     * À la première ouverture après la mise à jour, les succès déjà mérités sont rangés sans
+     * fanfare : on ne fête que ceux décrochés ensuite.
+     */
+    fun seedAchievements(paintings: List<Painting>) {
+        if (prefs.contains(ANNOUNCED)) return
+        announced = Achievement.won(progress(paintings)).map { it.name }.toSet()
+    }
 
     /** Les succès décrochés et pas encore annoncés ; ils sont marqués annoncés en retour. */
     fun takeNewAchievements(paintings: List<Painting>): List<Achievement> {

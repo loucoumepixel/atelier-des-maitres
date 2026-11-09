@@ -52,7 +52,7 @@ sealed interface GameToast {
 @Stable
 class StudioState(
     val loaded: LoadedCanvas,
-    private val repository: PaintingRepository,
+    val repository: PaintingRepository,
     private val career: Career,
     /** Toile du jour : chaque touche gagnée compte double. */
     val daily: Boolean,

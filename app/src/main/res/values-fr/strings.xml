@@ -396,4 +396,10 @@
         <item>Écartez deux doigts pour zoomer sur les petites zones, glissez pour vous déplacer.</item>
         <item>Maintenez l\'œil pour revoir le tableau original à tout moment.</item>
     </string-array>
+    <string name="journal_streak_none">Pas de série en cours</string>
+    <string name="journal_streak_start">Peignez une zone aujourd\'hui pour lancer une nouvelle série.</string>
+    <string name="journal_locked">Pas encore décroché</string>
+    <string name="journal_close">Fermer le carnet</string>
+    <string name="varnish_hint">Un reflet balaie la toile, et elle part au musée, vernie.</string>
+    <string name="guided_done">C\'est parti !</string>
 </resources>

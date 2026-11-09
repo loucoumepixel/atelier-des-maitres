@@ -132,6 +132,7 @@ fun StudioScreen(painting: Painting, difficulty: Difficulty, repository: Paintin
 
     LaunchedEffect(painting.id, difficulty) {
         try {
+            career.seedAchievements(repository.paintings.value)
             val loaded = repository.load(painting, difficulty) { loadProgress = it }
             val daily = career.daily(repository.paintings.value)?.id == painting.id
             state = withContext(Dispatchers.Default) { StudioState(loaded, repository, career, daily, scope) }
@@ -162,7 +163,13 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     var menu by remember { mutableStateOf(false) }
     var confirmRestart by remember { mutableStateOf(false) }
     var chooseMatter by remember { mutableStateOf(false) }
-    var showHint by remember { mutableStateOf(state.session.paintedCount == 0) }
+    // La toute première toile se fait accompagnée, pas à pas.
+    val tour = remember {
+        val first = !career.guidedDone && state.session.paintedCount == 0 && career.finishedCount(state.allPaintings) == 0
+        if (first) GuidedTour() else null
+    }
+    val guiding = tour != null && !tour.finished
+    var showHint by remember { mutableStateOf(state.session.paintedCount == 0 && tour == null) }
     val painting = state.loaded.painting
     val context = LocalContext.current
     val view = LocalView.current
@@ -227,7 +234,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     // La bulle du petit œil, les premières fois : après le bandeau d'aide, puis elle s'efface.
     var eyeTip by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        if (career.peekTipsLeft <= 0) return@LaunchedEffect
+        if (career.peekTipsLeft <= 0 || tour != null) return@LaunchedEffect
         delay(if (showHint) 5_600 else 1_200)
         career.peekTipsLeft--
         eyeTip = true
@@ -322,7 +329,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(48.dp)
-                        .eyePulse(eyeTip)
+                        .eyePulse(eyeTip || (guiding && tour?.step == 3))
                         .padding(2.dp)
                         .wallButtonShadow(look)
                         .clip(CircleShape)
@@ -411,6 +418,14 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                 HintBanner(visible = showHint, look = look, modifier = Modifier.align(Alignment.TopCenter).padding(12.dp))
                 EyeTip(visible = eyeTip, look = look, onDismiss = { eyeTip = false }, modifier = Modifier.align(Alignment.TopEnd).padding(end = 8.dp, top = 2.dp))
                 ToastPill(state.toast, Modifier.align(Alignment.TopCenter).padding(top = 14.dp))
+                if (tour != null) {
+                    GuidedTourEffects(tour, state, peek) { career.guidedDone = true }
+                    GuidedCard(
+                        tour,
+                        onNext = { tour.advance(state.camera.zoom) },
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(start = 12.dp, end = 12.dp, bottom = 72.dp),
+                    )
+                }
 
                 // Outils flottants : annuler / rétablir à gauche, « trouver » à droite.
                 Row(
@@ -432,38 +447,22 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp).testTag(TAG_TROUVER),
                 ) { scope.launch { state.findNextRegion() } }
             }
-            PaletteBar(state, look, Modifier.padding(start = 10.dp, end = 10.dp, top = 4.dp, bottom = 10.dp))
+            PaletteBar(
+                state,
+                look,
+                Modifier.padding(start = 10.dp, end = 10.dp, top = 4.dp, bottom = 10.dp).guideOutline(guiding && tour?.step == 0),
+                lead = { MatterTile(state.matter, matterColour(state), open = chooseMatter) { chooseMatter = !chooseMatter } },
+            )
         }
 
         if (state.pickerOpen) ColorPickerSheet(state)
 
         if (chooseMatter) {
-            AlertDialog(
-                onDismissRequest = { chooseMatter = false },
-                icon = { Icon(Icons.Outlined.Brush, contentDescription = null) },
-                title = { Text(stringResource(R.string.matter_title)) },
-                text = {
-                    Column(Modifier.selectableGroup()) {
-                        Matter.entries.forEach { m ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .selectable(selected = state.matter == m, role = Role.RadioButton) { state.changeMatter(m) }
-                                    .padding(vertical = 8.dp),
-                            ) {
-                                RadioButton(selected = state.matter == m, onClick = null)
-                                Spacer(Modifier.width(12.dp))
-                                Column {
-                                    Text(stringResource(m.labelRes), style = MaterialTheme.typography.titleSmall)
-                                    Text(stringResource(m.textRes), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                }
-                            }
-                        }
-                    }
-                },
-                confirmButton = { TextButton(onClick = { chooseMatter = false }) { Text(stringResource(R.string.ok)) } },
+            MatterChooser(
+                current = state.matter,
+                color = matterColour(state),
+                onChoose = { state.changeMatter(it) },
+                onDismiss = { chooseMatter = false },
             )
         }
 
@@ -497,25 +496,22 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                     state.showCompletion = false
                     scope.launch { state.camera.animateToOverview() }
                 },
+                onVarnish = { if (soundOn) sound?.varnish() },
             )
             BackHandler { state.showCompletion = false }
         }
     }
 }
 
-private val Matter.labelRes: Int
-    get() = when (this) {
-        Matter.PLATE -> R.string.matter_plate
-        Matter.LEGERE -> R.string.matter_light
-        Matter.EPAISSE -> R.string.matter_thick
+/** La couleur des échantillons de matière : celle qu'on tient au pinceau, sinon la première du tableau. */
+private fun matterColour(state: StudioState): Color {
+    val argb = when (val tool = state.tool) {
+        is Tool.Palette -> state.canvas.palette[tool.index]
+        is Tool.Custom -> tool.color
+        else -> state.canvas.palette.firstOrNull() ?: 0x2B5BA8
     }
-
-private val Matter.textRes: Int
-    get() = when (this) {
-        Matter.PLATE -> R.string.matter_plate_text
-        Matter.LEGERE -> R.string.matter_light_text
-        Matter.EPAISSE -> R.string.matter_thick_text
-    }
+    return Color(argb or (0xFF shl 24))
+}
 
 /** Petit mot de jeu (série, couleur finie, nouveau rang) qui s'affiche un instant puis s'en va. */
 @Composable

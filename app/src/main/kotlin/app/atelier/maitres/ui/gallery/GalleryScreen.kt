@@ -37,6 +37,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
@@ -121,7 +122,7 @@ import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Painting, Difficulty) -> Unit, onMuseum: () -> Unit) {
+fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Painting, Difficulty) -> Unit, onMuseum: () -> Unit, onJournal: () -> Unit = {}) {
     val paintings by repository.paintings.collectAsState()
     val statsVersion by repository.statsVersion.collectAsState()
     val state by career.state.collectAsState()
@@ -190,6 +191,7 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
                     paintedToday = career.paintedToday,
                     names = names,
                     onAbout = { about = true },
+                    onJournal = onJournal,
                 )
             }
             item(key = "question", span = StaggeredGridItemSpan.FullLine) {
@@ -296,7 +298,7 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
 
 /** Rang, série de jours et barre de progression vers le rang suivant. */
 @Composable
-private fun CareerHeader(touches: Int, streak: Int, paintedToday: Boolean, names: Array<String>, onAbout: () -> Unit) {
+private fun CareerHeader(touches: Int, streak: Int, paintedToday: Boolean, names: Array<String>, onAbout: () -> Unit, onJournal: () -> Unit) {
     val colors = LocalPlayColors.current
     val rank = Career.rankOf(touches)
     val (fraction, next) = Career.progress(touches)
@@ -317,7 +319,11 @@ private fun CareerHeader(touches: Int, streak: Int, paintedToday: Boolean, names
                 Text(stringResource(R.string.rank_of, rank + 1, Career.RANK_AT.size), style = HandStyle, color = colors.kraft)
             }
             val streakLabel = stringResource(if (paintedToday) R.string.streak_kept else R.string.streak_hint)
-            FlameChip(streak, paintedToday, colors.kraft, Modifier.semantics { contentDescription = streakLabel })
+            // La flamme ouvre le carnet, où l'on retrouve la série et son jour de grâce.
+            FlameChip(streak, paintedToday, colors.kraft, Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClick = onJournal).semantics { contentDescription = streakLabel })
+            IconButton(onClick = onJournal) {
+                Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = stringResource(R.string.journal_open), tint = colors.kraft)
+            }
             IconButton(onClick = onAbout) {
                 Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.about_open), tint = colors.kraft)
             }

@@ -81,6 +81,9 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
     /** La toile finie. */
     fun fanfare() = arpeggio(listOf(55, 60, 64, 67, 72, 76), 130)
 
+    /** Le vernis : une petite pluie de notes claires, douce, qui descend. */
+    fun varnish() = arpeggio(listOf(84, 79, 76, 72), 70)
+
     /** Le son revient : deux notes pour le dire. */
     fun hello() = arpeggio(listOf(60, 67), 100)
 

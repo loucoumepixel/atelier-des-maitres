@@ -153,6 +153,7 @@ internal fun FaceToFace(
                 painting = painting,
                 bitmap = artworks[painting.id] ?: thumbnails[painting.id],
                 frame = chosen[painting.id] ?: Frame.CHENE,
+                varnished = career.isVarnished(painting),
                 facade = wall,
                 lit = abs(page - pager.currentPage - pager.currentPageOffsetFraction).coerceAtMost(1f),
                 zoomable = page == pager.currentPage,
@@ -291,6 +292,7 @@ private fun OnWall(
     painting: Painting,
     bitmap: Bitmap?,
     frame: Frame,
+    varnished: Boolean,
     facade: FacadePainter?,
     lit: Float,
     zoomable: Boolean,
@@ -343,7 +345,7 @@ private fun OnWall(
                 translationY = pan.y
             },
     ) {
-        facade?.painting(drawContext.canvas.nativeCanvas, size.width, size.height, painting, bitmap, frame, 1f - 0.45f * lit)
+        facade?.painting(drawContext.canvas.nativeCanvas, size.width, size.height, painting, bitmap, frame, 1f - 0.45f * lit, varnished)
     }
 }
 
@@ -401,7 +403,7 @@ internal class FacadePainter(private val gallery: GalleryPainter) {
     }
 
     /** Une toile au centre d'une page de [w] × [h], éclairée à [light] (1 : plein spot). */
-    fun painting(c: android.graphics.Canvas, w: Float, h: Float, painting: Painting, bitmap: Bitmap?, frame: Frame, light: Float) {
+    fun painting(c: android.graphics.Canvas, w: Float, h: Float, painting: Painting, bitmap: Bitmap?, frame: Frame, light: Float, varnished: Boolean = false) {
         val aspect = bitmap?.let { it.width.toFloat() / it.height } ?: 0.8f
         val border = if (frame.style == Frame.Style.BAROQUE) 0.17f else 0.13f
         // La plus grande toile qui tient, cadre compris, dans la largeur et dans le haut du mur.
@@ -442,6 +444,12 @@ internal class FacadePainter(private val gallery: GalleryPainter) {
         gallery.drawFrame(c, frame, pw, ph, b, null)
         if (bitmap != null) c.drawBitmap(bitmap, null, RectF(0f, 0f, pw, ph), image)
         else { fill.color = 0xFF3B2C22.toInt(); c.drawRect(0f, 0f, pw, ph, fill) }
+        // Une toile vernie renvoie la lumière du spot : un lustre en biais, venu d'en haut.
+        if (varnished && bitmap != null) {
+            fill.shader = LinearGradient(0f, 0f, pw * 0.7f, ph, intArrayOf(0x40FFFFFF, 0x00FFFFFF, 0x12FFFFFF, 0x00FFFFFF), floatArrayOf(0f, 0.35f, 0.55f, 0.75f), Shader.TileMode.CLAMP)
+            c.drawRect(0f, 0f, pw, ph, fill)
+            fill.shader = null
+        }
         // La toile est en retrait : le cadre y jette une ombre en haut et à gauche.
         val depth = ph * 0.03f
         matrix.setScale(depth, 1f)

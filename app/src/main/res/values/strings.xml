@@ -394,4 +394,10 @@
         <item>Spread two fingers to zoom in on small areas, and drag to move around.</item>
         <item>Hold the eye to see the original painting at any time.</item>
     </string-array>
+    <string name="journal_streak_none">No streak right now</string>
+    <string name="journal_streak_start">Paint one area today to start a new streak.</string>
+    <string name="journal_locked">Not won yet</string>
+    <string name="journal_close">Close the notebook</string>
+    <string name="varnish_hint">A gleam sweeps across the canvas, and it goes to the museum, varnished.</string>
+    <string name="guided_done">Let\'s go!</string>
 </resources>

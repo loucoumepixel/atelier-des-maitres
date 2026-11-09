@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
 import app.atelier.maitres.ui.intro.StudioIntro
+import app.atelier.maitres.ui.journal.JournalScreen
 import app.atelier.maitres.ui.museum.MuseumScreen
 import app.atelier.maitres.ui.studio.AmbiencePlayer
 import app.atelier.maitres.ui.studio.StudioScreen
@@ -33,6 +34,9 @@ private const val WELCOME = "accueil"
 
 /** Mon musée, la galerie des toiles terminées. */
 private const val MUSEUM = "musee"
+
+/** Le carnet de l'apprenti : série, succès, histoire. */
+private const val JOURNAL = "carnet"
 
 class MainActivity : ComponentActivity() {
     /** L'ambiance de salle sous la galerie et le musée. */
@@ -91,6 +95,8 @@ class MainActivity : ComponentActivity() {
                         val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
                         if (target == WELCOME) {
                             WelcomeScreen(career = career, onEnter = { open = null })
+                        } else if (target == JOURNAL) {
+                            JournalScreen(career = career, repository = repository, onBack = { open = null })
                         } else if (target == MUSEUM) {
                             MuseumScreen(repository = repository, career = career, onBack = { open = null })
                         } else if (painting != null && difficulty != null) {
@@ -107,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                 career = career,
                                 onOpen = { p, d -> open = "${p.id}|${d.name}" },
                                 onMuseum = { open = MUSEUM },
+                                onJournal = { open = JOURNAL },
                             )
                         }
                     }
