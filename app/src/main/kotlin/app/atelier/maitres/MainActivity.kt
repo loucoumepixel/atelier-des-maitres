@@ -43,15 +43,15 @@ class MainActivity : ComponentActivity() {
     private val ambience = AmbiencePlayer()
 
     /** Vrai quand l'application est à l'écran : l'ambiance se tait en arrière-plan. */
-    private var visible by mutableStateOf(false)
+    private var onScreen by mutableStateOf(false)
 
     override fun onStart() {
         super.onStart()
-        visible = true
+        onScreen = true
     }
 
     override fun onStop() {
-        visible = false
+        onScreen = false
         super.onStop()
     }
 
@@ -78,8 +78,8 @@ class MainActivity : ComponentActivity() {
                 val musicOn by career.musicFlow.collectAsState()
 
                 // Galerie et musée seulement : l'atelier a la musique de son époque.
-                LaunchedEffect(open, revealed, visible, musicOn) {
-                    ambience.play(revealed && visible && musicOn && (open == null || open == MUSEUM))
+                LaunchedEffect(open, revealed, onScreen, musicOn) {
+                    ambience.play(revealed && onScreen && musicOn && (open == null || open == MUSEUM))
                 }
 
                 Box(Modifier.fillMaxSize()) {
