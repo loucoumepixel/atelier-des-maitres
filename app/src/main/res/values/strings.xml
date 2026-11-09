@@ -400,4 +400,6 @@
     <string name="journal_close">Close the notebook</string>
     <string name="varnish_hint">A gleam sweeps across the canvas, and it goes to the museum, varnished.</string>
     <string name="guided_done">Let\'s go!</string>
+    <string name="journal_streak_one">1-day streak</string>
+    <string name="journal_card_go">Open</string>
 </resources>

@@ -112,7 +112,11 @@ fun JournalScreen(career: Career, repository: PaintingRepository, onBack: () -> 
                 JournalCard(card) {
                     val streak = career.streak
                     Text(
-                        if (streak > 0) stringResource(R.string.journal_streak, streak) + " 🔥" else stringResource(R.string.journal_streak_none),
+                        when (streak) {
+                            0 -> stringResource(R.string.journal_streak_none)
+                            1 -> stringResource(R.string.journal_streak_one) + " 🔥"
+                            else -> stringResource(R.string.journal_streak, streak) + " 🔥"
+                        },
                         fontFamily = Fraunces,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 19.sp,

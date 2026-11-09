@@ -402,4 +402,6 @@
     <string name="journal_close">Fermer le carnet</string>
     <string name="varnish_hint">Un reflet balaie la toile, et elle part au musée, vernie.</string>
     <string name="guided_done">C\'est parti !</string>
+    <string name="journal_streak_one">Série d\'un jour</string>
+    <string name="journal_card_go">Ouvrir</string>
 </resources>

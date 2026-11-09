@@ -217,6 +217,10 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
                 val hung = remember(paintings, statsVersion) { career.finishedCount(paintings) }
                 MuseumCard(hung, onMuseum)
             }
+            item(key = "journal", span = StaggeredGridItemSpan.FullLine) {
+                val won = remember(paintings, statsVersion) { app.atelier.maitres.core.Achievement.won(career.progress(paintings)).size }
+                NotebookCard(won, onJournal)
+            }
             daily?.let { painting ->
                 item(key = "daily", span = StaggeredGridItemSpan.FullLine) {
                     DailyCard(painting, repository, onClick = { open(painting) })
@@ -321,9 +325,6 @@ private fun CareerHeader(touches: Int, streak: Int, paintedToday: Boolean, names
             val streakLabel = stringResource(if (paintedToday) R.string.streak_kept else R.string.streak_hint)
             // La flamme ouvre le carnet, où l'on retrouve la série et son jour de grâce.
             FlameChip(streak, paintedToday, colors.kraft, Modifier.clip(RoundedCornerShape(12.dp)).clickable(onClick = onJournal).semantics { contentDescription = streakLabel })
-            IconButton(onClick = onJournal) {
-                Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = stringResource(R.string.journal_open), tint = colors.kraft)
-            }
             IconButton(onClick = onAbout) {
                 Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.about_open), tint = colors.kraft)
             }
@@ -552,6 +553,47 @@ private fun ExhibitionThumb(painting: Painting, done: Boolean, repository: Paint
 }
 
 private val EXPO_TEAL = Color(0xFF1F5C63)
+
+/** L'entrée du carnet de l'apprenti, avec le compte des succès. */
+@Composable
+private fun NotebookCard(won: Int, onClick: () -> Unit) {
+    val colors = LocalPlayColors.current
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 6.dp)
+            .rotate(-0.5f)
+            .flatShadow(Play.Ink, 3.dp, 5.dp, 6.dp)
+            .background(colors.polaroid, RoundedCornerShape(6.dp))
+            .border(2.dp, Play.Ink, RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.AutoMirrored.Outlined.MenuBook, contentDescription = null, tint = Play.Coral, modifier = Modifier.size(30.dp))
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.journal_title), fontFamily = Fraunces, fontWeight = FontWeight.Black, fontSize = 20.sp, color = colors.ink)
+            Text(
+                stringResource(R.string.journal_achievements, won, app.atelier.maitres.core.Achievement.entries.size),
+                style = HandStyle,
+                color = colors.kraft,
+            )
+        }
+        Spacer(Modifier.width(10.dp))
+        Text(
+            stringResource(R.string.journal_card_go),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+            modifier = Modifier
+                .background(Play.Coral, RoundedCornerShape(20.dp))
+                .border(2.dp, Play.Ink, RoundedCornerShape(20.dp))
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+    }
+}
 
 /** L'entrée du musée : un pan de mur de damas rouge, avec le nombre de toiles accrochées. */
 @Composable
