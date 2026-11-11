@@ -31,4 +31,4 @@ Utiliser le même mot de passe pour le magasin et la clé. Conserver `upload.jks
 6. Déposer `atelier-des-maitres.aab` de la dernière Release, puis envoyer en examen.
 
 ## Droits sur les images
-Les vingt œuvres sont dans le domaine public (artistes morts avant 1955). Les reproductions photographiques fidèles d'œuvres en deux dimensions ne créent pas de nouveau droit (directive européenne 2019/790, article 14 ; jurisprudence Bridgeman aux États-Unis). La reproduction de *Maisons et personnage* provient de la collection domaine public de rawpixel (CC0).
+Les trente œuvres sont dans le domaine public (artistes morts avant 1955). Les reproductions photographiques fidèles d'œuvres en deux dimensions ne créent pas de nouveau droit (directive européenne 2019/790, article 14 ; jurisprudence Bridgeman aux États-Unis). La reproduction de *Maisons et personnage* provient de la collection domaine public de rawpixel (CC0).

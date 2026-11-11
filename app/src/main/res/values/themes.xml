@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Thème de fenêtre minimal : tout le reste est dessiné par Compose (Material 3). -->
+    <!-- Thème de fenêtre minimal : tout le reste est dessiné par Compose (Material 3).
+         Les barres système sont rendues transparentes par enableEdgeToEdge() (MainActivity) :
+         statusBarColor et navigationBarColor sont obsolètes depuis Android 15. -->
     <style name="Theme.Atelier" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/paper</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 </resources>

@@ -147,11 +147,6 @@
     <string name="vermeer_laitiere_note">Un filet de lait, un rayon de lumière : Vermeer fait d\'un geste de cuisine un instant suspendu.</string>
     <string name="american_gothic_title">American Gothic</string>
     <string name="american_gothic_note">Wood fit poser sa sœur et son dentiste devant une maison de l\'Iowa. On les croit mari et femme ; il les voulait père et fille.</string>
-    <string name="liberte_peuple_title">La Liberté guidant le peuple</string>
-    <string name="liberte_peuple_note">Peinte en l\'honneur des Trois Glorieuses de juillet 1830. Restaurée en 2024, elle a retrouvé ses couleurs vives.</string>
-    <string name="naissance_venus_title">La Naissance de Vénus</string>
-    <string name="naissance_venus_year">vers 1485</string>
-    <string name="naissance_venus_note">Zéphyr souffle la déesse vers le rivage, où une Heure l\'attend avec un manteau fleuri.</string>
     <string name="joconde_title">La Joconde</string>
     <string name="joconde_artist">Léonard de Vinci</string>
     <string name="joconde_nickname">Léonard</string>
@@ -206,8 +201,6 @@
     <string name="guide_american_gothic">Iowa, 1930. Grant Wood remarque une petite maison blanche avec une fenêtre en ogive, de style gothique. Il imagine les gens qui pourraient y vivre, et fait poser sa sœur Nan et son dentiste. On croit souvent qu\'ils sont mari et femme, mais le peintre les voyait comme un père et sa fille. La fourche se retrouve dans les coutures de la salopette et dans la fenêtre. Ce tableau est devenu l\'une des images les plus connues d\'Amérique.</string>
     <string name="guide_naufrage_minotaure">Joseph Mallord William Turner, le peintre anglais de la lumière et des tempêtes. Ici, un grand navire se brise dans une mer déchaînée, pendant que des chaloupes tentent de sauver l\'équipage. Turner ne peint pas chaque vague : il peint la force de la nature, avec de grands gestes et des couleurs qui se mêlent. Avec plus d\'un demi-siècle d\'avance, il annonce les impressionnistes.</string>
     <string name="guide_le_cri">Edvard Munch se promenait au coucher du soleil près d\'Oslo quand, raconte-t-il, le ciel est devenu rouge sang. Il a senti, dit-il, un cri infini traverser la nature. Il peint alors ce personnage qui se tient la tête, sur un pont, sous un ciel en flammes. Munch en a fait plusieurs versions, en peinture, au pastel et en gravure. Ce tableau est devenu le symbole de l\'angoisse moderne.</string>
-    <string name="guide_liberte_peuple">Paris, juillet 1830. Pendant trois jours, les Parisiens se soulèvent contre le roi Charles X : ce sont les Trois Glorieuses. Eugène Delacroix n\'a pas combattu, mais il veut au moins peindre pour sa patrie. La Liberté, drapeau tricolore à la main, guide le peuple par-dessus les barricades. À côté d\'elle, un gamin brandit deux pistolets. Le tableau a été restauré en 2024 au Louvre, et il a retrouvé ses couleurs.</string>
-    <string name="guide_naissance_venus">Florence, vers 1485. Sandro Botticelli peint Vénus, déesse de l\'amour, qui arrive sur le rivage debout sur une coquille. À gauche, le vent Zéphyr souffle pour la pousser vers la terre ; à droite, une jeune femme lui tend un manteau couvert de fleurs. C\'était l\'une des premières grandes peintures depuis l\'Antiquité à représenter un sujet mythologique. Le tableau est à la galerie des Offices, à Florence.</string>
     <string name="guide_joconde">Léonard de Vinci commence ce portrait vers 1503, à Florence. Il ne s\'en séparera jamais : il l\'emporte en France, où il passe ses dernières années, et le retouche sans cesse. Son secret s\'appelle le sfumato : des contours si doux qu\'ils semblent fondre dans l\'ombre, surtout au coin des lèvres. C\'est pour cela que son sourire paraît changer quand on la regarde. Volée en 1911, retrouvée deux ans plus tard, elle est aujourd\'hui au Louvre.</string>
     <string name="guide_listen">Écouter le guide</string>
     <string name="guide_stop">Arrêter le guide</string>
@@ -234,7 +227,7 @@
     <string name="expo_visages">Visages célèbres</string>
     <string name="expo_visages_text">Quatre regards que le monde entier connaît. Finissez-les tous avant la fin du mois.</string>
     <string name="expo_paris">Paris en peinture</string>
-    <string name="expo_paris_text">Ponts, îles et barricades de la capitale. Finissez les trois toiles avant la fin du mois.</string>
+    <string name="expo_paris_text">Ponts, îles et rues sous la pluie de la capitale. Finissez les trois toiles avant la fin du mois.</string>
     <string name="expo_voyages">Voyages lointains</string>
     <string name="expo_voyages_text">Du Japon au Maroc, jusqu\'à l\'Iowa. Finissez les quatre toiles avant la fin du mois.</string>
     <string name="expo_natures">Natures en fête</string>
@@ -276,4 +269,139 @@
         <item quantity="other">%1$d toiles accrochées, à admirer dans leur galerie</item>
     </plurals>
     <string name="museum_visit">Visiter</string>
+
+    <!-- Nouvelles toiles (MAJ tout public, novembre 2026) -->
+    <string name="vermeer_perle_title">La Jeune Fille à la perle</string>
+    <string name="vermeer_perle_year">vers 1665</string>
+    <string name="vermeer_perle_note">Ce n\'est pas un portrait : c\'est une « tronie », un visage imaginé, coiffé d\'un turban bleu et jaune.</string>
+    <string name="monet_coquelicots_title">Les Coquelicots</string>
+    <string name="monet_coquelicots_note">Près d\'Argenteuil, Camille et leur fils Jean apparaissent deux fois : en haut de la colline, puis au premier plan.</string>
+    <string name="monet_ombrelle_title">La Promenade, la femme à l\'ombrelle</string>
+    <string name="monet_ombrelle_note">Camille et Jean vus d\'en bas, contre le ciel : Monet peint vite, pour attraper le vent qui passe.</string>
+    <string name="chambre_arles_title">La Chambre à Arles</string>
+    <string name="chambre_arles_note">Vincent voulait que les couleurs seules « reposent la tête ». Il peignit trois fois sa chambre de la Maison jaune.</string>
+    <string name="iris_title">Les Iris</string>
+    <string name="iris_note">Peints dans le jardin de Saint-Rémy, dès la première semaine de son séjour, en mai 1889.</string>
+    <string name="tournesols_title">Les Tournesols</string>
+    <string name="tournesols_note">Peints à Arles en août 1888 pour décorer la chambre de son ami Paul Gauguin.</string>
+    <string name="fuji_rouge_title">Le Fuji rouge</string>
+    <string name="fuji_rouge_year">vers 1831</string>
+    <string name="fuji_rouge_note">À la fin de l\'été, au lever du jour, le soleil rougit la montagne. Trois couleurs suffisent à Hokusai.</string>
+    <string name="averse_ohashi_title">Averse soudaine sur le pont Ōhashi</string>
+    <string name="averse_ohashi_note">Une estampe des Cent vues d\'Edo. Van Gogh l\'aimait tant qu\'il la recopia à la peinture à l\'huile en 1887.</string>
+    <string name="rue_paris_pluie_title">Rue de Paris, temps de pluie</string>
+    <string name="rue_paris_pluie_note">Un carrefour tout neuf près de la gare Saint-Lazare, où les parapluies se croisent sur les pavés mouillés.</string>
+    <string name="chasseurs_neige_title">Les Chasseurs dans la neige</string>
+    <string name="chasseurs_neige_note">Un des tableaux des saisons de Bruegel : au loin, tout le village patine sur les étangs gelés.</string>
+    <string name="arcimboldo_ete_title">L\'Été</string>
+    <string name="arcimboldo_ete_note">Regardez bien : ce visage est fait de fruits, de légumes et d\'épis de blé. Une cerise pour la lèvre, une poire pour le menton.</string>
+    <string name="jeu_du_fouet_title">Le Jeu du fouet</string>
+    <string name="jeu_du_fouet_note">À la récréation, les écoliers se tiennent la main et courent en ligne : le dernier doit tenir bon !</string>
+
+    <string name="guide_vermeer_perle">Delft, aux Pays-Bas, vers 1665. Johannes Vermeer peint une jeune fille qui se retourne vers nous, la bouche entrouverte, comme si nous venions de l\'appeler. On ne sait pas qui elle est : ce n\'est pas un portrait commandé, mais un visage imaginé. Son turban est peint avec un bleu très précieux, tiré d\'une pierre, le lapis-lazuli, qui coûtait plus cher que l\'or. Et la perle ? Deux petites touches de blanc suffisent à la faire briller. Le tableau est au Mauritshuis, à La Haye.</string>
+    <string name="guide_monet_coquelicots">Été 1873, près d\'Argenteuil, au bord de la Seine. Claude Monet se promène avec sa femme Camille et leur fils Jean dans un champ de coquelicots. Regardez bien : la maman à l\'ombrelle et l\'enfant apparaissent deux fois, en haut de la colline et au premier plan, comme s\'ils descendaient vers nous. Les fleurs ne sont que des taches rouges, posées vite. L\'année suivante, Monet montre ce tableau à la toute première exposition des impressionnistes. Il est aujourd\'hui au musée d\'Orsay, à Paris.</string>
+    <string name="guide_monet_ombrelle">Été 1875. Claude Monet installe son chevalet en bas d\'une petite colline. Là-haut, sa femme Camille tient une ombrelle verte, et leur fils Jean se tient un peu plus loin, dans les herbes. Le vent fait voler le voile et les nuages filent. Monet peint en quelques heures, à grands coups de pinceau, pour garder ce moment avant qu\'il ne s\'envole. On a l\'impression de lever les yeux vers eux. Le tableau est à la National Gallery of Art de Washington.</string>
+    <string name="guide_chambre_arles">Vincent van Gogh aimait tant sa petite chambre de la Maison jaune, à Arles, qu\'il l\'a peinte trois fois. Celle-ci est la deuxième, peinte en 1889. Il écrit à son frère Théo que les couleurs doivent reposer la tête : des murs bleu lavande, un lit jaune, une couverture rouge. Regardez le sol, il penche un peu, comme si la pièce nous tendait les bras. Aux murs, Vincent a accroché ses propres tableaux. Cette chambre est à l\'Art Institute de Chicago.</string>
+    <string name="guide_iris">Mai 1889. Vincent van Gogh vient d\'arriver à la maison de santé de Saint-Rémy-de-Provence. Dès la première semaine, il sort dans le jardin et peint ces iris. Il les appelle son paratonnerre : la peinture l\'aide à aller mieux. Regardez les feuilles, on dirait des épées vertes, et ce seul iris blanc, à gauche, au milieu des bleus. Aujourd\'hui, le tableau est au musée Getty, à Los Angeles.</string>
+    <string name="guide_tournesols">Arles, août 1888. Vincent van Gogh attend la visite de son ami peintre Paul Gauguin. Pour décorer sa chambre, il peint des tournesols dans un vase, presque seulement avec des jaunes. Il doit peindre très vite, car les fleurs fanent en quelques jours. Gauguin adorera ces tableaux. Vincent les signe sur le vase, simplement : Vincent. Cette version est à la National Gallery de Londres.</string>
+    <string name="guide_fuji_rouge">Vers 1831, au Japon. Katsushika Hokusai publie les Trente-six vues du mont Fuji. Dans celle-ci, il n\'y a ni vague ni personnage : seulement la montagne, rougie par le soleil du matin, à la fin de l\'été. Le ciel est bleu, avec de petits nuages blancs en rangées. Avec trois couleurs à peine, Hokusai fait sentir le calme d\'un matin sans vent. Ces images étaient imprimées avec des planches de bois gravées, une par couleur.</string>
+    <string name="guide_averse_ohashi">Edo, l\'ancienne Tokyo, 1857. Utagawa Hiroshige grave une averse qui surprend des passants sur un grand pont de bois. La pluie tombe en fines lignes droites, chacune gravée à la main. Les gens se cachent sous leurs chapeaux de paille et leurs parapluies. Trente ans plus tard, à Paris, Vincent van Gogh admire tellement cette estampe qu\'il la recopie en peinture à l\'huile. Le Japon a beaucoup inspiré les peintres européens.</string>
+    <string name="guide_rue_paris_pluie">Paris, 1877. Gustave Caillebotte peint un carrefour tout neuf près de la gare Saint-Lazare. Les grands immeubles viennent d\'être construits, et les pavés brillent sous la pluie. Les passants se croisent sous leurs parapluies, un peu comme dans une photographie. Caillebotte était peintre, mais aussi un ami généreux : il achetait les tableaux des impressionnistes pour les aider. Ce tableau immense est à l\'Art Institute de Chicago.</string>
+    <string name="guide_chasseurs_neige">Hiver 1565, en Flandre. Pieter Bruegel peint une série de tableaux sur les saisons. Dans celui-ci, des chasseurs rentrent au village avec leurs chiens, dans la neige. En bas, tout le monde s\'amuse sur les étangs gelés : on patine, on joue, on glisse. Les arbres noirs et le ciel vert pâle donnent froid rien qu\'à les regarder. Le tableau est au Kunsthistorisches Museum, à Vienne.</string>
+    <string name="guide_arcimboldo_ete">Giuseppe Arcimboldo était le peintre des empereurs d\'Autriche. Il a eu une idée amusante : peindre les quatre saisons comme des visages faits de ce qu\'elles nous donnent. Voici l\'Été. Sa joue est une pêche, son nez un concombre, ses dents des petits pois, et ses cheveux sont faits de fruits. Il a même tressé sa signature dans le col en paille. Les empereurs adoraient ces devinettes en peinture.</string>
+    <string name="guide_jeu_du_fouet">États-Unis, 1872. Winslow Homer peint une école de campagne, toute rouge, au milieu d\'un pré. C\'est la récréation : des garçons se tiennent la main et courent en ligne. Ceux du bout sont projetés comme la mèche d\'un fouet, et deux d\'entre eux sont déjà tombés ! Homer aimait peindre les enfants et la vie simple. Ce tableau est au Metropolitan Museum de New York.</string>
+
+    <string name="expo_enfances">Enfances</string>
+    <string name="expo_enfances_text">Jeux de récréation, promenades et chambre d\'enfant. Finissez les quatre toiles avant la fin du mois.</string>
+    <string name="expo_japon">Le Japon des estampes</string>
+    <string name="expo_japon_text">Vagues, montagne et averse, gravées sur bois. Finissez les trois toiles avant la fin du mois.</string>
+    <string name="frame_craie">Cadre de craie</string>
+    <string name="frame_indigo">Cadre indigo</string>
+
+    <!-- Carnet de l'apprenti : succès, histoire, série (vagues 2 et 3) -->
+    <string name="journal_title">Mon carnet</string>
+    <string name="journal_open">Ouvrir mon carnet</string>
+    <string name="journal_streak">Série de %1$d jours</string>
+    <string name="journal_grace_ready">Un jour de grâce en réserve : un oubli ne cassera pas votre série.</string>
+    <string name="journal_grace_used_today">Hier est passé sans peinture : peignez aujourd\'hui, le jour de grâce sauvera votre série.</string>
+    <string name="journal_grace_none">Encore %1$d jours d\'affilée pour gagner un jour de grâce.</string>
+    <string name="journal_achievements">Succès · %1$d sur %2$d</string>
+    <string name="journal_story">Chapitre %1$d · %2$s</string>
+    <string name="journal_masterpiece">Après Génie : le Chef-d\'œuvre</string>
+    <string name="journal_masterpiece_text">Trois étoiles Expert sur toutes les toiles : %1$d sur %2$d</string>
+    <string name="achievement_won">Succès : %1$s !</string>
+    <string-array name="story_titles">
+        <item>Le gribouilleur</item>
+        <item>Le barbouilleur</item>
+        <item>L\'apprenti</item>
+        <item>Le compagnon</item>
+        <item>L\'artiste</item>
+        <item>Le maître</item>
+        <item>Le génie</item>
+    </string-array>
+    <string-array name="story_texts">
+        <item>« Je suis entré dans l\'atelier par la petite porte, avec mes mains vides et beaucoup d\'envie. Le maître m\'a tendu un pinceau : “Commence par une zone. Une seule.” »</item>
+        <item>« J\'ai déjà taché trois tabliers. Le maître rit : “La peinture qui tombe par terre, c\'est la preuve qu\'on a travaillé.” Il m\'a montré comment tenir le pinceau plus près des poils. »</item>
+        <item>« Aujourd\'hui, j\'ai broyé mes premières couleurs. Le bleu outremer vient d\'une pierre qui a traversé la mer. J\'ai compris pourquoi on n\'en gâche pas une goutte. »</item>
+        <item>« Le maître m\'a confié ses pinceaux pour la première fois. Il a regardé longtemps ma toile, puis il a dit : “Demain, tu peindras le ciel.” Je n\'ai pas dormi de la nuit. »</item>
+        <item>« Des visiteurs se sont arrêtés devant une de mes toiles. Ils ont cherché ma signature dans le coin. Le maître a souri sans rien dire. »</item>
+        <item>« Ce matin, un jeune garçon a poussé la petite porte de l\'atelier. Je lui ai tendu un pinceau : “Commence par une zone. Une seule.” »</item>
+        <item>« Le maître m\'a laissé les clés de l\'atelier. Il paraît qu\'il reste un dernier défi : peindre chaque toile au plus haut niveau. Les grands maîtres appellent ça un chef-d\'œuvre. »</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>Première toile</item>
+        <item>Cinq toiles</item>
+        <item>Dix toiles</item>
+        <item>Vingt toiles</item>
+        <item>Toute la galerie</item>
+        <item>Premier Normal</item>
+        <item>Premier Expert</item>
+        <item>Trois étoiles</item>
+        <item>Dix en Expert</item>
+        <item>Les sept Vincent</item>
+        <item>Les cinq Monet</item>
+        <item>Le Japon</item>
+        <item>Peintre de nuit</item>
+        <item>3 jours d\'affilée</item>
+        <item>7 jours d\'affilée</item>
+        <item>30 jours d\'affilée</item>
+        <item>Exposant</item>
+        <item>Commissaire</item>
+        <item>Premier vernis</item>
+        <item>Dix vernis</item>
+        <item>Ma toile</item>
+        <item>Maître</item>
+        <item>Génie</item>
+        <item>Chef-d\'œuvre</item>
+    </string-array>
+    <string name="varnish">Vernir la toile</string>
+    <string name="varnished">Toile vernie</string>
+    <string name="rank_party_title">Vous voilà…</string>
+    <string name="rank_party_rank">Rang %1$d sur %2$d · %3$d touches</string>
+    <string name="rank_party_unlocked">Nouvelles toiles déballées :</string>
+    <string name="rank_party_go">Continuer</string>
+    <string name="matter_button">Matière : %1$s</string>
+    <string name="guided_skip">Passer</string>
+    <string name="guided_step">Étape %1$d sur %2$d</string>
+    <string name="guided_next">Suivant</string>
+    <string-array name="guided_titles">
+        <item>Choisissez une couleur</item>
+        <item>Peignez les zones</item>
+        <item>Approchez-vous</item>
+        <item>Le petit œil</item>
+    </string-array>
+    <string-array name="guided_texts">
+        <item>Chaque pot de la palette porte un numéro. Touchez un pot : les zones de ce numéro s\'allument sur la toile.</item>
+        <item>Touchez une zone allumée pour la peindre. Une zone peinte avec la bonne couleur rapporte des touches.</item>
+        <item>Écartez deux doigts pour zoomer sur les petites zones, glissez pour vous déplacer.</item>
+        <item>Maintenez l\'œil pour revoir le tableau original à tout moment.</item>
+    </string-array>
+    <string name="journal_streak_none">Pas de série en cours</string>
+    <string name="journal_streak_start">Peignez une zone aujourd\'hui pour lancer une nouvelle série.</string>
+    <string name="journal_locked">Pas encore décroché</string>
+    <string name="journal_close">Fermer le carnet</string>
+    <string name="varnish_hint">Un reflet balaie la toile, et elle part au musée, vernie.</string>
+    <string name="guided_done">C\'est parti !</string>
+    <string name="journal_streak_one">Série d\'un jour</string>
+    <string name="journal_card_go">Ouvrir</string>
 </resources>

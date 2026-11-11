@@ -73,7 +73,7 @@ import kotlin.random.Random
  * soulève de la planche.
  */
 @Composable
-fun PaletteBar(state: StudioState, look: AtelierLook, modifier: Modifier = Modifier) {
+fun PaletteBar(state: StudioState, look: AtelierLook, modifier: Modifier = Modifier, lead: (@Composable () -> Unit)? = null) {
     // Lu pour recomposer après chaque touche (les traits de progression changent).
     state.version
     val palette = state.canvas.palette
@@ -84,7 +84,8 @@ fun PaletteBar(state: StudioState, look: AtelierLook, modifier: Modifier = Modif
     LaunchedEffect(tool) {
         val index = (tool as? Tool.Palette)?.index ?: return@LaunchedEffect
         val visible = listState.layoutInfo.visibleItemsInfo
-        if (visible.none { it.index == index && it.offset >= 0 }) listState.animateScrollToItem(maxOf(0, index - 2))
+        val shift = if (lead != null) 1 else 0
+        if (visible.none { it.index == index + shift && it.offset >= 0 }) listState.animateScrollToItem(maxOf(0, index + shift - 2))
     }
 
     LazyRow(
@@ -94,6 +95,8 @@ fun PaletteBar(state: StudioState, look: AtelierLook, modifier: Modifier = Modif
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Le godet de matière ouvre la palette : il ne compte pas dans les index des couleurs.
+        if (lead != null) item(key = "lead") { lead() }
         itemsIndexed(palette.toList(), key = { index, _ -> "p$index" }) { index, color ->
             val total = state.canvas.regionsPerColor[index]
             val remaining = state.session.remainingPerColor[index]

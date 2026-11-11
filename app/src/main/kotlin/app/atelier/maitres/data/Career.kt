@@ -1,7 +1,10 @@
 package app.atelier.maitres.data
 
 import android.content.Context
+import app.atelier.maitres.core.Achievement
 import app.atelier.maitres.core.Difficulty
+import app.atelier.maitres.core.Progress
+import app.atelier.maitres.core.Streak
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +20,7 @@ import java.time.LocalDate
  */
 class Career(context: Context, private val repository: PaintingRepository) {
 
-    data class State(val touches: Int, val streak: Int, val lastDay: String?)
+    data class State(val touches: Int, val streak: Streak)
 
     private val prefs = context.getSharedPreferences("atelier", Context.MODE_PRIVATE)
     private val _state = MutableStateFlow(load())
@@ -26,11 +29,29 @@ class Career(context: Context, private val repository: PaintingRepository) {
     val touches: Int get() = _state.value.touches
     val rank: Int get() = rankOf(touches)
 
-    /** Jours peints d'affilée, remis à zéro si hier est resté sans peinture. */
-    val streak: Int
-        get() = _state.value.let { if (it.lastDay == today() || it.lastDay == today(-1)) it.streak else 0 }
+    /**
+     * Jours peints d'affilée, remis à zéro si un jour est resté sans peinture, sauf si le jour
+     * de grâce (gagné tous les 7 jours d'affilée) le pardonne.
+     */
+    val streak: Int get() = _state.value.streak.current(epochDay())
 
-    val paintedToday: Boolean get() = _state.value.lastDay == today()
+    /** Jours de grâce en réserve (0 ou 1). */
+    val graces: Int get() = _state.value.streak.graces
+
+    /** Vrai quand la série ne tient aujourd'hui que par le jour de grâce : peindre l'utilisera. */
+    val streakNeedsGrace: Boolean get() = _state.value.streak.needsGrace(epochDay())
+
+    /** Jours d'affilée qu'il reste à peindre pour gagner un jour de grâce. */
+    val daysToGrace: Int
+        get() {
+            val s = _state.value.streak
+            return if (s.isAlive(epochDay())) (Streak.GRACE_AFTER - s.towardGrace).coerceAtLeast(1) else Streak.GRACE_AFTER
+        }
+
+    /** La plus longue série jamais tenue. */
+    val bestStreak: Int get() = maxOf(prefs.getInt(BEST_STREAK, 0), streak)
+
+    val paintedToday: Boolean get() = _state.value.streak.lastDay == epochDay()
 
     var soundOn: Boolean
         get() = prefs.getBoolean(SOUND, true)
@@ -39,7 +60,15 @@ class Career(context: Context, private val repository: PaintingRepository) {
     /** La petite musique de piano, en fond dans l'atelier. */
     var musicOn: Boolean
         get() = prefs.getBoolean(MUSIC, true)
-        set(value) = prefs.edit().putBoolean(MUSIC, value).apply()
+        set(value) {
+            prefs.edit().putBoolean(MUSIC, value).apply()
+            _music.value = value
+        }
+
+    private val _music = MutableStateFlow(prefs.getBoolean(MUSIC, true))
+
+    /** La musique (et l'ambiance de salle) est-elle voulue ? Suit [musicOn]. */
+    val musicFlow: StateFlow<Boolean> = _music.asStateFlow()
 
     /** Épaisseur de la peinture à l'huile choisie par le joueur. */
     var matter: Matter
@@ -58,14 +87,15 @@ class Career(context: Context, private val repository: PaintingRepository) {
     fun earn(points: Int): Int {
         val before = rank
         val s = _state.value
-        val day = today()
-        val streak = when (s.lastDay) {
-            day -> s.streak
-            today(-1) -> s.streak + 1
-            else -> 1
-        }
-        val next = State(s.touches + points.coerceAtLeast(0), streak, day)
-        prefs.edit().putInt(TOUCHES, next.touches).putInt(STREAK, next.streak).putString(LAST_DAY, next.lastDay).apply()
+        val next = State(s.touches + points.coerceAtLeast(0), s.streak.paint(epochDay()))
+        prefs.edit()
+            .putInt(TOUCHES, next.touches)
+            .putInt(STREAK, next.streak.days)
+            .putString(LAST_DAY, today())
+            .putInt(GRACES, next.streak.graces)
+            .putInt(TOWARD_GRACE, next.streak.towardGrace)
+            .putInt(BEST_STREAK, maxOf(prefs.getInt(BEST_STREAK, 0), next.streak.days))
+            .apply()
         _state.value = next
         return rank.takeIf { it > before } ?: -1
     }
@@ -97,6 +127,73 @@ class Career(context: Context, private val repository: PaintingRepository) {
 
     private fun framesWon(): Set<Frame> =
         prefs.getStringSet(FRAMES_WON, emptySet())!!.mapNotNull { n -> Frame.entries.firstOrNull { it.name == n } }.toSet()
+
+    /** Expositions complètes (un cadre gagné chacune). */
+    val exhibitionsWon: Int get() = framesWon().size
+
+    // ------------------------------------------------------------ vernis, succès, avis
+
+    /** Vrai si la toile a déjà reçu son vernis final. */
+    fun isVarnished(painting: Painting): Boolean = painting.id in prefs.getStringSet(VARNISHED, emptySet())!!
+
+    fun varnish(painting: Painting) =
+        prefs.edit().putStringSet(VARNISHED, prefs.getStringSet(VARNISHED, emptySet())!! + painting.id).apply()
+
+    val varnishedCount: Int get() = prefs.getStringSet(VARNISHED, emptySet())!!.size
+
+    /** Le résumé de ce que le joueur a accompli, pour les succès et le Chef-d'œuvre. */
+    fun progress(paintings: List<Painting>): Progress {
+        val catalogue = paintings.filter { !it.isImported }
+        val finished = catalogue.associate { p ->
+            p.id to Difficulty.entries.zip(stars(p)).filter { it.second }.map { it.first }.toSet()
+        }
+        return Progress(
+            finished = finished,
+            catalogueSize = catalogue.size,
+            importsFinished = paintings.count { it.isImported && stars(it).any { won -> won } },
+            bestStreak = bestStreak,
+            exhibitionsWon = exhibitionsWon,
+            varnished = varnishedCount,
+            rank = rank,
+        )
+    }
+
+    /** Succès déjà annoncés au joueur (les autres sont fêtés à la prochaine occasion). */
+    private var announced: Set<String>
+        get() = prefs.getStringSet(ANNOUNCED, emptySet())!!
+        set(value) = prefs.edit().putStringSet(ANNOUNCED, value).apply()
+
+    /**
+     * À la première ouverture après la mise à jour, les succès déjà mérités sont rangés sans
+     * fanfare : on ne fête que ceux décrochés ensuite.
+     */
+    fun seedAchievements(paintings: List<Painting>) {
+        if (prefs.contains(ANNOUNCED)) return
+        announced = Achievement.won(progress(paintings)).map { it.name }.toSet()
+    }
+
+    /** Les succès décrochés et pas encore annoncés ; ils sont marqués annoncés en retour. */
+    fun takeNewAchievements(paintings: List<Painting>): List<Achievement> {
+        val won = Achievement.won(progress(paintings))
+        val fresh = won.filter { it.name !in announced }
+        if (fresh.isNotEmpty()) announced = announced + fresh.map { it.name }
+        return fresh
+    }
+
+    /**
+     * Vrai une seule fois, quand le moment est bon pour demander un avis sur le Play Store :
+     * après une toile terminée, et seulement à partir de la troisième.
+     */
+    fun shouldAskReview(paintings: List<Painting>): Boolean {
+        if (prefs.getBoolean(REVIEW_ASKED, false) || finishedCount(paintings) < 3) return false
+        prefs.edit().putBoolean(REVIEW_ASKED, true).apply()
+        return true
+    }
+
+    /** La première toile guidée a-t-elle déjà été montrée ? */
+    var guidedDone: Boolean
+        get() = prefs.getBoolean(GUIDED_DONE, false)
+        set(value) = prefs.edit().putBoolean(GUIDED_DONE, value).apply()
 
     /** Toiles du catalogue terminées au moins à un niveau. */
     fun finishedCount(paintings: List<Painting>): Int = paintings.count { p -> stars(p).any { it } }
@@ -157,7 +254,14 @@ class Career(context: Context, private val repository: PaintingRepository) {
 
     private fun load(): State {
         if (prefs.contains(TOUCHES)) {
-            return State(prefs.getInt(TOUCHES, 0), prefs.getInt(STREAK, 0), prefs.getString(LAST_DAY, null))
+            val last = prefs.getString(LAST_DAY, null)?.let { runCatching { LocalDate.parse(it).toEpochDay() }.getOrNull() }
+            val streak = Streak(
+                days = prefs.getInt(STREAK, 0),
+                lastDay = last,
+                graces = prefs.getInt(GRACES, 0),
+                towardGrace = prefs.getInt(TOWARD_GRACE, 0),
+            )
+            return State(prefs.getInt(TOUCHES, 0), streak)
         }
         // Première ouverture après la mise à jour : la progression déjà faite compte d'emblée.
         var touches = 0
@@ -165,12 +269,14 @@ class Career(context: Context, private val repository: PaintingRepository) {
             touches += s.faithful * s.difficulty.zonePoints + if (s.isComplete) s.difficulty.canvasBonus else 0
         }
         prefs.edit().putInt(TOUCHES, touches).apply()
-        return State(touches, 0, null)
+        return State(touches, Streak())
     }
 
     private fun key(kind: String, p: Painting, d: Difficulty) = "${kind}_${p.id}_${d.name}"
 
     private fun today(offset: Long = 0): String = LocalDate.now().plusDays(offset).toString()
+
+    private fun epochDay(): Long = LocalDate.now().toEpochDay()
 
     companion object {
         /** Touches nécessaires pour chaque rang, de Gribouilleur à Génie. */
@@ -199,6 +305,13 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val EXPO_DONE = "expo_done_"
         private const val FRAMES_WON = "frames_won"
         private const val FRAME = "frame_"
+        private const val GRACES = "career_graces"
+        private const val TOWARD_GRACE = "career_toward_grace"
+        private const val BEST_STREAK = "career_best_streak"
+        private const val VARNISHED = "varnished"
+        private const val ANNOUNCED = "achievements_announced"
+        private const val REVIEW_ASKED = "review_asked"
+        private const val GUIDED_DONE = "guided_done"
     }
 }
 

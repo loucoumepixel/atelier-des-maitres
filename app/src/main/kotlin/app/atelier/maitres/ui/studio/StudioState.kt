@@ -52,7 +52,7 @@ sealed interface GameToast {
 @Stable
 class StudioState(
     val loaded: LoadedCanvas,
-    private val repository: PaintingRepository,
+    val repository: PaintingRepository,
     private val career: Career,
     /** Toile du jour : chaque touche gagnée compte double. */
     val daily: Boolean,
@@ -134,6 +134,9 @@ class StudioState(
 
     var toast by mutableStateOf<GameToast?>(null)
         private set
+
+    /** Toutes les toiles de la galerie (catalogue et imports). */
+    val allPaintings: List<Painting> get() = repository.paintings.value
 
     /** Toiles déballées grâce aux rangs gagnés pendant la séance. */
     fun unlockedPaintings(): List<Painting> =

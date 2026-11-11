@@ -12,6 +12,8 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,7 +22,9 @@ import androidx.compose.ui.Modifier
 import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.ui.gallery.GalleryScreen
 import app.atelier.maitres.ui.intro.StudioIntro
+import app.atelier.maitres.ui.journal.JournalScreen
 import app.atelier.maitres.ui.museum.MuseumScreen
+import app.atelier.maitres.ui.studio.AmbiencePlayer
 import app.atelier.maitres.ui.studio.StudioScreen
 import app.atelier.maitres.ui.theme.AtelierTheme
 import app.atelier.maitres.ui.welcome.WelcomeScreen
@@ -31,7 +35,31 @@ private const val WELCOME = "accueil"
 /** Mon musée, la galerie des toiles terminées. */
 private const val MUSEUM = "musee"
 
+/** Le carnet de l'apprenti : série, succès, histoire. */
+private const val JOURNAL = "carnet"
+
 class MainActivity : ComponentActivity() {
+    /** L'ambiance de salle sous la galerie et le musée. */
+    private val ambience = AmbiencePlayer()
+
+    /** Vrai quand l'application est à l'écran : l'ambiance se tait en arrière-plan. */
+    private var onScreen by mutableStateOf(false)
+
+    override fun onStart() {
+        super.onStart()
+        onScreen = true
+    }
+
+    override fun onStop() {
+        onScreen = false
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        ambience.play(false)
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,6 +75,12 @@ class MainActivity : ComponentActivity() {
                 // L'intro du studio, une fois par lancement (pas à chaque rotation de l'écran).
                 var introShown by rememberSaveable { mutableStateOf(false) }
                 var revealed by rememberSaveable { mutableStateOf(false) }
+                val musicOn by career.musicFlow.collectAsState()
+
+                // Galerie et musée seulement : l'atelier a la musique de son époque.
+                LaunchedEffect(open, revealed, onScreen, musicOn) {
+                    ambience.play(revealed && onScreen && musicOn && (open == null || open == MUSEUM))
+                }
 
                 Box(Modifier.fillMaxSize()) {
                     if (revealed) AnimatedContent(
@@ -61,6 +95,8 @@ class MainActivity : ComponentActivity() {
                         val difficulty = parts?.getOrNull(1)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
                         if (target == WELCOME) {
                             WelcomeScreen(career = career, onEnter = { open = null })
+                        } else if (target == JOURNAL) {
+                            JournalScreen(career = career, repository = repository, onBack = { open = null })
                         } else if (target == MUSEUM) {
                             MuseumScreen(repository = repository, career = career, onBack = { open = null })
                         } else if (painting != null && difficulty != null) {
@@ -77,6 +113,7 @@ class MainActivity : ComponentActivity() {
                                 career = career,
                                 onOpen = { p, d -> open = "${p.id}|${d.name}" },
                                 onMuseum = { open = MUSEUM },
+                                onJournal = { open = JOURNAL },
                             )
                         }
                     }
