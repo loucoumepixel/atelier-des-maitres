@@ -402,4 +402,6 @@
     <string name="guided_done">Let\'s go!</string>
     <string name="journal_streak_one">1-day streak</string>
     <string name="journal_card_go">Open</string>
+    <!-- Le cartel du musée sous la toile de l'intro du studio. -->
+    <string name="intro_medium">oil on canvas, 2026</string>
 </resources>
