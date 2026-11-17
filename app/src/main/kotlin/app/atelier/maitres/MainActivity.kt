@@ -40,7 +40,7 @@ private const val JOURNAL = "carnet"
 
 class MainActivity : ComponentActivity() {
     /** L'ambiance de salle sous la galerie et le musée. */
-    private val ambience = AmbiencePlayer()
+    private val ambience by lazy { AmbiencePlayer(applicationContext) }
 
     /** Vrai quand l'application est à l'écran : l'ambiance se tait en arrière-plan. */
     private var onScreen by mutableStateOf(false)
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        ambience.play(false)
+        ambience.release()
         super.onDestroy()
     }
 

@@ -177,7 +177,7 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     var soundOn by remember { mutableStateOf(career.soundOn) }
     var musicOn by remember { mutableStateOf(career.musicOn) }
     var inFront by remember { mutableStateOf(true) }
-    val sound = remember { runCatching { StudioSound(context.applicationContext, painting.era) }.getOrNull() }
+    val sound = remember { runCatching { StudioSound(context.applicationContext, painting.era, painting.id.hashCode()) }.getOrNull() }
     DisposableEffect(sound) { onDispose { sound?.release() } }
     LaunchedEffect(sound) { sound?.prepare() }
     LifecycleEventEffect(Lifecycle.Event.ON_START) { inFront = true }
