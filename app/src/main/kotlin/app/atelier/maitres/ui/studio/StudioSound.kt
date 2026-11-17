@@ -33,10 +33,17 @@ import kotlin.random.Random
  * Chaque touche joue une note de bois tendre, façon marimba, dans une gamme pentatonique :
  * la mélodie avance d'un pas à chaque zone et monte pendant une série de coups justes.
  * Une couleur finie joue un petit arpège, une toile finie une fanfare. En fond, la musique
- * de l'époque du tableau ([EraMusic]) : valse au piano pour Van Gogh, arpèges à la Debussy
- * pour Monet, koto pour Hokusai… Une petite réverbération de pièce fait respirer le tout.
+ * de l'époque du tableau : la musique enregistrée de `assets/musique` quand l'époque en a une
+ * ([LoopingTrack]), sinon la boucle composée sur place ([EraMusic]) : koto pour Hokusai,
+ * violoncelle pour Friedrich… Une petite réverbération de pièce fait respirer les notes.
+ *
+ * [variant] choisit, pour une même toile, toujours la même musique quand l'époque en a plusieurs.
  */
-class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNISME) {
+class StudioSound(
+    private val context: Context,
+    private val era: Era = Era.POSTIMPRESSIONNISME,
+    private val variant: Int = 0,
+) {
     private val dir = File(context.cacheDir, "sons")
     private val pool = SoundPool.Builder()
         .setMaxStreams(8)
@@ -45,6 +52,8 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
     private val notes = ConcurrentHashMap<Int, Int>()
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     @Volatile private var musicLoop: ShortArray? = null
+    @Volatile private var track: LoopingTrack? = null
+    @Volatile private var released = false
     private var musicJob: Job? = null
     private var wantMusic = false
     private var step = 7
@@ -58,7 +67,11 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
                 if (!file.exists()) writeWav(file, reverb(bell(midi), WET_NOTES))
                 notes[midi] = pool.load(file.path, 1)
             }
-            musicLoop = EraMusic.render(era)
+            val file = LoopingTrack.eraFile(context, era, variant)
+            val opened = file?.let { LoopingTrack.open(context, it, MUSIC_LEVEL) }
+            // L'atelier a pu se fermer pendant qu'on préparait la musique.
+            synchronized(this@StudioSound) { if (released) opened?.release() else track = opened }
+            if (opened == null) musicLoop = EraMusic.render(era)
         }
         withContext(Dispatchers.Main) { if (wantMusic) startMusic() }
     }
@@ -95,6 +108,11 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
 
     fun release() {
         wantMusic = false
+        synchronized(this) {
+            released = true
+            track?.release()
+            track = null
+        }
         scope.cancel()
         runCatching { pool.release() }
     }
@@ -109,6 +127,10 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
     }
 
     private fun startMusic() {
+        track?.let {
+            it.play(true)
+            return
+        }
         val loop = musicLoop ?: return
         if (musicJob?.isActive == true) return
         musicJob = scope.launch(Dispatchers.IO) {
@@ -150,6 +172,7 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
     }
 
     private fun stopMusic() {
+        track?.play(false)
         val job = musicJob ?: return
         musicJob = null
         job.cancel()
@@ -183,6 +206,9 @@ class StudioSound(context: Context, private val era: Era = Era.POSTIMPRESSIONNIS
         const val RATE = EraMusic.RATE
         const val OUT_GAIN = EraMusic.OUT_GAIN
         const val WET_NOTES = 0.32f
+
+        /** Volume de la musique enregistrée : un fond, sous les notes de bois. */
+        const val MUSIC_LEVEL = 0.6f
         val PENTA = EraMusic.PENTA
         val STEPS = intArrayOf(-1, 1, 1, 2, -2, 0, 1)
 

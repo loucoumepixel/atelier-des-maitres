@@ -11,8 +11,9 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 /**
- * L'époque d'une toile, qui choisit la musique de fond de l'atelier. Aucune musique n'est
- * enregistrée : tout est composé et joué par [EraMusic], sans droits à payer à personne.
+ * L'époque d'une toile, qui choisit la musique de fond de l'atelier. L'application joue la
+ * musique enregistrée de l'époque quand elle en a une (`assets/musique`) ; sinon [EraMusic]
+ * la compose sur place, sans droits à payer à personne.
  */
 enum class Era {
     /** Monet, Renoir, Seurat : arpèges flottants à la Debussy, accords de neuvième. */

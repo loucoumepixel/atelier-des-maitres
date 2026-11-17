@@ -1,5 +1,6 @@
 package app.atelier.maitres.ui.studio
 
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
@@ -12,20 +13,44 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.min
 
 /**
- * L'ambiance de salle de musée ([MuseumAmbience]) jouée en boucle sous la galerie et le
- * musée, avec un fondu d'entrée. Elle se calcule à la première demande (moins d'une seconde,
- * hors du fil principal) et se tait dès qu'on entre dans l'atelier, qui a sa propre musique.
+ * La musique du musée, jouée en boucle sous la galerie et le musée, avec un fondu d'entrée.
+ * C'est la musique enregistrée `assets/musique/ambiance-musee.ogg` ; si elle manque, l'ambiance
+ * de salle composée sur place ([MuseumAmbience]) la remplace. Elle se tait dès qu'on entre
+ * dans l'atelier, qui a la musique de son époque.
  */
-class AmbiencePlayer {
+class AmbiencePlayer(private val context: Context) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     @Volatile private var loop: ShortArray? = null
     private var job: Job? = null
+    private var recorded: LoopingTrack? = null
+    private var lookedForTrack = false
+    private var wanted = false
+    private var released = false
 
-    /** Joue l'ambiance si [on], sinon l'arrête. Appeler autant de fois qu'on veut. */
+    /** Joue l'ambiance si [on], sinon l'arrête. Appeler autant de fois qu'on veut, du fil principal. */
     fun play(on: Boolean) {
+        if (released) return
+        wanted = on
+        if (!lookedForTrack) {
+            if (!on) return
+            lookedForTrack = true
+            scope.launch(Dispatchers.IO) {
+                val opened = LoopingTrack.open(context, LoopingTrack.MUSEUM, LEVEL)
+                withContext(Dispatchers.Main) {
+                    if (released) opened?.release() else recorded = opened
+                    play(wanted)
+                }
+            }
+            return
+        }
+        recorded?.let {
+            it.play(on)
+            return
+        }
         if (!on) {
             job?.cancel()
             job = null
@@ -74,5 +99,19 @@ class AmbiencePlayer {
                 }
             }
         }
+    }
+
+    /** Arrête tout pour de bon (fin de l'activité). */
+    fun release() {
+        released = true
+        job?.cancel()
+        job = null
+        recorded?.release()
+        recorded = null
+    }
+
+    private companion object {
+        /** Volume de la musique du musée : plus discret que celle de l'atelier. */
+        const val LEVEL = 0.5f
     }
 }
