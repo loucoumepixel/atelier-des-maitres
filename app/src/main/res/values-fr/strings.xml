@@ -404,4 +404,6 @@
     <string name="guided_done">C\'est parti !</string>
     <string name="journal_streak_one">Série d\'un jour</string>
     <string name="journal_card_go">Ouvrir</string>
+    <!-- Le cartel du musée sous la toile de l'intro du studio. -->
+    <string name="intro_medium">huile sur toile, 2026</string>
 </resources>
