@@ -54,6 +54,8 @@ class StudioSound(
     @Volatile private var musicLoop: ShortArray? = null
     @Volatile private var track: LoopingTrack? = null
     @Volatile private var released = false
+    @Volatile private var musicGain = 1f
+    @Volatile private var synth: AudioTrack? = null
     private var musicJob: Job? = null
     private var wantMusic = false
     private var step = 7
@@ -68,7 +70,7 @@ class StudioSound(
                 notes[midi] = pool.load(file.path, 1)
             }
             val file = LoopingTrack.eraFile(context, era, variant)
-            val opened = file?.let { LoopingTrack.open(context, it, MUSIC_LEVEL) }
+            val opened = file?.let { LoopingTrack.open(context, it, musicGain) }
             // L'atelier a pu se fermer pendant qu'on préparait la musique.
             synchronized(this@StudioSound) { if (released) opened?.release() else track = opened }
             if (opened == null) musicLoop = EraMusic.render(era)
@@ -104,6 +106,13 @@ class StudioSound(
     fun music(on: Boolean) {
         wantMusic = on
         if (on) startMusic() else stopMusic()
+    }
+
+    /** Le volume de la musique (réglage du joueur, de 0 à 1), appliqué tout de suite. */
+    fun musicVolume(volume: Float) {
+        musicGain = volume
+        track?.setLevel(volume)
+        synth?.let { runCatching { it.setVolume(volume) } }
     }
 
     fun release() {
@@ -151,8 +160,9 @@ class StudioSound(
             try {
                 track.setVolume(0f)
                 track.play()
+                synth = track
                 // Fondu d'entrée sur deux secondes, pendant que la musique s'écrit.
-                val fade = launch { for (k in 1..20) { delay(100); track.setVolume(k / 20f) } }
+                val fade = launch { for (k in 1..20) { delay(100); track.setVolume(k / 20f * musicGain) } }
                 var pos = 0
                 val chunk = RATE / 10
                 while (isActive) {
@@ -162,6 +172,7 @@ class StudioSound(
                 }
                 fade.cancel()
             } finally {
+                synth = null
                 runCatching {
                     track.pause()
                     track.flush()
@@ -207,8 +218,6 @@ class StudioSound(
         const val OUT_GAIN = EraMusic.OUT_GAIN
         const val WET_NOTES = 0.32f
 
-        /** Volume de la musique enregistrée : un fond, sous les notes de bois. */
-        const val MUSIC_LEVEL = 0.6f
         val PENTA = EraMusic.PENTA
         val STEPS = intArrayOf(-1, 1, 1, 2, -2, 0, 1)
 

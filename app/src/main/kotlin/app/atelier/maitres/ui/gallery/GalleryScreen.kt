@@ -109,6 +109,7 @@ import app.atelier.maitres.ui.play.emphasized
 import app.atelier.maitres.ui.play.flatShadow
 import app.atelier.maitres.ui.play.formatCount
 import app.atelier.maitres.ui.play.rankNames
+import app.atelier.maitres.ui.studio.MusicVolumeSlider
 import app.atelier.maitres.ui.theme.CartelStyle
 import app.atelier.maitres.ui.theme.Caveat
 import app.atelier.maitres.ui.theme.Fraunces
@@ -281,7 +282,7 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
         )
     }
 
-    if (about) AboutDialog(onDismiss = { about = false })
+    if (about) AboutDialog(career, onDismiss = { about = false })
 
     deleting?.let { painting ->
         AlertDialog(
@@ -891,7 +892,7 @@ private fun DifficultyRow(difficulty: Difficulty, stat: PaintingStats?, highligh
 
 /** Version, confidentialité, contact et crédits : ce qu'un utilisateur (et la Play Console) s'attend à trouver. */
 @Composable
-private fun AboutDialog(onDismiss: () -> Unit) {
+private fun AboutDialog(career: Career, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val version = remember {
@@ -910,6 +911,9 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                     Text(stringResource(R.string.version, version), style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(12.dp))
                 }
+                // Le seul réglage du jeu, à portée depuis la galerie (la musique du musée y joue).
+                MusicVolumeSlider(career)
+                Spacer(Modifier.height(12.dp))
                 Text(
                     stringResource(R.string.about_text),
                     style = MaterialTheme.typography.bodyMedium,

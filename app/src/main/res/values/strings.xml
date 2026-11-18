@@ -124,6 +124,10 @@
     <string name="sound_unmute">Turn the sound back on</string>
     <string name="music_on">Play the music</string>
     <string name="music_off">Stop the music</string>
+    <string name="music_volume">Music volume</string>
+    <string name="music_volume_menu">Music volume…</string>
+    <string name="music_volume_hint">Slide to hear the change. It also sets the museum music.</string>
+    <string name="music_volume_percent">%1$d%%</string>
     <string name="monet_impression_title">Impression, Sunrise</string>
     <string name="monet_impression_note">The port of Le Havre at dawn. A critic mocked the title, and the word “Impressionism” was born.</string>
     <string name="monet_nympheas_title">Water Lilies</string>
