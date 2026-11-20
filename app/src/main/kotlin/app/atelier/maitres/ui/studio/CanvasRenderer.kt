@@ -134,6 +134,20 @@ class CanvasRenderer(
      * posée sur une marge de papier comme une œuvre encadrée. À appeler sur le thread principal.
      */
     fun exportBitmap(): Bitmap {
+        val out = cleanPixels()
+        val margin = max(width, height) / 24
+        // Pas de apply { } ici : width et height y seraient ceux de l'image encadrée, plus grande.
+        val framed = Bitmap.createBitmap(width + 2 * margin, height + 2 * margin, Bitmap.Config.ARGB_8888)
+        framed.eraseColor(PAPER)
+        framed.setPixels(out, 0, width, margin, margin, width, height)
+        return framed
+    }
+
+    /**
+     * Copie des pixels de la toile sans le hachurage de la couleur active, pour l'aperçu de la
+     * galerie. À appeler sur le thread principal ; la réduction se fait ensuite ailleurs.
+     */
+    fun cleanPixels(): IntArray {
         val out = pixels.copyOf()
         if (highlight >= 0) {
             for (r in 0 until canvas.regionCount) {
@@ -144,12 +158,7 @@ class CanvasRenderer(
                 }
             }
         }
-        val margin = max(width, height) / 24
-        // Pas de apply { } ici : width et height y seraient ceux de l'image encadrée, plus grande.
-        val framed = Bitmap.createBitmap(width + 2 * margin, height + 2 * margin, Bitmap.Config.ARGB_8888)
-        framed.eraseColor(PAPER)
-        framed.setPixels(out, 0, width, margin, margin, width, height)
-        return framed
+        return out
     }
 
     private fun drawRegion(region: Int) {

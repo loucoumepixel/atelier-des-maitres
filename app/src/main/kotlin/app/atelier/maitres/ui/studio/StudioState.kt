@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import app.atelier.maitres.core.PaintingSession
+import app.atelier.maitres.data.CanvasPreview
 import app.atelier.maitres.data.Career
 import app.atelier.maitres.data.Exhibition
 import app.atelier.maitres.data.Exhibitions
@@ -344,7 +345,13 @@ class StudioState(
     private fun persist() {
         if (!dirty) return
         dirty = false
-        repository.saveProgress(loaded.painting, loaded.difficulty, session.fills.copyOf(), session.faithfulCount)
+        repository.saveProgress(
+            loaded.painting,
+            loaded.difficulty,
+            session.fills.copyOf(),
+            session.faithfulCount,
+            CanvasPreview(renderer.cleanPixels(), renderer.width, renderer.height),
+        )
     }
 
     private companion object {
