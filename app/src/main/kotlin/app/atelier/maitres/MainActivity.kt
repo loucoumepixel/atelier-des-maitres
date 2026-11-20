@@ -76,6 +76,8 @@ class MainActivity : ComponentActivity() {
                 var introShown by rememberSaveable { mutableStateOf(false) }
                 var revealed by rememberSaveable { mutableStateOf(false) }
                 val musicOn by career.musicFlow.collectAsState()
+                val musicVolume by career.musicVolumeFlow.collectAsState()
+                LaunchedEffect(musicVolume) { ambience.setVolume(musicVolume) }
 
                 // Galerie et musée seulement : l'atelier a la musique de son époque.
                 LaunchedEffect(open, revealed, onScreen, musicOn) {

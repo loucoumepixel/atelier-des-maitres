@@ -70,6 +70,20 @@ class Career(context: Context, private val repository: PaintingRepository) {
     /** La musique (et l'ambiance de salle) est-elle voulue ? Suit [musicOn]. */
     val musicFlow: StateFlow<Boolean> = _music.asStateFlow()
 
+    /** Volume de la musique choisi par le joueur, de 0 à 1. Doux par défaut. */
+    var musicVolume: Float
+        get() = _musicVolume.value
+        set(value) {
+            val v = value.coerceIn(0f, 1f)
+            prefs.edit().putFloat(MUSIC_VOLUME, v).apply()
+            _musicVolume.value = v
+        }
+
+    private val _musicVolume = MutableStateFlow(prefs.getFloat(MUSIC_VOLUME, DEFAULT_MUSIC_VOLUME).coerceIn(0f, 1f))
+
+    /** Suit [musicVolume], pour régler la musique qui joue déjà. */
+    val musicVolumeFlow: StateFlow<Float> = _musicVolume.asStateFlow()
+
     /** Épaisseur de la peinture à l'huile choisie par le joueur. */
     var matter: Matter
         get() = Matter.entries.firstOrNull { it.name == prefs.getString(MATTER, null) } ?: Matter.LEGERE
@@ -300,6 +314,10 @@ class Career(context: Context, private val repository: PaintingRepository) {
         private const val LAST_DAY = "career_last_day"
         private const val SOUND = "sound"
         private const val MUSIC = "music"
+        private const val MUSIC_VOLUME = "music_volume"
+
+        /** Volume de départ de la musique : un fond discret. */
+        const val DEFAULT_MUSIC_VOLUME = 0.3f
         private const val PEEK_TIPS = "peek_tips_left"
         private const val MATTER = "matter"
         private const val EXPO_DONE = "expo_done_"

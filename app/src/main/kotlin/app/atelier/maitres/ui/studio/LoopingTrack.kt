@@ -16,9 +16,10 @@ import kotlinx.coroutines.launch
  * Une musique enregistrée (`assets/musique/…ogg`) jouée en boucle, avec un fondu d'entrée et
  * de sortie. Quand on l'arrête, elle se met en pause : elle reprend là où elle s'était tue.
  *
- * Les fichiers sont réglés au même volume (−23 LUFS) ; [level] dose ensuite chaque usage.
+ * Les fichiers sont réglés au même volume (−23 LUFS) ; [level] est le volume voulu (le réglage
+ * du joueur), qu'on peut changer pendant que la musique joue avec [setLevel].
  */
-class LoopingTrack private constructor(private val player: MediaPlayer, private val level: Float) {
+class LoopingTrack private constructor(private val player: MediaPlayer, private var level: Float) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var fade: Job? = null
     private var volume = 0f
@@ -38,6 +39,12 @@ class LoopingTrack private constructor(private val player: MediaPlayer, private 
             }
             if (!on) runCatching { player.pause() }
         }
+    }
+
+    /** Change le volume tout de suite, même au milieu d'un fondu. */
+    fun setLevel(value: Float) {
+        level = value
+        runCatching { player.setVolume(volume * level, volume * level) }
     }
 
     fun release() {
