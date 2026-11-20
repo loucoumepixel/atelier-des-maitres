@@ -30,6 +30,15 @@ class AmbiencePlayer(private val context: Context) {
     private var lookedForTrack = false
     private var wanted = false
     private var released = false
+    @Volatile private var gain = 1f
+    @Volatile private var synth: AudioTrack? = null
+
+    /** Le volume de la musique (réglage du joueur, de 0 à 1), appliqué tout de suite. */
+    fun setVolume(volume: Float) {
+        gain = volume * LEVEL
+        recorded?.setLevel(gain)
+        synth?.let { runCatching { it.setVolume(gain) } }
+    }
 
     /** Joue l'ambiance si [on], sinon l'arrête. Appeler autant de fois qu'on veut, du fil principal. */
     fun play(on: Boolean) {
@@ -39,7 +48,7 @@ class AmbiencePlayer(private val context: Context) {
             if (!on) return
             lookedForTrack = true
             scope.launch(Dispatchers.IO) {
-                val opened = LoopingTrack.open(context, LoopingTrack.MUSEUM, LEVEL)
+                val opened = LoopingTrack.open(context, LoopingTrack.MUSEUM, gain)
                 withContext(Dispatchers.Main) {
                     if (released) opened?.release() else recorded = opened
                     play(wanted)
@@ -82,7 +91,8 @@ class AmbiencePlayer(private val context: Context) {
             try {
                 track.setVolume(0f)
                 track.play()
-                val fade = launch { for (k in 1..30) { delay(100); track.setVolume(k / 30f) } }
+                synth = track
+                val fade = launch { for (k in 1..30) { delay(100); track.setVolume(k / 30f * gain) } }
                 var pos = 0
                 val chunk = rate / 10
                 while (isActive) {
@@ -92,6 +102,7 @@ class AmbiencePlayer(private val context: Context) {
                 }
                 fade.cancel()
             } finally {
+                synth = null
                 runCatching {
                     track.pause()
                     track.flush()
@@ -111,7 +122,7 @@ class AmbiencePlayer(private val context: Context) {
     }
 
     private companion object {
-        /** Volume de la musique du musée : plus discret que celle de l'atelier. */
-        const val LEVEL = 0.5f
+        /** La musique du musée, un peu plus discrète que celle de l'atelier au même réglage. */
+        const val LEVEL = 0.8f
     }
 }

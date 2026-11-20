@@ -39,6 +39,20 @@ data class PaintingStats(val difficulty: Difficulty, val faithful: Int, val tota
     val isComplete: Boolean get() = total > 0 && faithful == total
 }
 
+/** Les pixels de la toile du joueur, copiés sur le thread principal pour en tirer l'aperçu de la galerie. */
+class CanvasPreview(val pixels: IntArray, val width: Int, val height: Int)
+
+/** L'image d'une toile dans la galerie, et ce qu'elle représente. */
+data class GalleryImage(
+    val bitmap: Bitmap,
+    /** Vrai s'il faut la présenter en sépia : l'original d'une toile pas encore peinte. */
+    val sketch: Boolean,
+    val started: Boolean,
+    val finished: Boolean,
+    /** Avancement du dernier niveau joué (1 à 99), ou 0 si la toile n'est pas en cours. */
+    val percent: Int,
+)
+
 /** Toile prête à peindre : son découpage, l'image d'origine et la progression enregistrée. */
 class LoadedCanvas(
     val painting: Painting,
@@ -61,6 +75,8 @@ class PaintingRepository(private val context: Context) {
     private val progressDir = File(context.filesDir, "progress").apply { mkdirs() }
     private val importDir = File(context.filesDir, "imports").apply { mkdirs() }
     private val reliefDir = File(context.cacheDir, "relief").apply { mkdirs() }
+    /** Petite photo de la toile telle que le joueur l'a laissée, pour la galerie. */
+    private val previewDir = File(context.filesDir, "apercu").apply { mkdirs() }
     private val importIndex = AtomicFile(File(importDir, "index.json"))
     private val prefs = context.getSharedPreferences("atelier", Context.MODE_PRIVATE)
 
@@ -193,11 +209,12 @@ class PaintingRepository(private val context: Context) {
      * Enregistre la progression sans bloquer l'appelant. [fills] doit être une copie :
      * l'écran continue de peindre pendant l'écriture.
      */
-    fun saveProgress(painting: Painting, difficulty: Difficulty, fills: IntArray, faithful: Int) {
+    fun saveProgress(painting: Painting, difficulty: Difficulty, fills: IntArray, faithful: Int, preview: CanvasPreview? = null) {
         appScope.launch {
             saveLock.withLock {
                 val written = runCatching { progressFile(painting, difficulty).write { PbnCodec.writeProgress(fills, it) } }
                 if (written.isFailure) return@withLock
+                preview?.let { writePreview(painting, it) }
                 prefs.edit()
                     .putString(statsKey(painting, difficulty), "$faithful/${fills.size}")
                     .putString(lastKey(painting), difficulty.name)
@@ -211,6 +228,11 @@ class PaintingRepository(private val context: Context) {
         appScope.launch {
             saveLock.withLock {
                 progressFile(painting, difficulty).delete()
+                // L'aperçu montre le dernier niveau joué : il ne vaut plus rien si c'est celui qu'on efface.
+                if (lastDifficulty(painting) == difficulty) {
+                    previewFile(painting).delete()
+                    thumbnails.remove(previewKey(painting))
+                }
                 prefs.edit().remove(statsKey(painting, difficulty)).apply()
                 _statsVersion.value++
             }
@@ -226,6 +248,58 @@ class PaintingRepository(private val context: Context) {
     /** Dernier niveau joué sur cette toile, pour la reprendre en un geste. */
     fun lastDifficulty(painting: Painting): Difficulty? =
         prefs.getString(lastKey(painting), null)?.let { name -> Difficulty.entries.firstOrNull { it.name == name } }
+
+    // ------------------------------------------------------------------ aperçu de la galerie
+
+    /**
+     * Ce que la galerie montre d'une toile : l'original en couleurs une fois finie, la toile du
+     * joueur telle qu'il l'a laissée quand elle est commencée, et une esquisse sépia sinon.
+     * Montrer l'original en couleurs dès la première zone peinte donnait l'impression qu'une
+     * toile à peine entamée (ou ouverte par erreur) était déjà entièrement peinte.
+     */
+    suspend fun galleryImage(painting: Painting): GalleryImage = withContext(Dispatchers.IO) {
+        val stats = stats(painting)
+        val finished = stats.any { it.isComplete }
+        val started = stats.any { it.faithful > 0 }
+        val shown = stats.firstOrNull { it.difficulty == lastDifficulty(painting) } ?: stats.maxByOrNull { it.fraction }
+        val percent = if (started && !finished) ((shown?.fraction ?: 0f) * 100).toInt().coerceIn(1, 99) else 0
+        val preview = if (started && !finished) previewImage(painting) else null
+        GalleryImage(
+            bitmap = preview ?: thumbnail(painting),
+            sketch = preview == null && !finished,
+            started = started,
+            finished = finished,
+            percent = percent,
+        )
+    }
+
+    private fun previewImage(painting: Painting): Bitmap? {
+        val key = previewKey(painting)
+        thumbnails.get(key)?.let { return it }
+        val file = previewFile(painting)
+        if (!file.exists()) return null
+        return runCatching { decodeScaled(ImageDecoder.createSource(file), THUMBNAIL_SIZE) }.getOrNull()
+            ?.also { thumbnails.put(key, it) }
+    }
+
+    private fun writePreview(painting: Painting, preview: CanvasPreview) {
+        runCatching {
+            val full = Bitmap.createBitmap(preview.pixels, preview.width, preview.height, Bitmap.Config.ARGB_8888)
+            val scale = THUMBNAIL_SIZE.toFloat() / max(preview.width, preview.height)
+            val small = Bitmap.createScaledBitmap(
+                full,
+                max(1, (preview.width * scale).roundToInt()),
+                max(1, (preview.height * scale).roundToInt()),
+                true,
+            )
+            AtomicFile(previewFile(painting)).write { small.compress(Bitmap.CompressFormat.JPEG, 88, it) }
+            thumbnails.put(previewKey(painting), small)
+            if (small !== full) full.recycle()
+        }
+    }
+
+    private fun previewFile(p: Painting) = File(previewDir, "${p.id}.jpg")
+    private fun previewKey(p: Painting) = "apercu:${p.id}"
 
     private fun statsKey(p: Painting, d: Difficulty) = "stats_${p.id}_${d.name}"
     private fun lastKey(p: Painting) = "last_${p.id}"
@@ -266,6 +340,8 @@ class PaintingRepository(private val context: Context) {
             resetProgress(painting, d)
         }
         prefs.edit().remove(lastKey(painting)).apply()
+        previewFile(painting).delete()
+        thumbnails.remove(previewKey(painting))
         reliefDir.listFiles { f -> f.name.startsWith("${painting.id}_") }?.forEach { it.delete() }
         thumbnails.remove(painting.id)
         _paintings.value = _paintings.value.filterNot { it.id == painting.id }

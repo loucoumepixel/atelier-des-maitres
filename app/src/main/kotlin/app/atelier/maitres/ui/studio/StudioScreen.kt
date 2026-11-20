@@ -40,6 +40,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Redo
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Brush
 import androidx.compose.material.icons.outlined.CenterFocusStrong
 import androidx.compose.material.icons.outlined.FitScreen
@@ -60,6 +61,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -179,6 +181,10 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
     var inFront by remember { mutableStateOf(true) }
     val sound = remember { runCatching { StudioSound(context.applicationContext, painting.era, painting.id.hashCode()) }.getOrNull() }
     DisposableEffect(sound) { onDispose { sound?.release() } }
+    val musicVolume by career.musicVolumeFlow.collectAsState()
+    var volumeDialog by remember { mutableStateOf(false) }
+    // Avant prepare() : la musique s'ouvre directement au bon volume.
+    LaunchedEffect(sound, musicVolume) { sound?.musicVolume(musicVolume) }
     LaunchedEffect(sound) { sound?.prepare() }
     LifecycleEventEffect(Lifecycle.Event.ON_START) { inFront = true }
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { inFront = false }
@@ -383,6 +389,14 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
                                     }
                                 },
                             )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.music_volume_menu)) },
+                                leadingIcon = { Icon(Icons.AutoMirrored.Outlined.VolumeUp, contentDescription = null) },
+                                onClick = {
+                                    menu = false
+                                    volumeDialog = true
+                                },
+                            )
                         }
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.matter_menu, stringResource(state.matter.labelRes).lowercase())) },
@@ -456,6 +470,8 @@ private fun Studio(state: StudioState, career: Career, onBack: () -> Unit) {
         }
 
         if (state.pickerOpen) ColorPickerSheet(state)
+
+        if (volumeDialog) MusicVolumeDialog(career, onDismiss = { volumeDialog = false })
 
         if (chooseMatter) {
             MatterChooser(

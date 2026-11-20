@@ -57,6 +57,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +94,7 @@ import app.atelier.maitres.core.Difficulty
 import app.atelier.maitres.data.Career
 import app.atelier.maitres.data.Exhibition
 import app.atelier.maitres.data.Exhibitions
+import app.atelier.maitres.data.GalleryImage
 import app.atelier.maitres.data.Painting
 import app.atelier.maitres.data.PaintingRepository
 import app.atelier.maitres.data.PaintingStats
@@ -109,6 +111,7 @@ import app.atelier.maitres.ui.play.emphasized
 import app.atelier.maitres.ui.play.flatShadow
 import app.atelier.maitres.ui.play.formatCount
 import app.atelier.maitres.ui.play.rankNames
+import app.atelier.maitres.ui.studio.MusicVolumeSlider
 import app.atelier.maitres.ui.theme.CartelStyle
 import app.atelier.maitres.ui.theme.Caveat
 import app.atelier.maitres.ui.theme.Fraunces
@@ -229,13 +232,11 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
             items(paintings.filter { it != daily }, key = { it.id }) { painting ->
                 // statsVersion force la relecture des étoiles après chaque sauvegarde.
                 val won = remember(painting.id, statsVersion) { career.stars(painting) }
-                val started = remember(painting.id, statsVersion) { repository.stats(painting).any { it.faithful > 0 } }
                 if (career.isUnlocked(painting)) {
                     Polaroid(
                         painting = painting,
                         repository = repository,
                         won = won,
-                        started = started,
                         onClick = { choosing = painting },
                         onLongClick = { if (painting.isImported) deleting = painting },
                     )
@@ -281,7 +282,7 @@ fun GalleryScreen(repository: PaintingRepository, career: Career, onOpen: (Paint
         )
     }
 
-    if (about) AboutDialog(onDismiss = { about = false })
+    if (about) AboutDialog(career, onDismiss = { about = false })
 
     deleting?.let { painting ->
         AlertDialog(
@@ -353,11 +354,31 @@ private fun CareerHeader(touches: Int, streak: Int, paintedToday: Boolean, names
 /** Petite inclinaison stable par toile, pour l'effet « photos posées sur la table ». */
 private fun tiltOf(id: String): Float = ((abs(id.hashCode()) % 7) - 3) * 0.7f
 
+/**
+ * L'image d'une toile dans la galerie : esquisse sépia tant qu'elle n'est pas commencée, la
+ * toile du joueur en cours de route, l'original en couleurs une fois finie. Relue après
+ * chaque sauvegarde.
+ */
 @Composable
-private fun rememberThumbnail(painting: Painting, repository: PaintingRepository) =
-    produceState<android.graphics.Bitmap?>(null, painting.id) {
-        value = runCatching { repository.thumbnail(painting) }.getOrNull()
+private fun rememberThumbnail(painting: Painting, repository: PaintingRepository): State<GalleryImage?> {
+    val version by repository.statsVersion.collectAsState()
+    return produceState<GalleryImage?>(null, painting.id, version) {
+        value = runCatching { repository.galleryImage(painting) }.getOrNull()
     }
+}
+
+/** L'image de la galerie, en sépia quand la toile n'est encore qu'une esquisse à peindre. */
+@Composable
+private fun GalleryPicture(image: GalleryImage, modifier: Modifier) {
+    val sepia by animateFloatAsState(if (image.sketch) 1f else 0f, tween(600), label = "sepia")
+    Image(
+        bitmap = remember(image.bitmap) { image.bitmap.asImageBitmap() },
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        colorFilter = if (sepia > 0f) ColorFilter.colorMatrix(sepiaMatrix(sepia)) else null,
+        modifier = modifier,
+    )
+}
 
 /** La toile du jour, en grand, qui rapporte double. */
 @Composable
@@ -375,14 +396,9 @@ private fun DailyCard(painting: Painting, repository: PaintingRepository, onClic
                 .clickable(onClickLabel = stringResource(R.string.action_choose_level), onClick = onClick)
                 .padding(10.dp),
         ) {
-            val bitmap = thumbnail
-            if (bitmap != null) {
-                Image(
-                    bitmap = remember(bitmap) { bitmap.asImageBitmap() },
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(16f / 10f),
-                )
+            val image = thumbnail
+            if (image != null) {
+                GalleryPicture(image, Modifier.fillMaxWidth().aspectRatio(16f / 10f))
             } else {
                 Spacer(Modifier.fillMaxWidth().aspectRatio(16f / 10f).background(colors.dots))
             }
@@ -527,14 +543,7 @@ private fun ExhibitionThumb(painting: Painting, done: Boolean, repository: Paint
                 .clickable(onClickLabel = stringResource(R.string.action_choose_level), onClick = onClick)
                 .semantics { contentDescription = if (done) "${painting.title}, $doneLabel" else painting.title },
         ) {
-            thumbnail?.let { bitmap ->
-                Image(
-                    bitmap = remember(bitmap) { bitmap.asImageBitmap() },
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+            thumbnail?.let { image -> GalleryPicture(image, Modifier.fillMaxSize()) }
         }
         if (done) {
             Box(
@@ -646,14 +655,13 @@ private fun Polaroid(
     painting: Painting,
     repository: PaintingRepository,
     won: List<Boolean>,
-    started: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
 ) {
     val colors = LocalPlayColors.current
     val thumbnail by rememberThumbnail(painting, repository)
-    // Les toiles jamais commencées sont présentées en sépia, comme une esquisse à peindre.
-    val sepia by animateFloatAsState(if (started) 0f else 1f, tween(600), label = "sepia")
+    val look = thumbnail
+    val started = look?.started ?: false
     val count = won.count { it }
     val starsText = stringResource(R.string.stars_label, count)
 
@@ -674,15 +682,10 @@ private fun Polaroid(
                 .semantics(mergeDescendants = true) { contentDescription = "${painting.title}, ${painting.artist}, $starsText" }
                 .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 10.dp),
         ) {
-            val bitmap = thumbnail
-            if (bitmap != null) {
-                Image(
-                    bitmap = remember(bitmap) { bitmap.asImageBitmap() },
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.colorMatrix(sepiaMatrix(sepia)),
-                    modifier = Modifier.fillMaxWidth().aspectRatio((bitmap.width.toFloat() / bitmap.height).coerceIn(0.7f, 1.4f)),
-                )
+            val image = thumbnail
+            if (image != null) {
+                val bitmap = image.bitmap
+                GalleryPicture(image, Modifier.fillMaxWidth().aspectRatio((bitmap.width.toFloat() / bitmap.height).coerceIn(0.7f, 1.4f)))
             } else {
                 Spacer(Modifier.fillMaxWidth().aspectRatio(0.85f).background(colors.dots))
             }
@@ -703,7 +706,9 @@ private fun Polaroid(
                 Text(
                     when {
                         count == 3 -> stringResource(R.string.cap_done)
+                        look == null -> ""
                         !started -> stringResource(R.string.cap_new)
+                        look.percent > 0 -> stringResource(R.string.percent, look.percent)
                         else -> ""
                     },
                     fontSize = 11.sp,
@@ -891,7 +896,7 @@ private fun DifficultyRow(difficulty: Difficulty, stat: PaintingStats?, highligh
 
 /** Version, confidentialité, contact et crédits : ce qu'un utilisateur (et la Play Console) s'attend à trouver. */
 @Composable
-private fun AboutDialog(onDismiss: () -> Unit) {
+private fun AboutDialog(career: Career, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val version = remember {
@@ -910,6 +915,9 @@ private fun AboutDialog(onDismiss: () -> Unit) {
                     Text(stringResource(R.string.version, version), style = CartelStyle, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(12.dp))
                 }
+                // Le seul réglage du jeu, à portée depuis la galerie (la musique du musée y joue).
+                MusicVolumeSlider(career)
+                Spacer(Modifier.height(12.dp))
                 Text(
                     stringResource(R.string.about_text),
                     style = MaterialTheme.typography.bodyMedium,
