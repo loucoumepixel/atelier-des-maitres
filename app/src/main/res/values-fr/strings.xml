@@ -410,4 +410,5 @@
     <string name="journal_card_go">Ouvrir</string>
     <!-- Le cartel du musée sous la toile de l'intro du studio. -->
     <string name="intro_medium">huile sur toile, 2026</string>
+    <string name="guide_language">fr</string>
 </resources>
