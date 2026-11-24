@@ -408,4 +408,6 @@
     <string name="journal_card_go">Open</string>
     <!-- Le cartel du musée sous la toile de l'intro du studio. -->
     <string name="intro_medium">oil on canvas, 2026</string>
+    <!-- Code de la langue de ce fichier : le guide choisit la voix du téléphone avec. -->
+    <string name="guide_language">en</string>
 </resources>

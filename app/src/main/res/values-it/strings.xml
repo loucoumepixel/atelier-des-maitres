@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">I maestri ti prestano %1$s.</string>
+    <string name="welcome_cta">Pennelli alla mano!</string>
+    <string name="about_open">Informazioni sull’app</string>
+    <string name="import_failed">Impossibile leggere questa immagine.</string>
+    <string name="remove_title">Rimuovere «%1$s»?</string>
+    <string name="remove_text">L’immagine importata e i tuoi progressi su questa tela verranno cancellati.</string>
+    <string name="remove">Rimuovi</string>
+    <string name="cancel">Annulla</string>
+    <string name="action_choose_level">Scegli il livello</string>
+    <string name="remove_image">Rimuovi questa immagine</string>
+    <string name="finished">Finito</string>
+    <string name="percent">%1$d%%</string>
+    <string name="import_title">Importa un’opera</string>
+    <string name="import_text">Un Monet, un Renoir, una foto delle vacanze: qualsiasi immagine del tuo telefono diventa una tela da dipingere.</string>
+    <string name="choose_level">Scegli il tuo livello</string>
+    <string name="level_easy">Facile</string>
+    <string name="level_normal">Normale</string>
+    <string name="level_expert">Esperto</string>
+    <string name="level_easy_text">Zone grandi, %1$d colori. Perfetto per rilassarsi.</string>
+    <string name="level_normal_text">L’equilibrio tra dettaglio e piacere, %1$d colori.</string>
+    <string name="level_expert_text">Tutte le sfumature del maestro, fino a %1$d colori.</string>
+    <string name="version">Versione %1$s</string>
+    <string name="about_text">Tutti i dipinti forniti sono di pubblico dominio. Niente pubblicità, niente account: nulla lascia il tuo telefono.</string>
+    <string name="privacy_policy">Informativa sulla privacy</string>
+    <string name="report_problem">Segnala un problema</string>
+    <string name="close">Chiudi</string>
+    <string name="free_colour">Colore libero</string>
+    <string name="colour_picker_open">Selettore di colore: scegli un colore libero</string>
+    <string name="eraser">Gomma</string>
+    <string name="share_text">«%1$s», %2$s, ridipinto in Atelier des Maîtres</string>
+    <string name="share_canvas">Condividi la tela</string>
+    <string name="share_failed">Impossibile preparare l’immagine per la condivisione.</string>
+    <string name="back_to_gallery">Torna alla galleria</string>
+    <string name="studio_progress">%1$s · %2$d / %3$d zone · %4$d%%</string>
+    <string name="peek_hold">Tieni premuto per vedere l’originale</string>
+    <string name="peek_on">Originale visibile</string>
+    <string name="peek_off">La tua tela visibile</string>
+    <string name="peek_show">Vedi l’originale</string>
+    <string name="peek_hide">Torna alla tua tela</string>
+    <string name="more_options">Altre opzioni</string>
+    <string name="overview">Panoramica</string>
+    <string name="restart_canvas">Ricomincia la tela</string>
+    <string name="undo">Annulla</string>
+    <string name="redo">Ripeti</string>
+    <string name="find_area">Trova una zona da dipingere</string>
+    <string name="restart_title">Ricominciare la tela?</string>
+    <string name="restart_text">Tutte le zone tornano bianche. Potrai ancora annullare.</string>
+    <string name="restart">Ricomincia</string>
+    <string name="keep">Tieni</string>
+    <string name="done_title">Capolavoro completato</string>
+    <string name="done_text">Hai ridipinto «%1$s» zona dopo zona, con i colori del maestro.</string>
+    <string name="admire">Ammira</string>
+    <string name="share">Condividi</string>
+    <string name="gallery">Galleria</string>
+    <string name="hint">Tocca una zona per dipingerla · tieni premuto per sceglierne il colore</string>
+    <string name="preparing">L’atelier sta preparando la tela (%1$s)…</string>
+    <string name="open_failed">Impossibile aprire questa immagine.</string>
+    <string name="picker_area">Zona n. %1$d</string>
+    <string name="picker_title">Selettore di colore</string>
+    <string name="master_colour">Colore del maestro</string>
+    <string name="canvas_palette">Tavolozza della tela</string>
+    <string name="paint_area">Dipingi la zona</string>
+    <string name="take_colour">Usa questo colore</string>
+    <string name="imported_title">La mia tela n. %1$d</string>
+    <string name="imported_artist">Importata</string>
+    <string name="imported_note">Un’immagine della tua galleria, divisa in zone come le tele dei maestri.</string>
+    <string name="nuit_etoilee_title">Notte stellata</string>
+    <string name="nuit_etoilee_note">Dipinta dalla sua stanza nell’ospedale psichiatrico di Saint-Rémy-de-Provence, poco prima dell’alba. Il paese, invece, è immaginario.</string>
+    <string name="champ_de_ble_cypres_title">Campo di grano con cipressi</string>
+    <string name="champ_de_ble_cypres_note">Van Gogh vedeva nei cipressi «l’equivalente di un obelisco egizio». Dipinse tre versioni di questo paesaggio.</string>
+    <string name="cafe_de_nuit_title">Il caffè di notte</string>
+    <string name="cafe_de_nuit_note">«Ho cercato di esprimere le terribili passioni umane con il rosso e il verde», scrisse al fratello Theo.</string>
+    <string name="maisons_personnage_title">Case e figura</string>
+    <string name="maisons_personnage_note">Un ricordo del Nord dipinto a Saint-Rémy: casette con il tetto di paglia, fumo a spirale e un sole al tramonto.</string>
+    <string name="grande_vague_title">La grande onda di Kanagawa</string>
+    <string name="grande_vague_year">1831 circa</string>
+    <string name="grande_vague_note">Una stampa delle Trentasei vedute del monte Fuji. Il blu di Prussia, allora nuovo in Giappone, fa un ingresso fragoroso.</string>
+    <string name="naufrage_minotaure_title">Il naufragio di una nave da trasporto</string>
+    <string name="naufrage_minotaure_year">1810 circa</string>
+    <string name="naufrage_minotaure_note">Turner, pittore della luce e delle tempeste, annuncia qui gli impressionisti con più di mezzo secolo di anticipo.</string>
+    <string name="le_cri_title">L’urlo</string>
+    <string name="le_cri_note">«Sentii un urlo infinito attraversare la natura.» Il cielo rosso potrebbe essere un tramonto su Oslo.</string>
+    <string name="welcome_title_em">la loro tavolozza</string>
+    <string name="welcome_new">Entri Scarabocchiatore, esci Genio!</string>
+    <string name="welcome_back">Bentornato, %1$s!</string>
+    <string name="welcome_cta_back">Continuiamo!</string>
+    <string name="welcome_cap">guarda, si dipinge da sola…</string>
+    <string name="welcome_cap_done">tocca a te!</string>
+    <string name="gallery_q">Cosa %1$s oggi?</string>
+    <string name="gallery_q_em">dipingiamo</string>
+    <string name="rank_of">grado %1$d di %2$d</string>
+    <string name="streak_kept">Serie mantenuta oggi</string>
+    <string name="streak_hint">Dipingi una zona oggi per mantenere la tua serie</string>
+    <string name="touches_n">%1$s tocchi</string>
+    <string name="next_rank">%1$s a %2$s</string>
+    <string name="max_rank">Grado massimo: chapeau!</string>
+    <string name="daily">la tela del giorno</string>
+    <string name="paint_now">Dipingi</string>
+    <string name="touches_word">tocchi</string>
+    <string name="cap_new">da iniziare</string>
+    <string name="cap_done">fatto!</string>
+    <string name="stars_label">%1$d stelle su 3</string>
+    <string name="locked_cap">si scarta a %1$s</string>
+    <string name="locked_title">Questa tela è ancora impacchettata</string>
+    <string name="locked_text">Si scarta al grado %1$s. Ancora %2$s tocchi: ogni zona dipinta bene te ne fa guadagnare.</string>
+    <string name="ok">OK</string>
+    <string name="surprise">Sorprendimi!</string>
+    <string name="surprise_label">Sorprendimi: una tela e un livello a caso</string>
+    <string name="colour_done">Colore %1$d finito</string>
+    <string name="combo">%1$d di fila!</string>
+    <string name="rank_up">Nuovo grado: %1$s!</string>
+    <string name="unlocked">«%1$s» è stata scartata!</string>
+    <string name="win_title">Bravo,\n%1$s!</string>
+    <string name="nickname_default">maestro</string>
+    <string name="win_drag">Scorri per vedere quanta strada hai fatto</string>
+    <string name="win_gain">+%1$s tocchi</string>
+    <string name="win_next">Ancora %1$s per diventare %2$s</string>
+    <string name="one_more">Un’altra!</string>
+    <string name="show_friends">Mostrala ai miei amici</string>
+    <string name="sound_mute">Disattiva l’audio</string>
+    <string name="sound_unmute">Riattiva l’audio</string>
+    <string name="music_on">Metti la musica</string>
+    <string name="music_off">Togli la musica</string>
+    <string name="music_volume">Volume della musica</string>
+    <string name="music_volume_menu">Volume della musica…</string>
+    <string name="music_volume_hint">Scorri per sentire la differenza. Regola anche la musica del museo.</string>
+    <string name="music_volume_percent">%1$d%%</string>
+    <string name="monet_impression_title">Impressione, levar del sole</string>
+    <string name="monet_impression_note">Il porto di Le Havre all’alba. Un critico prese in giro il titolo, e nacque la parola «impressionismo».</string>
+    <string name="monet_nympheas_title">Ninfee</string>
+    <string name="monet_nympheas_note">Monet dipinse le ninfee del suo stagno di Giverny più di 250 volte, a ogni ora del giorno.</string>
+    <string name="monet_prairie_title">Prato a Giverny</string>
+    <string name="monet_prairie_note">Stabilitosi a Giverny, Monet dipinse la campagna intorno a casa sua con ogni luce, prima di creare il suo celebre giardino d’acqua.</string>
+    <string name="panier_pommes_title">Il cesto di mele</string>
+    <string name="panier_pommes_year">1893 circa</string>
+    <string name="panier_pommes_note">Il tavolo pende, e anche la bottiglia: Cézanne mostra ogni oggetto dal suo lato migliore, anche se la prospettiva si piega.</string>
+    <string name="voyageur_brume_title">Viandante sul mare di nebbia</string>
+    <string name="voyageur_brume_year">1818 circa</string>
+    <string name="voyageur_brume_note">L’icona del romanticismo tedesco. Non vediamo mai il volto del viandante: guardiamo la nebbia insieme a lui.</string>
+    <string name="pont_neuf_title">Il Pont Neuf</string>
+    <string name="pont_neuf_note">Renoir dipinse la folla dal piano di sopra di un caffè; suo fratello fermava i passanti perché restassero immobili un istante.</string>
+    <string name="grande_jatte_title">Una domenica pomeriggio sull’isola della Grande-Jatte</string>
+    <string name="grande_jatte_note">Due anni di lavoro, punto dopo punto: Seurat accosta tocchi di colore puro perché l’occhio li mescoli da lontano.</string>
+    <string name="noce_juive_title">Nozze ebraiche in Marocco</string>
+    <string name="noce_juive_year">1839 circa</string>
+    <string name="noce_juive_note">Delacroix assistette a questa festa a Tangeri nel 1832 e la dipinse a memoria, aiutandosi con i suoi taccuini.</string>
+    <string name="vermeer_laitiere_title">La lattaia</string>
+    <string name="vermeer_laitiere_year">1658 circa</string>
+    <string name="vermeer_laitiere_note">Un filo di latte, un raggio di luce: Vermeer trasforma un gesto di cucina in un istante sospeso.</string>
+    <string name="american_gothic_title">American Gothic</string>
+    <string name="american_gothic_note">Wood fece posare sua sorella e il suo dentista davanti a una casa dell’Iowa. Li si crede marito e moglie; lui pensava a padre e figlia.</string>
+    <string name="joconde_title">La Gioconda</string>
+    <string name="joconde_artist">Leonardo da Vinci</string>
+    <string name="joconde_nickname">Leonardo</string>
+    <string name="joconde_note">Leonardo la tenne con sé tutta la vita e continuò a ritoccarla. Il suo sorriso deve tutto allo sfumato, contorni che si sciolgono nell’ombra.</string>
+    <plurals name="find_mistake">
+        <item quantity="one">Trova la zona dipinta del colore sbagliato (%d)</item>
+        <item quantity="other">Trova una zona dipinta del colore sbagliato (ne restano %d)</item>
+    </plurals>
+    <plurals name="colour_swatch">
+        <item quantity="one">Colore %1$d, resta %2$d zona</item>
+        <item quantity="other">Colore %1$d, restano %2$d zone</item>
+    </plurals>
+    <string-array name="rank_names">
+        <item>Scarabocchiatore</item>
+        <item>Imbrattatele</item>
+        <item>Apprendista</item>
+        <item>Garzone</item>
+        <item>Artista</item>
+        <item>Maestro</item>
+        <item>Genio</item>
+    </string-array>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d giorno</item>
+        <item quantity="other">%1$d giorni</item>
+    </plurals>
+    <string name="peek_tip">Tieni premuto l’occhio per vedere il vero dipinto del maestro. Lascia andare e torna la tua tela.</string>
+    <string name="matter_menu">Materia del colore: %1$s</string>
+    <string name="matter_title">Materia del colore</string>
+    <string name="matter_plate">Piatta</string>
+    <string name="matter_plate_text">Solo il colore, come una stampa.</string>
+    <string name="matter_light">Leggera</string>
+    <string name="matter_light_text">Un leggero rilievo a olio che cattura la luce.</string>
+    <string name="matter_thick">Densa</string>
+    <string name="matter_thick_text">Impasto generoso, pennellate ben visibili.</string>
+    <string name="guide_nuit_etoilee">Giugno 1889. Vincent van Gogh vive nell’ospedale psichiatrico di Saint-Rémy-de-Provence, dove è andato di sua volontà per farsi curare. Dalla finestra osserva il cielo prima dell’alba. Ma il paese che hai appena dipinto non è mai esistito: Vincent lo ha inventato, con un campanile che ricorda le chiese della sua Olanda natale. Il cipresso, come una fiamma scura, unisce la terra alle stelle. Oggi è uno dei dipinti più famosi al mondo. Si trova a New York.</string>
+    <string name="guide_champ_de_ble_cypres">Estate 1889, vicino a Saint-Rémy. Van Gogh pianta il cavalletto in pieno vento, davanti al grano maturo. Ama i cipressi, che paragona agli obelischi egizi, e sogna di dipingerli come nessuno ha mai fatto. Guarda le nuvole: turbinano come il colore denso che stende con il pennello. Amava così tanto questo paesaggio che ne dipinse tre versioni. Questa si trova alla National Gallery di Londra.</string>
+    <string name="guide_cafe_de_nuit">Arles, settembre 1888. Van Gogh passa tre notti in questo caffè di place Lamartine, aperto a tutte le ore, dove dormono i vagabondi. Vuole, scrive al fratello Theo, esprimere le terribili passioni umane con il rosso e il verde. Le lampade a gas pulsano di aloni gialli, il tavolo da biliardo proietta un’ombra enorme. Vincent lo definì uno dei suoi quadri più brutti, eppure uno di quelli a cui teneva di più.</string>
+    <string name="guide_maisons_personnage">Primavera 1890. Rinchiuso a Saint-Rémy, Van Gogh ricorda la sua giovinezza nel nord dell’Europa. Dipinge casette con i tetti coperti di muschio, fumo che si arriccia come pennellate, un sole al tramonto e un contadino che torna a casa. Le sue lettere parlano di ricordi del Nord. Poche settimane dopo lascerà la Provenza per Auvers-sur-Oise, dove dipinge i suoi ultimissimi quadri.</string>
+    <string name="guide_grande_vague">Intorno al 1831, in Giappone. Katsushika Hokusai ha più di settant’anni quando pubblica le sue Trentasei vedute del monte Fuji. Quest’onda è la più famosa di tutte. Guarda bene: dietro la schiuma che si alza come artigli, il monte Fuji sembra minuscolo. Tre barche di pescatori si tuffano sotto la cresta. Il blu di Prussia, arrivato dall’Europa, era allora un colore nuovo in Giappone. Questa stampa è stata tirata migliaia di volte, e ha affascinato sia Monet sia Van Gogh.</string>
+    <string name="guide_monet_impression">Le Havre, una mattina del 1872. Claude Monet dipinge il porto dalla sua finestra: il sole arancione brilla sull’acqua, le barche sono solo ombre blu. Due anni dopo lo espone a Parigi con il titolo Impressione, levar del sole. Un critico lo prende in giro e chiama questi pittori impressionisti. Il soprannome è rimasto, e ha dato il nome a un intero movimento.</string>
+    <string name="guide_monet_nympheas">A Giverny, Monet fa scavare uno stagno e pianta ninfee di tutti i colori. Per quasi trent’anni dipinge questo piccolo specchio d’acqua a ogni ora, con ogni luce: più di duecentocinquanta quadri. Non c’è riva né orizzonte, solo il cielo che si riflette tra i fiori. Alla fine della sua vita, anche quando la vista gli si indeboliva, continuò a dipingere le sue ninfee.</string>
+    <string name="guide_monet_prairie">Monet si stabilisce a Giverny nel 1883, in una casa circondata da prati e pioppi. Prima di creare il suo celebre giardino d’acqua, dipinge la campagna intorno a sé, all’aperto, in poche sedute rapide per cogliere la luce del momento. Alberi rosa, erba punteggiata di fiori: il dettaglio non conta, conta la sensazione di una bella giornata.</string>
+    <string name="guide_panier_pommes">Paul Cézanne diceva di voler stupire Parigi con una mela. In questa natura morta niente è davvero dritto: il tavolo pende, la bottiglia anche, e il bordo della tovaglia non combacia. Non è goffaggine. Cézanne mostra ogni oggetto dal suo lato migliore, come se ci girassimo intorno. Picasso e i cubisti lo chiameranno più tardi il padre di tutti noi. Questo dipinto si trova a Chicago.</string>
+    <string name="guide_voyageur_brume">Intorno al 1818, in Germania. Caspar David Friedrich dipinge un uomo in piedi su una roccia, sopra un mare di nuvole. Non vediamo mai il suo volto, ed è voluto: guardiamo il paesaggio con lui, da sopra la sua spalla. Questo viandante è diventato il simbolo del romanticismo, il movimento che cercava nella natura l’immensità e l’emozione. Il dipinto si trova ad Amburgo.</string>
+    <string name="guide_pont_neuf">Parigi, 1872. Pierre-Auguste Renoir si sistema al piano di sopra di un caffè davanti al Pont-Neuf per dipingere la folla al sole. Suo fratello Edmond lo aiuta a modo suo: ferma i passanti per chiedere l’ora o la strada, mentre Renoir li schizza. Cielo azzurro, ombre leggere, gente a passeggio: è la Parigi allegra dei primi tempi dell’impressionismo. Il dipinto si trova oggi a Washington.</string>
+    <string name="guide_grande_jatte">Georges Seurat ha ventiquattro anni quando comincia questo dipinto. Ci lavora per due anni, accostando minuscoli tocchi di colore puro. Da lontano, il nostro occhio li mescola: questa tecnica si chiamerà puntinismo. Sull’isola della Grande-Jatte, vicino a Parigi, i parigini passeggiano di domenica con una scimmia, dei cani e degli ombrellini. L’enorme originale si trova a Chicago.</string>
+    <string name="guide_noce_juive">Nel 1832, Eugène Delacroix si unisce a una missione diplomatica in Marocco. A Tangeri assiste a un matrimonio ebraico e riempie i suoi taccuini di schizzi e colori. Tornato a Parigi, dipinge la scena a memoria: i musicisti, le danzatrici, la luce bianca sui muri. Quel viaggio ha cambiato per sempre la sua pittura. Il quadro si trova al Louvre.</string>
+    <string name="guide_vermeer_laitiere">Intorno al 1658, a Delft, nei Paesi Bassi. Johannes Vermeer dipinge una domestica che versa il latte in una cucina tranquilla. Guarda la luce della finestra, i puntini luminosi sul pane, il blu profondo del grembiule, ottenuto da una pietra preziosa macinata, il lapislazzuli. Non succede nulla, eppure tutto sembra sospeso. Vermeer dipinse pochissimi quadri, appena una quarantina. Questo si trova ad Amsterdam.</string>
+    <string name="guide_american_gothic">Iowa, 1930. Grant Wood nota una casetta bianca con una finestra gotica a punta. Immagina le persone che potrebbero viverci, e chiede a sua sorella Nan e al suo dentista di posare. Spesso li si crede marito e moglie, ma il pittore li vedeva come un padre e sua figlia. Il forcone si ripete nelle cuciture della salopette e nella finestra. Questo dipinto è diventato una delle immagini più conosciute d’America.</string>
+    <string name="guide_naufrage_minotaure">Joseph Mallord William Turner, il pittore inglese della luce e delle tempeste. Qui una grande nave si spezza in un mare in burrasca, mentre alcune barche cercano di salvare l’equipaggio. Turner non dipinge ogni onda: dipinge la forza della natura, con ampi gesti e colori che si fondono l’uno nell’altro. Con più di mezzo secolo di anticipo, apre la strada agli impressionisti.</string>
+    <string name="guide_le_cri">Edvard Munch passeggiava al tramonto vicino a Oslo quando, scrisse, il cielo diventò rosso sangue. Sentì, diceva, un urlo infinito attraversare la natura. Così dipinse questa figura che si stringe la testa su un ponte, sotto un cielo in fiamme. Munch ne fece diverse versioni, a olio, a pastello e a stampa. Questo quadro è diventato il simbolo dell’angoscia moderna.</string>
+    <string name="guide_joconde">Leonardo da Vinci inizia questo ritratto intorno al 1503, a Firenze. Non se ne separa mai: lo porta con sé in Francia, dove trascorre i suoi ultimi anni, e continua a ritoccarlo. Il suo segreto si chiama sfumato: contorni così morbidi che sembrano sciogliersi nell’ombra, soprattutto agli angoli della bocca. Per questo il suo sorriso sembra cambiare mentre la guardi. Rubata nel 1911 e ritrovata due anni dopo, oggi vive al Louvre.</string>
+    <string name="guide_listen">Ascolta la guida</string>
+    <string name="guide_stop">Ferma la guida</string>
+
+    <!-- Mostre del mese -->
+    <string name="expo_of_month">la mostra del mese</string>
+    <string name="expo_progress">%1$d tele su %2$d</string>
+    <string name="expo_complete">Mostra completata, bravo!</string>
+    <plurals name="expo_days_left">
+        <item quantity="one">ultimo giorno</item>
+        <item quantity="other">ancora %1$d giorni</item>
+    </plurals>
+    <string name="expo_prize">In palio</string>
+    <string name="expo_bonus">+%1$d tocchi</string>
+    <string name="expo_won">Mostra completata: %1$s e %2$d tocchi vinti!</string>
+    <string name="expo_vincent">Vincent, una vita intera</string>
+    <string name="expo_vincent_text">Quattro tele di Van Gogh, da Arles ad Auvers. Finiscile tutte prima della fine del mese.</string>
+    <string name="expo_mer">Il mare in tempesta</string>
+    <string name="expo_mer_text">Quattro tele dove l’acqua ruggisce, da Hokusai a Turner. Finiscile tutte prima della fine del mese.</string>
+    <string name="expo_impressionnistes">Gli impressionisti</string>
+    <string name="expo_impressionnistes_text">Luce tremolante, dipinta all’aria aperta. Finisci le quattro tele prima della fine del mese.</string>
+    <string name="expo_crepuscule">Dal tramonto all’alba</string>
+    <string name="expo_crepuscule_text">Soli nascenti, notti stellate e cieli in fiamme. Finisci le quattro tele prima della fine del mese.</string>
+    <string name="expo_visages">Volti celebri</string>
+    <string name="expo_visages_text">Quattro sguardi che tutto il mondo conosce. Finiscili tutti prima della fine del mese.</string>
+    <string name="expo_paris">Parigi dipinta</string>
+    <string name="expo_paris_text">Ponti, isole e strade piovose della capitale. Finisci le tre tele prima della fine del mese.</string>
+    <string name="expo_voyages">Viaggi lontani</string>
+    <string name="expo_voyages_text">Dal Giappone al Marocco, fino all’Iowa. Finisci le quattro tele prima della fine del mese.</string>
+    <string name="expo_natures">Natura in fiore</string>
+    <string name="expo_natures_text">Frutta, fiori, grano e ninfee. Finisci le quattro tele prima della fine del mese.</string>
+
+    <!-- Cornici del museo -->
+    <string name="frame_chene">Rovere</string>
+    <string name="frame_noyer">Noce</string>
+    <string name="frame_dore">Dorata</string>
+    <string name="frame_baroque">Barocca</string>
+    <string name="frame_tournesol">Cornice girasole</string>
+    <string name="frame_ecume">Cornice spuma</string>
+    <string name="frame_nenuphar">Cornice ninfea</string>
+    <string name="frame_nocturne">Cornice notturno</string>
+    <string name="frame_velours">Cornice velluto</string>
+    <string name="frame_zinc">Cornice zinco</string>
+    <string name="frame_laque">Cornice laccata</string>
+    <string name="frame_vigne">Cornice vite</string>
+
+    <!-- Il mio museo -->
+    <string name="museum_title">Il mio museo</string>
+    <plurals name="museum_count">
+        <item quantity="one">%1$d tela alle pareti · scorri per passeggiare</item>
+        <item quantity="other">%1$d tele alle pareti · scorri per passeggiare</item>
+    </plurals>
+    <string name="museum_hint">tocca un dipinto per metterti davanti</string>
+    <string name="museum_back">Corridoio</string>
+    <string name="museum_position">%1$d / %2$d</string>
+    <string name="museum_swipe">scorri al dipinto successivo · pizzica per guardare da vicino</string>
+    <string name="museum_frames">Cornice</string>
+    <string name="museum_listen">Ascolta la guida</string>
+    <string name="museum_listen_stop">Ferma la guida</string>
+    <string name="museum_listen_sub">la storia di questo dipinto</string>
+    <string name="museum_empty">Finisci una tela per appenderla nel tuo museo.</string>
+    <string name="museum_baroque_at">a %1$d tele</string>
+    <string name="museum_open">Il mio museo</string>
+    <plurals name="museum_open_text">
+        <item quantity="one">%1$d tela appesa nella sua galleria</item>
+        <item quantity="other">%1$d tele appese nella loro galleria</item>
+    </plurals>
+    <string name="museum_visit">Visita</string>
+
+    <!-- Nuovi dipinti -->
+    <string name="vermeer_perle_title">La ragazza con l’orecchino di perla</string>
+    <string name="vermeer_perle_year">1665 circa</string>
+    <string name="vermeer_perle_note">Non un ritratto ma una «tronie», un volto immaginato, con un turbante blu e giallo.</string>
+    <string name="monet_coquelicots_title">Campo di papaveri</string>
+    <string name="monet_coquelicots_note">Vicino ad Argenteuil, Camille e il figlio Jean compaiono due volte: in cima alla collina, poi in primo piano.</string>
+    <string name="monet_ombrelle_title">Donna con parasole</string>
+    <string name="monet_ombrelle_note">Camille e Jean visti dal basso, contro il cielo: Monet dipinge in fretta per cogliere il vento che passa.</string>
+    <string name="chambre_arles_title">La camera da letto</string>
+    <string name="chambre_arles_note">Vincent voleva che i soli colori «riposassero la mente». Dipinse la sua stanza nella Casa Gialla tre volte.</string>
+    <string name="iris_title">Iris</string>
+    <string name="iris_note">Dipinti nel giardino di Saint-Rémy durante la sua primissima settimana lì, nel maggio 1889.</string>
+    <string name="tournesols_title">Girasoli</string>
+    <string name="tournesols_note">Dipinti ad Arles nell’agosto 1888 per decorare la stanza del suo amico Paul Gauguin.</string>
+    <string name="fuji_rouge_title">Fuji rosso</string>
+    <string name="fuji_rouge_year">1831 circa</string>
+    <string name="fuji_rouge_note">A fine estate, all’alba, il sole tinge di rosso la montagna. A Hokusai bastano tre colori.</string>
+    <string name="averse_ohashi_title">Acquazzone improvviso sul ponte Ōhashi</string>
+    <string name="averse_ohashi_note">Una stampa delle Cento vedute famose di Edo. Van Gogh la amava tanto da copiarla a olio nel 1887.</string>
+    <string name="rue_paris_pluie_title">Strada di Parigi, giornata di pioggia</string>
+    <string name="rue_paris_pluie_note">Un incrocio nuovo di zecca vicino alla Gare Saint-Lazare, dove gli ombrelli passano sui ciottoli bagnati.</string>
+    <string name="chasseurs_neige_title">Cacciatori nella neve</string>
+    <string name="chasseurs_neige_note">Uno dei dipinti delle stagioni di Bruegel: laggiù, tutto il villaggio pattina sugli stagni ghiacciati.</string>
+    <string name="arcimboldo_ete_title">L’Estate</string>
+    <string name="arcimboldo_ete_note">Guarda bene: questo volto è fatto di frutta, verdura e spighe di grano. Una ciliegia per labbro, una pera per mento.</string>
+    <string name="jeu_du_fouet_title">Il gioco della frusta</string>
+    <string name="jeu_du_fouet_note">Durante la ricreazione, gli scolari si tengono per mano e corrono in fila: l’ultimo deve tenersi forte!</string>
+
+    <string name="guide_vermeer_perle">Delft, nei Paesi Bassi, intorno al 1665. Johannes Vermeer dipinge una ragazza che si volta verso di noi, le labbra socchiuse, come se l’avessimo appena chiamata. Nessuno sa chi sia: non è un ritratto su commissione, ma un volto immaginato. Il suo turbante è dipinto con un blu prezioso ricavato da una pietra, il lapislazzuli, che costava più dell’oro. E la perla? Bastano due piccoli tocchi di bianco per farla brillare. Il dipinto si trova al Mauritshuis, all’Aia.</string>
+    <string name="guide_monet_coquelicots">Estate 1873, vicino ad Argenteuil, sulle rive della Senna. Claude Monet passeggia con la moglie Camille e il figlio Jean in un campo di papaveri. Guarda bene: la madre con l’ombrellino e il bambino compaiono due volte, in cima alla collina e in primo piano, come se scendessero verso di noi. I fiori sono solo rapide macchie di rosso. L’anno dopo, Monet presentò questo dipinto alla primissima mostra impressionista. Oggi si trova al Museo d’Orsay, a Parigi.</string>
+    <string name="guide_monet_ombrelle">Estate 1875. Claude Monet sistema il cavalletto ai piedi di una piccola collina. Lassù, sua moglie Camille tiene un parasole verde, e il figlio Jean sta un po’ più in là, nell’erba. Il vento le solleva il velo e le nuvole corrono. Monet dipinge in poche ore, a larghe pennellate, per fermare l’istante prima che voli via. Sembra di guardarli dal basso. Il dipinto si trova alla National Gallery of Art, a Washington.</string>
+    <string name="guide_chambre_arles">Vincent van Gogh amava così tanto la sua piccola camera nella Casa Gialla di Arles che la dipinse tre volte. Questa è la seconda versione, del 1889. Scrisse al fratello Theo che i colori dovevano riposare la mente: pareti blu lavanda, un letto giallo, una coperta rossa. Guarda il pavimento, pende un po’, come se la stanza ci aprisse le braccia. Alle pareti, Vincent appese i suoi stessi quadri. Questa camera si trova all’Art Institute di Chicago.</string>
+    <string name="guide_iris">Maggio 1889. Vincent van Gogh è appena arrivato all’ospedale di Saint-Rémy-de-Provence. Nella sua primissima settimana, esce in giardino e dipinge questi iris. Dice che la pittura è il suo parafulmine: lo aiuta a stare meglio. Guarda le foglie, come spade verdi, e quell’unico iris bianco a sinistra in mezzo a tutti quelli blu. Il dipinto si trova oggi al Getty Museum, a Los Angeles.</string>
+    <string name="guide_tournesols">Arles, agosto 1888. Vincent van Gogh aspetta la visita del suo amico, il pittore Paul Gauguin. Per decorargli la stanza, dipinge dei girasoli in un vaso, quasi solo con i gialli. Deve lavorare in fretta, perché i fiori appassiscono in pochi giorni. Gauguin avrebbe adorato questi quadri. Vincent firma sul vaso, semplicemente: Vincent. Questa versione si trova alla National Gallery, a Londra.</string>
+    <string name="guide_fuji_rouge">Intorno al 1831, in Giappone. Katsushika Hokusai pubblica le sue Trentasei vedute del monte Fuji. In questa non c’è nessuna onda e nessuna persona: solo la montagna, arrossata dal sole del mattino a fine estate. Il cielo è blu, con file di piccole nuvole bianche. Con appena tre colori, Hokusai ci fa sentire la calma di un mattino senza vento. Queste immagini venivano stampate con matrici di legno intagliate, una per ogni colore.</string>
+    <string name="guide_averse_ohashi">Edo, l’antico nome di Tokyo, 1857. Utagawa Hiroshige mostra un acquazzone improvviso che sorprende la gente su un grande ponte di legno. La pioggia cade in linee sottili e dritte, ognuna intagliata a mano. Le persone si riparano sotto cappelli di paglia e ombrelli. Trent’anni dopo, a Parigi, Vincent van Gogh ammirava così tanto questa stampa da copiarla a olio. Il Giappone ha ispirato molti pittori europei.</string>
+    <string name="guide_rue_paris_pluie">Parigi, 1877. Gustave Caillebotte dipinge un incrocio nuovo di zecca vicino alla Gare Saint-Lazare. Gli alti palazzi sono appena stati costruiti, e i ciottoli brillano sotto la pioggia. La gente si incrocia sotto gli ombrelli, un po’ come in una fotografia. Caillebotte era pittore ma anche un amico generoso: comprava i quadri degli impressionisti per aiutarli. Questa enorme tela si trova all’Art Institute di Chicago.</string>
+    <string name="guide_chasseurs_neige">Inverno 1565, nelle Fiandre. Pieter Bruegel dipinge una serie di quadri sulle stagioni. In questo, i cacciatori tornano al villaggio con i loro cani, attraverso la neve. Laggiù, tutti si divertono sugli stagni ghiacciati: pattinano, giocano, scivolano. Gli alberi neri e il cielo verde pallido fanno venire freddo solo a guardarli. Il dipinto si trova al Kunsthistorisches Museum, a Vienna.</string>
+    <string name="guide_arcimboldo_ete">Giuseppe Arcimboldo fu pittore degli imperatori d’Austria. Ebbe un’idea divertente: dipingere le quattro stagioni come volti fatti di ciò che ogni stagione ci dona. Ecco l’Estate. La guancia è una pesca, il naso un cetriolo, i denti sono piselli, e i capelli sono fatti di frutta. Ha perfino intrecciato la sua firma nel colletto di paglia. Gli imperatori adoravano questi indovinelli dipinti.</string>
+    <string name="guide_jeu_du_fouet">Stati Uniti, 1872. Winslow Homer dipinge una piccola scuola di campagna rossa in mezzo a un prato. È l’ora della ricreazione: alcuni ragazzi si tengono per mano e corrono in fila. Quelli in fondo vengono lanciati come la punta di una frusta, e due sono già caduti! Homer amava dipingere i bambini e la vita semplice di campagna. Questo dipinto si trova al Metropolitan Museum, a New York.</string>
+
+    <string name="expo_enfances">Infanzie</string>
+    <string name="expo_enfances_text">Giochi in cortile, passeggiate e una cameretta. Finisci le quattro tele prima della fine del mese.</string>
+    <string name="expo_japon">Stampe giapponesi</string>
+    <string name="expo_japon_text">Onde, una montagna e un acquazzone, intagliati nel legno. Finisci le tre tele prima della fine del mese.</string>
+    <string name="frame_craie">Cornice gesso</string>
+    <string name="frame_indigo">Cornice indaco</string>
+
+    <!-- Taccuino dell’apprendista -->
+    <string name="journal_title">Il mio taccuino</string>
+    <string name="journal_open">Apri il mio taccuino</string>
+    <string name="journal_streak">Serie di %1$d giorni</string>
+    <string name="journal_grace_ready">Un giorno di grazia in riserva: un giorno saltato non interromperà la tua serie.</string>
+    <string name="journal_grace_used_today">Ieri è passato senza dipingere: dipingi oggi e il tuo giorno di grazia salverà la serie.</string>
+    <string name="journal_grace_none">Ancora %1$d giorni di fila per guadagnare un giorno di grazia.</string>
+    <string name="journal_achievements">Traguardi · %1$d su %2$d</string>
+    <string name="journal_story">Capitolo %1$d · %2$s</string>
+    <string name="journal_masterpiece">Oltre il Genio: il Capolavoro</string>
+    <string name="journal_masterpiece_text">Tre stelle in Esperto su ogni tela: %1$d su %2$d</string>
+    <string name="achievement_won">Traguardo: %1$s!</string>
+    <string-array name="story_titles">
+        <item>Lo scarabocchiatore</item>
+        <item>L’imbrattatele</item>
+        <item>L’apprendista</item>
+        <item>Il garzone</item>
+        <item>L’artista</item>
+        <item>Il maestro</item>
+        <item>Il genio</item>
+    </string-array>
+    <string-array name="story_texts">
+        <item>«Sono entrato nell’atelier dalla porta sul retro, a mani vuote e con tanta speranza. Il maestro mi ha teso un pennello: “Comincia da una zona. Una sola.”»</item>
+        <item>«Ho già macchiato tre grembiuli. Il maestro ride: “Il colore sul pavimento è la prova che qualcuno ha lavorato.” Mi ha mostrato come tenere il pennello più vicino alle setole.»</item>
+        <item>«Oggi ho macinato i miei primi colori. Il blu oltremare viene da una pietra che ha attraversato il mare. Ora so perché non se ne spreca mai una goccia.»</item>
+        <item>«Il maestro mi ha lasciato usare i suoi pennelli per la prima volta. Ha guardato a lungo la mia tela, poi ha detto: “Domani dipingerai il cielo.” Non ho dormito tutta la notte.»</item>
+        <item>«Alcuni visitatori si sono fermati davanti a una mia tela. Cercavano la mia firma nell’angolo. Il maestro ha sorriso senza dire niente.»</item>
+        <item>«Stamattina un ragazzino ha spinto la porta sul retro dell’atelier. Gli ho teso un pennello: “Comincia da una zona. Una sola.”»</item>
+        <item>«Il maestro mi ha lasciato le chiavi dell’atelier. Dicono che resti un’ultima sfida: dipingere ogni tela al livello più alto. I grandi maestri lo chiamano un capolavoro.»</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>Prima tela</item>
+        <item>Cinque tele</item>
+        <item>Dieci tele</item>
+        <item>Venti tele</item>
+        <item>Tutta la galleria</item>
+        <item>Primo Normale</item>
+        <item>Primo Esperto</item>
+        <item>Tre stelle</item>
+        <item>Dieci in Esperto</item>
+        <item>Tutti e sette i Vincent</item>
+        <item>Tutti e cinque i Monet</item>
+        <item>Giappone</item>
+        <item>Pittore notturno</item>
+        <item>3 giorni di fila</item>
+        <item>7 giorni di fila</item>
+        <item>30 giorni di fila</item>
+        <item>Espositore</item>
+        <item>Curatore</item>
+        <item>Prima vernice</item>
+        <item>Dieci vernici</item>
+        <item>La mia tela</item>
+        <item>Maestro</item>
+        <item>Genio</item>
+        <item>Capolavoro</item>
+    </string-array>
+    <string name="varnish">Vernicia la tela</string>
+    <string name="varnished">Verniciata</string>
+    <string name="rank_party_title">Ora sei…</string>
+    <string name="rank_party_rank">Grado %1$d di %2$d · %3$d tocchi</string>
+    <string name="rank_party_unlocked">Nuove tele scartate:</string>
+    <string name="rank_party_go">Continua</string>
+    <string name="matter_button">Colore: %1$s</string>
+    <string name="guided_skip">Salta</string>
+    <string name="guided_step">Passo %1$d di %2$d</string>
+    <string name="guided_next">Avanti</string>
+    <string-array name="guided_titles">
+        <item>Scegli un colore</item>
+        <item>Dipingi le zone</item>
+        <item>Avvicinati</item>
+        <item>Il piccolo occhio</item>
+    </string-array>
+    <string-array name="guided_texts">
+        <item>Ogni barattolo della tavolozza ha un numero. Tocca un barattolo: le zone con quel numero si illuminano sulla tela.</item>
+        <item>Tocca una zona illuminata per dipingerla. Ogni zona dipinta del colore giusto ti fa guadagnare tocchi.</item>
+        <item>Allarga due dita per ingrandire le zone piccole, e trascina per spostarti.</item>
+        <item>Tieni premuto l’occhio per vedere il dipinto originale in qualsiasi momento.</item>
+    </string-array>
+    <string name="journal_streak_none">Nessuna serie al momento</string>
+    <string name="journal_streak_start">Dipingi una zona oggi per iniziare una nuova serie.</string>
+    <string name="journal_locked">Non ancora vinto</string>
+    <string name="journal_close">Chiudi il taccuino</string>
+    <string name="varnish_hint">Un riflesso attraversa la tela, che va al museo, verniciata.</string>
+    <string name="guided_done">Andiamo!</string>
+    <string name="journal_streak_one">Serie di 1 giorno</string>
+    <string name="journal_card_go">Apri</string>
+    <string name="intro_medium">olio su tela, 2026</string>
+    <string name="guide_language">it</string>
+</resources>

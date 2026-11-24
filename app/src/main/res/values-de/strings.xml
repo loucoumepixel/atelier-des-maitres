@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Die Meister leihen dir %1$s.</string>
+    <string name="welcome_cta">Pinsel bereit!</string>
+    <string name="about_open">Über die App</string>
+    <string name="import_failed">Dieses Bild konnte nicht gelesen werden.</string>
+    <string name="remove_title">„%1$s“ entfernen?</string>
+    <string name="remove_text">Das importierte Bild und dein Fortschritt auf dieser Leinwand werden gelöscht.</string>
+    <string name="remove">Entfernen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="action_choose_level">Stufe wählen</string>
+    <string name="remove_image">Dieses Bild entfernen</string>
+    <string name="finished">Fertig</string>
+    <string name="percent">%1$d %%</string>
+    <string name="import_title">Ein Werk importieren</string>
+    <string name="import_text">Ein Monet, ein Renoir, ein Urlaubsfoto: Jedes Bild auf deinem Handy wird zur Leinwand zum Ausmalen.</string>
+    <string name="choose_level">Wähle deine Stufe</string>
+    <string name="level_easy">Leicht</string>
+    <string name="level_normal">Normal</string>
+    <string name="level_expert">Experte</string>
+    <string name="level_easy_text">Große Felder, %1$d Farben. Perfekt zum Entspannen.</string>
+    <string name="level_normal_text">Die Balance zwischen Detail und Vergnügen, %1$d Farben.</string>
+    <string name="level_expert_text">Jede Nuance des Meisters, bis zu %1$d Farben.</string>
+    <string name="version">Version %1$s</string>
+    <string name="about_text">Alle enthaltenen Gemälde sind gemeinfrei. Keine Werbung, kein Konto: Nichts verlässt dein Handy.</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="report_problem">Problem melden</string>
+    <string name="close">Schließen</string>
+    <string name="free_colour">Freie Farbe</string>
+    <string name="colour_picker_open">Farbwähler: eine freie Farbe wählen</string>
+    <string name="eraser">Radierer</string>
+    <string name="share_text">„%1$s“, %2$s, neu gemalt in Atelier des Maîtres</string>
+    <string name="share_canvas">Leinwand teilen</string>
+    <string name="share_failed">Das Bild konnte nicht zum Teilen vorbereitet werden.</string>
+    <string name="back_to_gallery">Zurück zur Galerie</string>
+    <string name="studio_progress">%1$s · %2$d / %3$d Felder · %4$d %%</string>
+    <string name="peek_hold">Gedrückt halten, um das Original zu sehen</string>
+    <string name="peek_on">Original sichtbar</string>
+    <string name="peek_off">Deine Leinwand sichtbar</string>
+    <string name="peek_show">Original ansehen</string>
+    <string name="peek_hide">Zurück zu deiner Leinwand</string>
+    <string name="more_options">Weitere Optionen</string>
+    <string name="overview">Übersicht</string>
+    <string name="restart_canvas">Leinwand neu beginnen</string>
+    <string name="undo">Rückgängig</string>
+    <string name="redo">Wiederholen</string>
+    <string name="find_area">Ein Feld zum Malen finden</string>
+    <string name="restart_title">Leinwand neu beginnen?</string>
+    <string name="restart_text">Alle Felder werden wieder leer. Du kannst es noch rückgängig machen.</string>
+    <string name="restart">Neu beginnen</string>
+    <string name="keep">Behalten</string>
+    <string name="done_title">Meisterwerk vollendet</string>
+    <string name="done_text">Du hast „%1$s“ Feld für Feld neu gemalt, mit den Farben des Meisters.</string>
+    <string name="admire">Bewundern</string>
+    <string name="share">Teilen</string>
+    <string name="gallery">Galerie</string>
+    <string name="hint">Tippe auf ein Feld, um es zu malen · lange drücken, um seine Farbe zu wählen</string>
+    <string name="preparing">Das Atelier bereitet die Leinwand vor (%1$s)…</string>
+    <string name="open_failed">Dieses Bild konnte nicht geöffnet werden.</string>
+    <string name="picker_area">Feld Nr. %1$d</string>
+    <string name="picker_title">Farbwähler</string>
+    <string name="master_colour">Farbe des Meisters</string>
+    <string name="canvas_palette">Palette der Leinwand</string>
+    <string name="paint_area">Feld malen</string>
+    <string name="take_colour">Diese Farbe nehmen</string>
+    <string name="imported_title">Meine Leinwand Nr. %1$d</string>
+    <string name="imported_artist">Importiert</string>
+    <string name="imported_note">Ein Bild aus deiner Galerie, in Felder aufgeteilt wie die Leinwände der Meister.</string>
+    <string name="nuit_etoilee_title">Die Sternennacht</string>
+    <string name="nuit_etoilee_note">Gemalt aus seinem Zimmer in der Heilanstalt von Saint-Rémy-de-Provence, kurz vor Sonnenaufgang. Das Dorf aber ist erfunden.</string>
+    <string name="champ_de_ble_cypres_title">Weizenfeld mit Zypressen</string>
+    <string name="champ_de_ble_cypres_note">Van Gogh sah in Zypressen „das Gegenstück zu einem ägyptischen Obelisken“. Er malte drei Fassungen dieser Landschaft.</string>
+    <string name="cafe_de_nuit_title">Das Nachtcafé</string>
+    <string name="cafe_de_nuit_note">„Ich habe versucht, mit Rot und Grün die schrecklichen menschlichen Leidenschaften auszudrücken“, schrieb er seinem Bruder Theo.</string>
+    <string name="maisons_personnage_title">Hütten und Figur</string>
+    <string name="maisons_personnage_note">Eine Erinnerung an den Norden, gemalt in Saint-Rémy: Strohdachhütten, kräuselnder Rauch und eine untergehende Sonne.</string>
+    <string name="grande_vague_title">Die große Welle vor Kanagawa</string>
+    <string name="grande_vague_year">um 1831</string>
+    <string name="grande_vague_note">Ein Holzschnitt aus den 36 Ansichten des Berges Fuji. Preußischblau, damals neu in Japan, hat einen donnernden Auftritt.</string>
+    <string name="naufrage_minotaure_title">Das Wrack eines Transportschiffs</string>
+    <string name="naufrage_minotaure_year">um 1810</string>
+    <string name="naufrage_minotaure_note">Turner, Maler des Lichts und der Stürme, kündigt hier die Impressionisten mehr als ein halbes Jahrhundert im Voraus an.</string>
+    <string name="le_cri_title">Der Schrei</string>
+    <string name="le_cri_note">„Ich spürte einen unendlichen Schrei, der durch die Natur ging.“ Der rote Himmel könnte ein Sonnenuntergang über Oslo sein.</string>
+    <string name="welcome_title_em">ihre Palette</string>
+    <string name="welcome_new">Als Kritzler rein, als Genie raus!</string>
+    <string name="welcome_back">Willkommen zurück, %1$s!</string>
+    <string name="welcome_cta_back">Weiter geht’s!</string>
+    <string name="welcome_cap">schau, es malt sich selbst…</string>
+    <string name="welcome_cap_done">jetzt du!</string>
+    <string name="gallery_q">Was %1$s wir heute?</string>
+    <string name="gallery_q_em">malen</string>
+    <string name="rank_of">Rang %1$d von %2$d</string>
+    <string name="streak_kept">Serie heute gehalten</string>
+    <string name="streak_hint">Male heute ein Feld, um deine Serie zu halten</string>
+    <string name="touches_n">%1$s Tupfer</string>
+    <string name="next_rank">%1$s bei %2$s</string>
+    <string name="max_rank">Höchster Rang: Hut ab!</string>
+    <string name="daily">Leinwand des Tages</string>
+    <string name="paint_now">Malen</string>
+    <string name="touches_word">Tupfer</string>
+    <string name="cap_new">zum Anfangen</string>
+    <string name="cap_done">fertig!</string>
+    <string name="stars_label">%1$d von 3 Sternen</string>
+    <string name="locked_cap">ausgepackt bei %1$s</string>
+    <string name="locked_title">Diese Leinwand ist noch eingepackt</string>
+    <string name="locked_text">Sie wird beim Rang %1$s ausgepackt. Noch %2$s Tupfer: Jedes richtig gemalte Feld bringt welche.</string>
+    <string name="ok">OK</string>
+    <string name="surprise">Überrasch mich!</string>
+    <string name="surprise_label">Überrasch mich: eine zufällige Leinwand und Stufe</string>
+    <string name="colour_done">Farbe %1$d fertig</string>
+    <string name="combo">%1$d am Stück!</string>
+    <string name="rank_up">Neuer Rang: %1$s!</string>
+    <string name="unlocked">„%1$s“ ist ausgepackt!</string>
+    <string name="win_title">Bravo,\n%1$s!</string>
+    <string name="nickname_default">Maestro</string>
+    <string name="win_drag">Wische, um deinen Fortschritt zu sehen</string>
+    <string name="win_gain">+%1$s Tupfer</string>
+    <string name="win_next">Noch %1$s, um %2$s zu werden</string>
+    <string name="one_more">Noch eine!</string>
+    <string name="show_friends">Meinen Freunden zeigen</string>
+    <string name="sound_mute">Ton aus</string>
+    <string name="sound_unmute">Ton wieder an</string>
+    <string name="music_on">Musik einschalten</string>
+    <string name="music_off">Musik ausschalten</string>
+    <string name="music_volume">Musiklautstärke</string>
+    <string name="music_volume_menu">Musiklautstärke…</string>
+    <string name="music_volume_hint">Schieben, um den Unterschied zu hören. Gilt auch für die Musik im Museum.</string>
+    <string name="music_volume_percent">%1$d %%</string>
+    <string name="monet_impression_title">Impression, Sonnenaufgang</string>
+    <string name="monet_impression_note">Der Hafen von Le Havre im Morgengrauen. Ein Kritiker spottete über den Titel, und das Wort „Impressionismus“ war geboren.</string>
+    <string name="monet_nympheas_title">Seerosen</string>
+    <string name="monet_nympheas_note">Monet malte die Seerosen seines Teichs in Giverny mehr als 250 Mal, zu jeder Tageszeit.</string>
+    <string name="monet_prairie_title">Wiese in Giverny</string>
+    <string name="monet_prairie_note">In Giverny malte Monet die Landschaft rund um sein Haus in jedem Licht, bevor er seinen berühmten Wassergarten anlegte.</string>
+    <string name="panier_pommes_title">Der Apfelkorb</string>
+    <string name="panier_pommes_year">um 1893</string>
+    <string name="panier_pommes_note">Der Tisch kippt, die Flasche auch: Cézanne zeigt jeden Gegenstand von seiner besten Seite, auch wenn sich die Perspektive verbiegt.</string>
+    <string name="voyageur_brume_title">Der Wanderer über dem Nebelmeer</string>
+    <string name="voyageur_brume_year">um 1818</string>
+    <string name="voyageur_brume_note">Die Ikone der deutschen Romantik. Wir sehen nie das Gesicht des Wanderers: Wir blicken mit ihm über den Nebel.</string>
+    <string name="pont_neuf_title">Der Pont Neuf</string>
+    <string name="pont_neuf_note">Renoir malte die Menge aus dem Obergeschoss eines Cafés; sein Bruder hielt Passanten auf, damit sie kurz stehen blieben.</string>
+    <string name="grande_jatte_title">Ein Sonntagnachmittag auf der Insel La Grande Jatte</string>
+    <string name="grande_jatte_note">Zwei Jahre Arbeit, Punkt für Punkt: Seurat setzt Tupfer reiner Farbe nebeneinander, damit das Auge sie aus der Ferne mischt.</string>
+    <string name="noce_juive_title">Jüdische Hochzeit in Marokko</string>
+    <string name="noce_juive_year">um 1839</string>
+    <string name="noce_juive_note">Delacroix erlebte dieses Fest 1832 in Tanger und malte es aus dem Gedächtnis, mit Hilfe seiner Skizzenbücher.</string>
+    <string name="vermeer_laitiere_title">Die Milchmagd</string>
+    <string name="vermeer_laitiere_year">um 1658</string>
+    <string name="vermeer_laitiere_note">Ein Strahl Milch, ein Strahl Licht: Vermeer macht aus einer Handbewegung in der Küche einen angehaltenen Augenblick.</string>
+    <string name="american_gothic_title">American Gothic</string>
+    <string name="american_gothic_note">Wood ließ seine Schwester und seinen Zahnarzt vor einem Haus in Iowa posieren. Man hält sie für ein Ehepaar; er dachte an Vater und Tochter.</string>
+    <string name="joconde_title">Mona Lisa</string>
+    <string name="joconde_artist">Leonardo da Vinci</string>
+    <string name="joconde_nickname">Leonardo</string>
+    <string name="joconde_note">Leonardo behielt sie sein Leben lang und überarbeitete sie immer wieder. Ihr Lächeln verdankt alles dem Sfumato, Umrissen, die im Schatten verschwimmen.</string>
+    <plurals name="find_mistake">
+        <item quantity="one">Finde das Feld in der falschen Farbe (%d)</item>
+        <item quantity="other">Finde ein Feld in der falschen Farbe (noch %d)</item>
+    </plurals>
+    <plurals name="colour_swatch">
+        <item quantity="one">Farbe %1$d, noch %2$d Feld</item>
+        <item quantity="other">Farbe %1$d, noch %2$d Felder</item>
+    </plurals>
+    <string-array name="rank_names">
+        <item>Kritzler</item>
+        <item>Kleckser</item>
+        <item>Lehrling</item>
+        <item>Geselle</item>
+        <item>Künstler</item>
+        <item>Meister</item>
+        <item>Genie</item>
+    </string-array>
+    <plurals name="streak_days">
+        <item quantity="one">%1$d Tag</item>
+        <item quantity="other">%1$d Tage</item>
+    </plurals>
+    <string name="peek_tip">Halte das Auge gedrückt, um das echte Gemälde des Meisters zu sehen. Lass los, und deine Leinwand ist zurück.</string>
+    <string name="matter_menu">Farbstruktur: %1$s</string>
+    <string name="matter_title">Farbstruktur</string>
+    <string name="matter_plate">Glatt</string>
+    <string name="matter_plate_text">Nur die Farbe, wie ein Druck.</string>
+    <string name="matter_light">Leicht</string>
+    <string name="matter_light_text">Ein leichtes Ölrelief, das das Licht einfängt.</string>
+    <string name="matter_thick">Pastos</string>
+    <string name="matter_thick_text">Kräftiger Farbauftrag, deutlich sichtbare Pinselstriche.</string>
+    <string name="guide_nuit_etoilee">Juni 1889. Vincent van Gogh lebt in der Heilanstalt von Saint-Rémy-de-Provence, in die er freiwillig gegangen ist, um sich behandeln zu lassen. Von seinem Fenster aus betrachtet er den Himmel vor der Morgendämmerung. Doch das Dorf, das du gerade gemalt hast, hat es nie gegeben: Vincent hat es erfunden, mit einem Kirchturm, der an die Kirchen seiner Heimat Holland erinnert. Die Zypresse verbindet wie eine dunkle Flamme die Erde mit den Sternen. Heute ist es eines der berühmtesten Gemälde der Welt. Es hängt in New York.</string>
+    <string name="guide_champ_de_ble_cypres">Sommer 1889, bei Saint-Rémy. Van Gogh stellt seine Staffelei mitten in den Wind, vor das reife Korn. Er liebt Zypressen, die er mit ägyptischen Obelisken vergleicht, und träumt davon, sie zu malen wie niemand vor ihm. Schau dir die Wolken an: Sie wirbeln wie die dicke Farbe, die er mit dem Pinsel aufträgt. Er liebte diese Landschaft so sehr, dass er drei Fassungen malte. Diese hier hängt in der National Gallery in London.</string>
+    <string name="guide_cafe_de_nuit">Arles, September 1888. Van Gogh verbringt drei Nächte in diesem Café an der Place Lamartine, das zu jeder Stunde geöffnet ist und in dem Herumtreiber schlafen. Er will, so schreibt er seinem Bruder Theo, mit Rot und Grün die schrecklichen menschlichen Leidenschaften ausdrücken. Die Gaslampen pulsieren in gelben Lichthöfen, der Billardtisch wirft einen riesigen Schatten. Vincent nannte es eines seiner hässlichsten Bilder, und doch eines, das ihm am meisten bedeutete.</string>
+    <string name="guide_maisons_personnage">Frühjahr 1890. Eingeschlossen in Saint-Rémy erinnert sich Van Gogh an seine Jugend im Norden Europas. Er malt Hütten mit bemoosten Dächern, Rauch, der sich wie Pinselstriche kräuselt, eine untergehende Sonne und einen Bauern auf dem Heimweg. Seine Briefe sprechen von Erinnerungen an den Norden. Wenige Wochen später verlässt er die Provence und geht nach Auvers-sur-Oise, wo er seine allerletzten Bilder malt.</string>
+    <string name="guide_grande_vague">Um 1831, in Japan. Katsushika Hokusai ist über siebzig, als er seine 36 Ansichten des Berges Fuji veröffentlicht. Diese Welle ist die berühmteste von allen. Schau genau hin: Hinter der Gischt, die sich wie Krallen erhebt, wirkt der Fuji winzig. Drei Fischerboote tauchen unter dem Wellenkamm hindurch. Preußischblau, aus Europa gebracht, war damals eine neue Farbe in Japan. Dieser Holzschnitt wurde tausendfach gedruckt und faszinierte Monet ebenso wie Van Gogh.</string>
+    <string name="guide_monet_impression">Le Havre, an einem Morgen im Jahr 1872. Claude Monet malt den Hafen von seinem Fenster aus: Die orange Sonne glänzt auf dem Wasser, die Boote sind nur blaue Schatten. Zwei Jahre später zeigt er das Bild in Paris unter dem Titel Impression, Sonnenaufgang. Ein Kritiker spottet und nennt diese Maler Impressionisten. Der Spitzname blieb und gab einer ganzen Bewegung ihren Namen.</string>
+    <string name="guide_monet_nympheas">In Giverny lässt Monet einen Teich ausheben und pflanzt Seerosen in allen Farben. Fast dreißig Jahre lang malt er dieses kleine Stück Wasser zu jeder Stunde, in jedem Licht: mehr als zweihundertfünfzig Bilder. Es gibt kein Ufer und keinen Horizont, nur den Himmel, der sich zwischen den Blüten spiegelt. Noch im Alter, als seine Augen schwächer wurden, malte er weiter seine Seerosen.</string>
+    <string name="guide_monet_prairie">Monet lässt sich 1883 in Giverny nieder, in einem Haus umgeben von Wiesen und Pappeln. Bevor er seinen berühmten Wassergarten anlegt, malt er die Landschaft um sich herum, im Freien, in wenigen schnellen Sitzungen, um das Licht des Augenblicks einzufangen. Rosa Bäume, Gras voller Blumen: Das Detail zählt nicht, das Gefühl eines schönen Tages schon.</string>
+    <string name="guide_panier_pommes">Paul Cézanne sagte, er wolle Paris mit einem Apfel in Erstaunen versetzen. In diesem Stillleben ist nichts ganz gerade: Der Tisch kippt, die Flasche auch, und der Rand des Tischtuchs passt nicht zusammen. Das ist keine Ungeschicklichkeit. Cézanne zeigt jeden Gegenstand von seiner besten Seite, als würden wir um ihn herumgehen. Picasso und die Kubisten nannten ihn später den Vater von uns allen. Dieses Gemälde hängt in Chicago.</string>
+    <string name="guide_voyageur_brume">Um 1818, in Deutschland. Caspar David Friedrich malt einen Mann, der auf einem Felsen über einem Wolkenmeer steht. Wir sehen nie sein Gesicht, und das ist Absicht: Wir betrachten die Landschaft mit ihm, über seine Schulter hinweg. Dieser Wanderer ist zum Symbol der Romantik geworden, der Bewegung, die in der Natur das Unendliche und das Gefühl suchte. Das Gemälde hängt in Hamburg.</string>
+    <string name="guide_pont_neuf">Paris, 1872. Pierre-Auguste Renoir setzt sich ins Obergeschoss eines Cafés gegenüber dem Pont-Neuf, um die Menge in der Sonne zu malen. Sein Bruder Edmond hilft auf seine Weise: Er hält Passanten an und fragt sie nach der Uhrzeit oder dem Weg, während Renoir sie skizziert. Blauer Himmel, leichte Schatten, Spaziergänger: Das ist das fröhliche Paris des frühen Impressionismus. Das Gemälde befindet sich heute in Washington.</string>
+    <string name="guide_grande_jatte">Georges Seurat ist vierundzwanzig, als er dieses Gemälde beginnt. Zwei Jahre arbeitet er daran und setzt winzige Tupfer reiner Farbe nebeneinander. Aus der Ferne mischt unser Auge sie: Man wird diese Technik Pointillismus nennen. Auf der Insel La Grande Jatte bei Paris spazieren die Pariser an einem Sonntag mit einem Affen, Hunden und Sonnenschirmen. Das riesige Original hängt in Chicago.</string>
+    <string name="guide_noce_juive">1832 schließt sich Eugène Delacroix einer diplomatischen Mission nach Marokko an. In Tanger erlebt er eine jüdische Hochzeit und füllt seine Hefte mit Skizzen und Farben. Zurück in Paris malt er die Szene aus dem Gedächtnis: die Musiker, die Tänzerinnen, das weiße Licht auf den Mauern. Diese Reise hat seine Malerei für immer verändert. Das Bild hängt im Louvre.</string>
+    <string name="guide_vermeer_laitiere">Um 1658, in Delft in den Niederlanden. Johannes Vermeer malt eine Magd, die in einer stillen Küche Milch eingießt. Schau dir das Licht vom Fenster an, die kleinen hellen Punkte auf dem Brot, das tiefe Blau der Schürze, gewonnen aus einem zermahlenen Edelstein, dem Lapislazuli. Nichts geschieht, und doch scheint alles in der Schwebe. Vermeer malte nur sehr wenige Bilder, kaum vierzig. Dieses hängt in Amsterdam.</string>
+    <string name="guide_american_gothic">Iowa, 1930. Grant Wood entdeckt ein kleines weißes Haus mit einem spitzen gotischen Fenster. Er stellt sich die Menschen vor, die dort wohnen könnten, und bittet seine Schwester Nan und seinen Zahnarzt, Modell zu stehen. Oft hält man sie für ein Ehepaar, aber der Maler sah in ihnen einen Vater und seine Tochter. Die Heugabel wiederholt sich in den Nähten der Latzhose und im Fenster. Dieses Gemälde ist zu einem der bekanntesten Bilder Amerikas geworden.</string>
+    <string name="guide_naufrage_minotaure">Joseph Mallord William Turner, der englische Maler des Lichts und der Stürme. Hier bricht ein großes Schiff in einem tobenden Meer auseinander, während kleine Boote versuchen, die Mannschaft zu retten. Turner malt nicht jede Welle: Er malt die Kraft der Natur, mit weiten Gesten und Farben, die ineinanderfließen. Mehr als ein halbes Jahrhundert im Voraus weist er den Impressionisten den Weg.</string>
+    <string name="guide_le_cri">Edvard Munch ging bei Sonnenuntergang in der Nähe von Oslo spazieren, als, so schrieb er, der Himmel blutrot wurde. Er spürte, sagte er, einen unendlichen Schrei, der durch die Natur ging. Also malte er diese Gestalt, die sich auf einer Brücke den Kopf hält, unter einem flammenden Himmel. Munch schuf mehrere Fassungen, in Öl, Pastell und als Druck. Dieses Bild ist zum Symbol der modernen Angst geworden.</string>
+    <string name="guide_joconde">Leonardo da Vinci beginnt dieses Porträt um 1503 in Florenz. Er trennt sich nie davon: Er nimmt es mit nach Frankreich, wo er seine letzten Jahre verbringt, und überarbeitet es immer wieder. Sein Geheimnis heißt Sfumato: Umrisse, so weich, dass sie im Schatten zu verschwimmen scheinen, besonders in den Mundwinkeln. Deshalb scheint sich ihr Lächeln zu verändern, wenn man sie ansieht. 1911 gestohlen und zwei Jahre später wiedergefunden, wohnt sie heute im Louvre.</string>
+    <string name="guide_listen">Den Museumsführer hören</string>
+    <string name="guide_stop">Führer anhalten</string>
+
+    <!-- Ausstellungen des Monats -->
+    <string name="expo_of_month">Ausstellung des Monats</string>
+    <string name="expo_progress">%1$d von %2$d Leinwänden</string>
+    <string name="expo_complete">Ausstellung vollständig, bravo!</string>
+    <plurals name="expo_days_left">
+        <item quantity="one">letzter Tag</item>
+        <item quantity="other">noch %1$d Tage</item>
+    </plurals>
+    <string name="expo_prize">Zu gewinnen</string>
+    <string name="expo_bonus">+%1$d Tupfer</string>
+    <string name="expo_won">Ausstellung vollständig: %1$s und %2$d Tupfer gewonnen!</string>
+    <string name="expo_vincent">Vincent, ein ganzes Leben</string>
+    <string name="expo_vincent_text">Vier Leinwände von Van Gogh, von Arles bis Auvers. Male sie alle fertig, bevor der Monat endet.</string>
+    <string name="expo_mer">Das tobende Meer</string>
+    <string name="expo_mer_text">Vier Leinwände, auf denen das Wasser tost, von Hokusai bis Turner. Male sie alle fertig, bevor der Monat endet.</string>
+    <string name="expo_impressionnistes">Die Impressionisten</string>
+    <string name="expo_impressionnistes_text">Flimmerndes Licht, im Freien gemalt. Male alle vier Leinwände fertig, bevor der Monat endet.</string>
+    <string name="expo_crepuscule">Von der Dämmerung bis zum Morgen</string>
+    <string name="expo_crepuscule_text">Aufgehende Sonnen, Sternennächte und Himmel in Flammen. Male alle vier Leinwände fertig, bevor der Monat endet.</string>
+    <string name="expo_visages">Berühmte Gesichter</string>
+    <string name="expo_visages_text">Vier Blicke, die die ganze Welt kennt. Male sie alle fertig, bevor der Monat endet.</string>
+    <string name="expo_paris">Paris in Farbe</string>
+    <string name="expo_paris_text">Brücken, Inseln und verregnete Straßen der Hauptstadt. Male alle drei Leinwände fertig, bevor der Monat endet.</string>
+    <string name="expo_voyages">Ferne Reisen</string>
+    <string name="expo_voyages_text">Von Japan nach Marokko, bis nach Iowa. Male alle vier Leinwände fertig, bevor der Monat endet.</string>
+    <string name="expo_natures">Blühende Natur</string>
+    <string name="expo_natures_text">Obst, Blumen, Weizen und Seerosen. Male alle vier Leinwände fertig, bevor der Monat endet.</string>
+
+    <!-- Rahmen im Museum -->
+    <string name="frame_chene">Eiche</string>
+    <string name="frame_noyer">Nussbaum</string>
+    <string name="frame_dore">Vergoldet</string>
+    <string name="frame_baroque">Barock</string>
+    <string name="frame_tournesol">Sonnenblumenrahmen</string>
+    <string name="frame_ecume">Gischtrahmen</string>
+    <string name="frame_nenuphar">Seerosenrahmen</string>
+    <string name="frame_nocturne">Nachtrahmen</string>
+    <string name="frame_velours">Samtrahmen</string>
+    <string name="frame_zinc">Zinkrahmen</string>
+    <string name="frame_laque">Lackrahmen</string>
+    <string name="frame_vigne">Weinrebenrahmen</string>
+
+    <!-- Mein Museum -->
+    <string name="museum_title">Mein Museum</string>
+    <plurals name="museum_count">
+        <item quantity="one">%1$d Leinwand an den Wänden · wische zum Schlendern</item>
+        <item quantity="other">%1$d Leinwände an den Wänden · wische zum Schlendern</item>
+    </plurals>
+    <string name="museum_hint">tippe auf ein Gemälde, um davor zu treten</string>
+    <string name="museum_back">Flur</string>
+    <string name="museum_position">%1$d / %2$d</string>
+    <string name="museum_swipe">wische zum nächsten Gemälde · mit zwei Fingern näher heran</string>
+    <string name="museum_frames">Rahmen</string>
+    <string name="museum_listen">Den Museumsführer hören</string>
+    <string name="museum_listen_stop">Führer anhalten</string>
+    <string name="museum_listen_sub">die Geschichte dieses Gemäldes</string>
+    <string name="museum_empty">Male eine Leinwand fertig, um sie in deinem Museum aufzuhängen.</string>
+    <string name="museum_baroque_at">ab %1$d Leinwänden</string>
+    <string name="museum_open">Mein Museum</string>
+    <plurals name="museum_open_text">
+        <item quantity="one">%1$d Leinwand hängt in der Galerie</item>
+        <item quantity="other">%1$d Leinwände hängen in der Galerie</item>
+    </plurals>
+    <string name="museum_visit">Besuchen</string>
+
+    <!-- Neue Gemälde -->
+    <string name="vermeer_perle_title">Das Mädchen mit dem Perlenohrgehänge</string>
+    <string name="vermeer_perle_year">um 1665</string>
+    <string name="vermeer_perle_note">Kein Porträt, sondern eine „Tronie“, ein erdachtes Gesicht, mit einem blau-gelben Turban.</string>
+    <string name="monet_coquelicots_title">Mohnfeld</string>
+    <string name="monet_coquelicots_note">Bei Argenteuil erscheinen Camille und ihr Sohn Jean zweimal: oben auf dem Hügel und dann im Vordergrund.</string>
+    <string name="monet_ombrelle_title">Frau mit Sonnenschirm</string>
+    <string name="monet_ombrelle_note">Camille und Jean von unten gesehen, vor dem Himmel: Monet malt schnell, um den vorbeiziehenden Wind einzufangen.</string>
+    <string name="chambre_arles_title">Das Schlafzimmer</string>
+    <string name="chambre_arles_note">Vincent wollte, dass allein die Farben „den Geist ausruhen“. Er malte sein Zimmer im Gelben Haus dreimal.</string>
+    <string name="iris_title">Schwertlilien</string>
+    <string name="iris_note">Gemalt im Garten von Saint-Rémy in seiner allerersten Woche dort, im Mai 1889.</string>
+    <string name="tournesols_title">Sonnenblumen</string>
+    <string name="tournesols_note">Gemalt in Arles im August 1888, um das Zimmer seines Freundes Paul Gauguin zu schmücken.</string>
+    <string name="fuji_rouge_title">Roter Fuji</string>
+    <string name="fuji_rouge_year">um 1831</string>
+    <string name="fuji_rouge_note">Am Ende des Sommers, im Morgengrauen, färbt die Sonne den Berg rot. Hokusai braucht nur drei Farben.</string>
+    <string name="averse_ohashi_title">Plötzlicher Regen über der Ōhashi-Brücke</string>
+    <string name="averse_ohashi_note">Ein Holzschnitt aus den Hundert Ansichten von Edo. Van Gogh liebte ihn so sehr, dass er ihn 1887 in Öl kopierte.</string>
+    <string name="rue_paris_pluie_title">Straße in Paris, Regenwetter</string>
+    <string name="rue_paris_pluie_note">Eine nagelneue Kreuzung nahe dem Gare Saint-Lazare, wo Regenschirme über das nasse Kopfsteinpflaster ziehen.</string>
+    <string name="chasseurs_neige_title">Die Jäger im Schnee</string>
+    <string name="chasseurs_neige_note">Eines von Bruegels Jahreszeitenbildern: Tief unten läuft das ganze Dorf auf den zugefrorenen Teichen Schlittschuh.</string>
+    <string name="arcimboldo_ete_title">Der Sommer</string>
+    <string name="arcimboldo_ete_note">Schau genau hin: Dieses Gesicht besteht aus Obst, Gemüse und Ähren. Eine Kirsche als Lippe, eine Birne als Kinn.</string>
+    <string name="jeu_du_fouet_title">Peitschenknallen</string>
+    <string name="jeu_du_fouet_note">In der Pause fassen sich die Schuljungen an den Händen und rennen in einer Reihe: Der Letzte muss sich gut festhalten!</string>
+
+    <string name="guide_vermeer_perle">Delft in den Niederlanden, um 1665. Johannes Vermeer malt ein Mädchen, das sich zu uns umdreht, die Lippen leicht geöffnet, als hätten wir gerade ihren Namen gerufen. Niemand weiß, wer sie ist: Es ist kein Auftragsporträt, sondern ein erdachtes Gesicht. Ihr Turban ist mit einem kostbaren Blau aus einem Stein gemalt, dem Lapislazuli, der mehr kostete als Gold. Und die Perle? Zwei kleine weiße Tupfer genügen, um sie glänzen zu lassen. Das Gemälde hängt im Mauritshuis in Den Haag.</string>
+    <string name="guide_monet_coquelicots">Sommer 1873, bei Argenteuil am Ufer der Seine. Claude Monet spaziert mit seiner Frau Camille und ihrem Sohn Jean durch ein Mohnfeld. Schau genau hin: Die Mutter mit ihrem Sonnenschirm und das Kind erscheinen zweimal, oben auf dem Hügel und im Vordergrund, als kämen sie zu uns herunter. Die Blumen sind nur schnelle rote Tupfer. Im Jahr darauf zeigte Monet dieses Gemälde in der allerersten Ausstellung der Impressionisten. Heute hängt es im Musée d’Orsay in Paris.</string>
+    <string name="guide_monet_ombrelle">Sommer 1875. Claude Monet stellt seine Staffelei am Fuß eines kleinen Hügels auf. Oben hält seine Frau Camille einen grünen Sonnenschirm, und ihr Sohn Jean steht etwas weiter weg im Gras. Der Wind hebt ihren Schleier, und die Wolken ziehen vorbei. Monet malt in wenigen Stunden, mit breiten Pinselstrichen, um den Moment festzuhalten, bevor er davonweht. Es ist, als blickten wir zu ihnen hinauf. Das Gemälde befindet sich in der National Gallery of Art in Washington.</string>
+    <string name="guide_chambre_arles">Vincent van Gogh liebte sein kleines Schlafzimmer im Gelben Haus in Arles so sehr, dass er es dreimal malte. Das ist die zweite Fassung, von 1889. Er schrieb seinem Bruder Theo, die Farben sollten den Geist ausruhen: lavendelblaue Wände, ein gelbes Bett, eine rote Decke. Schau dir den Boden an, er neigt sich ein wenig, als würde uns das Zimmer die Arme öffnen. An die Wände hängte Vincent seine eigenen Bilder. Dieses Schlafzimmer befindet sich im Art Institute of Chicago.</string>
+    <string name="guide_iris">Mai 1889. Vincent van Gogh ist gerade in der Heilanstalt von Saint-Rémy-de-Provence angekommen. Schon in seiner allerersten Woche geht er in den Garten und malt diese Schwertlilien. Er nennt die Malerei seinen Blitzableiter: Sie hilft ihm, sich besser zu fühlen. Schau dir die Blätter an, wie grüne Schwerter, und die einzige weiße Iris links zwischen all den blauen. Das Gemälde befindet sich heute im Getty Museum in Los Angeles.</string>
+    <string name="guide_tournesols">Arles, August 1888. Vincent van Gogh wartet auf den Besuch seines Freundes, des Malers Paul Gauguin. Um dessen Zimmer zu schmücken, malt er Sonnenblumen in einer Vase, fast nur in Gelbtönen. Er muss schnell arbeiten, denn die Blumen welken in wenigen Tagen. Gauguin sollte diese Bilder lieben. Vincent signiert auf der Vase, ganz einfach: Vincent. Diese Fassung hängt in der National Gallery in London.</string>
+    <string name="guide_fuji_rouge">Um 1831, in Japan. Katsushika Hokusai veröffentlicht seine 36 Ansichten des Berges Fuji. In diesem Bild gibt es keine Welle und keine Menschen: nur den Berg, rot gefärbt von der Morgensonne am Ende des Sommers. Der Himmel ist blau, mit Reihen kleiner weißer Wolken. Mit kaum drei Farben lässt uns Hokusai die Ruhe eines windstillen Morgens spüren. Diese Bilder wurden mit geschnitzten Holzplatten gedruckt, eine für jede Farbe.</string>
+    <string name="guide_averse_ohashi">Edo, der alte Name von Tokio, 1857. Utagawa Hiroshige zeigt einen plötzlichen Regenschauer, der Menschen auf einer großen Holzbrücke überrascht. Der Regen fällt in feinen geraden Linien, jede von Hand geschnitzt. Die Leute verstecken sich unter Strohhüten und Schirmen. Dreißig Jahre später, in Paris, bewunderte Vincent van Gogh diesen Holzschnitt so sehr, dass er ihn in Öl kopierte. Japan hat viele europäische Maler inspiriert.</string>
+    <string name="guide_rue_paris_pluie">Paris, 1877. Gustave Caillebotte malt eine nagelneue Kreuzung nahe dem Gare Saint-Lazare. Die hohen Häuser sind gerade erst gebaut, und das Kopfsteinpflaster glänzt im Regen. Die Leute begegnen sich unter ihren Schirmen, ein bisschen wie auf einer Fotografie. Caillebotte war Maler, aber auch ein großzügiger Freund: Er kaufte die Bilder der Impressionisten, um ihnen zu helfen. Diese riesige Leinwand befindet sich im Art Institute of Chicago.</string>
+    <string name="guide_chasseurs_neige">Winter 1565, in Flandern. Pieter Bruegel malt eine Reihe von Bildern über die Jahreszeiten. Auf diesem kehren Jäger mit ihren Hunden durch den Schnee ins Dorf zurück. Unten vergnügen sich alle auf den zugefrorenen Teichen: Sie laufen Schlittschuh, spielen, schlittern. Die schwarzen Bäume und der blassgrüne Himmel lassen einen schon beim Hinsehen frieren. Das Gemälde hängt im Kunsthistorischen Museum in Wien.</string>
+    <string name="guide_arcimboldo_ete">Giuseppe Arcimboldo war Maler der Kaiser in Österreich. Er hatte eine lustige Idee: die vier Jahreszeiten als Gesichter zu malen, die aus dem bestehen, was uns jede Jahreszeit schenkt. Das hier ist der Sommer. Seine Wange ist ein Pfirsich, seine Nase eine Gurke, seine Zähne sind Erbsen, und sein Haar besteht aus Früchten. Er hat sogar seine Signatur in den Strohkragen eingeflochten. Die Kaiser liebten diese gemalten Rätsel.</string>
+    <string name="guide_jeu_du_fouet">Vereinigte Staaten, 1872. Winslow Homer malt ein kleines rotes Dorfschulhaus mitten auf einer Wiese. Es ist Pause: Jungen fassen sich an den Händen und rennen in einer Reihe. Die am Ende werden weggeschleudert wie die Spitze einer Peitsche, und zwei sind schon hingefallen! Homer malte gern Kinder und das einfache Leben auf dem Land. Dieses Gemälde befindet sich im Metropolitan Museum in New York.</string>
+
+    <string name="expo_enfances">Kindheiten</string>
+    <string name="expo_enfances_text">Pausenspiele, Spaziergänge und ein Schlafzimmer. Male alle vier Leinwände fertig, bevor der Monat endet.</string>
+    <string name="expo_japon">Japanische Holzschnitte</string>
+    <string name="expo_japon_text">Wellen, ein Berg und ein Regenschauer, in Holz geschnitten. Male alle drei Leinwände fertig, bevor der Monat endet.</string>
+    <string name="frame_craie">Kreiderahmen</string>
+    <string name="frame_indigo">Indigorahmen</string>
+
+    <!-- Notizbuch des Lehrlings -->
+    <string name="journal_title">Mein Notizbuch</string>
+    <string name="journal_open">Mein Notizbuch öffnen</string>
+    <string name="journal_streak">Serie: %1$d Tage</string>
+    <string name="journal_grace_ready">Ein Gnadentag in Reserve: Ein verpasster Tag unterbricht deine Serie nicht.</string>
+    <string name="journal_grace_used_today">Gestern hast du nicht gemalt: Male heute, und dein Gnadentag rettet deine Serie.</string>
+    <string name="journal_grace_none">Noch %1$d Tage am Stück, um einen Gnadentag zu verdienen.</string>
+    <string name="journal_achievements">Erfolge · %1$d von %2$d</string>
+    <string name="journal_story">Kapitel %1$d · %2$s</string>
+    <string name="journal_masterpiece">Jenseits des Genies: das Meisterstück</string>
+    <string name="journal_masterpiece_text">Drei Experten-Sterne auf jeder Leinwand: %1$d von %2$d</string>
+    <string name="achievement_won">Erfolg: %1$s!</string>
+    <string-array name="story_titles">
+        <item>Der Kritzler</item>
+        <item>Der Kleckser</item>
+        <item>Der Lehrling</item>
+        <item>Der Geselle</item>
+        <item>Der Künstler</item>
+        <item>Der Meister</item>
+        <item>Das Genie</item>
+    </string-array>
+    <string-array name="story_texts">
+        <item>„Ich kam durch die Hintertür ins Atelier, mit leeren Händen und viel Hoffnung. Der Meister reichte mir einen Pinsel: ‚Fang mit einem Feld an. Nur einem.‘“</item>
+        <item>„Ich habe schon drei Schürzen bekleckert. Der Meister lacht: ‚Farbe auf dem Boden beweist, dass jemand gearbeitet hat.‘ Er hat mir gezeigt, wie man den Pinsel näher an den Borsten hält.“</item>
+        <item>„Heute habe ich meine ersten Farben gerieben. Ultramarinblau stammt von einem Stein, der übers Meer gekommen ist. Jetzt weiß ich, warum wir nie einen Tropfen verschwenden.“</item>
+        <item>„Der Meister hat mich zum ersten Mal seine Pinsel benutzen lassen. Er sah lange auf meine Leinwand und sagte dann: ‚Morgen malst du den Himmel.‘ Ich habe die ganze Nacht nicht geschlafen.“</item>
+        <item>„Besucher blieben vor einer meiner Leinwände stehen. Sie suchten meine Signatur in der Ecke. Der Meister lächelte und sagte nichts.“</item>
+        <item>„Heute Morgen hat ein kleiner Junge die Hintertür des Ateliers aufgestoßen. Ich reichte ihm einen Pinsel: ‚Fang mit einem Feld an. Nur einem.‘“</item>
+        <item>„Der Meister hat mir die Schlüssel des Ateliers überlassen. Man sagt, eine letzte Herausforderung bleibt: jede Leinwand auf der höchsten Stufe zu malen. Die großen Meister nennen das ein Meisterstück.“</item>
+    </string-array>
+    <string-array name="achievement_names">
+        <item>Erste Leinwand</item>
+        <item>Fünf Leinwände</item>
+        <item>Zehn Leinwände</item>
+        <item>Zwanzig Leinwände</item>
+        <item>Die ganze Galerie</item>
+        <item>Erstes Normal</item>
+        <item>Erstes Experte</item>
+        <item>Drei Sterne</item>
+        <item>Zehn auf Experte</item>
+        <item>Alle sieben Vincents</item>
+        <item>Alle fünf Monets</item>
+        <item>Japan</item>
+        <item>Nachtmaler</item>
+        <item>3 Tage am Stück</item>
+        <item>7 Tage am Stück</item>
+        <item>30 Tage am Stück</item>
+        <item>Aussteller</item>
+        <item>Kurator</item>
+        <item>Erster Firnis</item>
+        <item>Zehn Firnisse</item>
+        <item>Meine eigene Leinwand</item>
+        <item>Meister</item>
+        <item>Genie</item>
+        <item>Meisterstück</item>
+    </string-array>
+    <string name="varnish">Leinwand firnissen</string>
+    <string name="varnished">Gefirnisst</string>
+    <string name="rank_party_title">Du bist jetzt…</string>
+    <string name="rank_party_rank">Rang %1$d von %2$d · %3$d Tupfer</string>
+    <string name="rank_party_unlocked">Neue Leinwände ausgepackt:</string>
+    <string name="rank_party_go">Weiter</string>
+    <string name="matter_button">Farbe: %1$s</string>
+    <string name="guided_skip">Überspringen</string>
+    <string name="guided_step">Schritt %1$d von %2$d</string>
+    <string name="guided_next">Weiter</string>
+    <string-array name="guided_titles">
+        <item>Wähle eine Farbe</item>
+        <item>Male die Felder</item>
+        <item>Komm näher</item>
+        <item>Das kleine Auge</item>
+    </string-array>
+    <string-array name="guided_texts">
+        <item>Jeder Farbtopf auf der Palette hat eine Nummer. Tippe auf einen Topf: Die Felder mit dieser Nummer leuchten auf der Leinwand auf.</item>
+        <item>Tippe auf ein leuchtendes Feld, um es zu malen. Jedes Feld in der richtigen Farbe bringt Tupfer.</item>
+        <item>Spreize zwei Finger, um kleine Felder heranzuzoomen, und ziehe, um dich zu bewegen.</item>
+        <item>Halte das Auge gedrückt, um jederzeit das Originalgemälde zu sehen.</item>
+    </string-array>
+    <string name="journal_streak_none">Gerade keine Serie</string>
+    <string name="journal_streak_start">Male heute ein Feld, um eine neue Serie zu beginnen.</string>
+    <string name="journal_locked">Noch nicht gewonnen</string>
+    <string name="journal_close">Notizbuch schließen</string>
+    <string name="varnish_hint">Ein Glanz huscht über die Leinwand, und sie kommt gefirnisst ins Museum.</string>
+    <string name="guided_done">Los geht’s!</string>
+    <string name="journal_streak_one">Serie: 1 Tag</string>
+    <string name="journal_card_go">Öffnen</string>
+    <string name="intro_medium">Öl auf Leinwand, 2026</string>
+    <string name="guide_language">de</string>
+</resources>

@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import app.atelier.maitres.R
 import app.atelier.maitres.data.Painting
 import java.util.Locale
 
@@ -21,8 +22,19 @@ class MuseumGuide(private val context: Context, private val onPlaying: (Boolean)
     private var ttsReady = false
     private var pending: Painting? = null
 
+    /**
+     * La langue des textes réellement affichés (fr, en, es, de, it, pt) : chaque fichier de traduction
+     * la donne lui-même, donc elle suit toujours le choix d'Android, même avec plusieurs langues réglées.
+     */
     private val language: String
-        get() = if (context.resources.configuration.locales[0].language == "fr") "fr" else "en"
+        get() = context.getString(R.string.guide_language)
+
+    /** La langue du joueur qui correspond aux textes (pour garder son accent : es-MX, pt-PT…), s'il en a une. */
+    private val playerLocale: Locale?
+        get() {
+            val locales = context.resources.configuration.locales
+            return (0 until locales.size()).map { locales[it] }.firstOrNull { it.language == language }
+        }
 
     /** Vrai si cette toile a quelque chose à raconter. */
     fun hasStory(painting: Painting): Boolean = !painting.guide.isNullOrBlank()
@@ -88,9 +100,34 @@ class MuseumGuide(private val context: Context, private val onPlaying: (Boolean)
             pending = painting
             return
         }
-        engine.language = if (language == "fr") Locale.FRANCE else Locale.UK
+        // La voix doit parler la langue du texte : on essaie l'accent du joueur (es-MX, pt-PT…),
+        // puis celui par défaut de la langue, puis la langue seule.
+        // Si aucune n'est installée, on demande quand même la langue : le téléphone peut la télécharger.
+        val voices = guideVoiceLocales(language, playerLocale)
+        engine.language = voices.firstOrNull { engine.isLanguageAvailable(it) >= TextToSpeech.LANG_AVAILABLE } ?: voices.first()
         engine.setSpeechRate(0.9f)
         engine.setPitch(0.92f)
         engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "guide_${painting.id}")
     }
+}
+
+/**
+ * Les voix à essayer, dans l'ordre, pour lire le texte du guide avec la synthèse du téléphone.
+ * Le français et l'anglais gardent leur voix habituelle (France, Royaume-Uni).
+ */
+fun guideVoiceLocales(language: String, player: Locale?): List<Locale> {
+    val default = when (language) {
+        "fr" -> Locale.FRANCE
+        "es" -> Locale.forLanguageTag("es-ES")
+        "de" -> Locale.GERMANY
+        "it" -> Locale.ITALY
+        "pt" -> Locale.forLanguageTag("pt-BR")
+        else -> Locale.UK
+    }
+    val accent = player?.takeIf { it.language == default.language && it.country.isNotEmpty() && default.language !in setOf("fr", "en") }
+    return listOfNotNull(
+        accent,
+        default,
+        Locale.forLanguageTag(default.language),
+    ).distinct()
 }
