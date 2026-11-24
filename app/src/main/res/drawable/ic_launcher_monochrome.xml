@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Icône thématique (Android 13+) : seule la forme compte. La médaille des rangs en contour,
-     le coup de pinceau plein, et le pinceau posé au bout du trait. -->
+<!-- Icône thématique (Android 13+) : seule la forme compte. Une toile dans son cadre,
+     la perle de Vermeer, des zones à peindre et le pinceau posé dessus. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="3"
+        android:pathData="M35,30L73,30Q77,30 77,34L77,74Q77,78 73,78L35,78Q31,78 31,74L31,34Q31,30 35,30Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M48,40C52,40 54,44 54,47.5C54,51.5 51.3,54 48,54C44.7,54 42,51.5 42,47.5C42,44 44,40 48,40Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:pathData="M31,66C40,60 46,68 55,63C61,59.5 67,61 77,57M44,78C46,72 50,69 55,63" />
     <group
-        android:pivotX="54"
-        android:pivotY="54"
-        android:scaleX="0.9"
-        android:scaleY="0.9">
-        <group
-            android:pivotX="54"
-            android:pivotY="54"
-            android:rotation="-8">
-            <path
-                android:fillColor="#00000000"
-                android:strokeColor="#FF000000"
-                android:strokeWidth="3"
-                android:pathData="M81,54A27,27 0,1 1,27 54A27,27 0,1 1,81 54Z" />
-            <path
-                android:fillColor="#FF000000"
-                android:pathData="M38,64C44,57 52,56 60,58C66,59.5 70,57 72,54L73,60C69,65 63,66 57,64.5C50,62.6 44,64 40,69Z" />
-        </group>
-        <group
-            android:translateX="64"
-            android:translateY="54"
-            android:rotation="-52"
-            android:scaleX="0.2"
-            android:scaleY="0.2">
-            <path
-                android:fillColor="#FF000000"
-                android:pathData="M-3,0C6,-3.4 14,-8.6 31,-9L58,-8.4L139,-6Q149,-6 149,0Q149,6 139,6L58,8.4L31,9C14,8.6 6,3.4 -3,0Z" />
-        </group>
+        android:translateX="60"
+        android:translateY="62"
+        android:rotation="-52"
+        android:scaleX="0.2"
+        android:scaleY="0.2">
+        <path
+            android:fillColor="#FF000000"
+            android:pathData="M-3,0C6,-3.4 14,-8.6 31,-9L58,-8.4L139,-6Q149,-6 149,0Q149,6 139,6L58,8.4L31,9C14,8.6 6,3.4 -3,0Z" />
     </group>
 </vector>
